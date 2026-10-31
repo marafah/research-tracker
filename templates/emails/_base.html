@@ -1,0 +1,11 @@
+{% load i18n %}{% get_current_language_bidi as RTL %}<!doctype html>
+<html dir="{% if RTL %}rtl{% else %}ltr{% endif %}"><body style="margin:0;background:#f1f4f9;font-family:Segoe UI,Tahoma,Arial,sans-serif;color:#1f2937">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#f1f4f9;padding:24px 0"><tr><td align="center">
+<table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#ffffff;border-radius:10px;overflow:hidden;border:1px solid #e3e8f0">
+  <tr><td style="background:#16324f;padding:18px 24px;color:#ffffff;font-size:18px;font-weight:bold">{{ SITE_NAME }}</td></tr>
+  {% block banner %}{% endblock %}
+  <tr><td style="padding:24px;font-size:15px;line-height:1.6;text-align:{% if RTL %}right{% else %}left{% endif %}">{% block body %}{% endblock %}</td></tr>
+  <tr><td style="padding:14px 24px;background:#f8fafc;color:#6b7280;font-size:12px;text-align:center">
+    {% trans "You receive this because you are part of a research group on" %} {{ SITE_NAME }}.
+    <a href="{{ SITE_URL }}{% url 'profile' %}" style="color:#1f4e79">{% trans "Email preferences" %}</a></td></tr>
+</table></td></tr></table></body></html>

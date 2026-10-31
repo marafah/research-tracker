@@ -1,0 +1,32 @@
+{% extends "base.html" %}{% load i18n %}
+{% block main_class %}container-fluid p-0{% endblock %}{% block footer %}{% endblock %}
+{% block content %}{% get_current_language as LANG %}
+<div class="auth-shell">
+  <div class="auth-side d-none d-lg-flex">
+    <div>
+      <div class="brand-mark brand-mark-light mb-3"><i class="bi bi-journal-check"></i></div>
+      <h2 class="fw-bold">{{ SITE_NAME }}</h2>
+      <p class="lead opacity-75">{% trans "Track every paper from idea to publication — submissions, revisions, deadlines and co-authors in one place." %}</p>
+      <ul class="list-unstyled mt-4 opacity-90">
+        <li class="mb-2"><i class="bi bi-check2-circle"></i> {% trans "Every journal attempt with full history" %}</li>
+        <li class="mb-2"><i class="bi bi-check2-circle"></i> {% trans "Automatic email reminders before deadlines" %}</li>
+        <li class="mb-2"><i class="bi bi-check2-circle"></i> {% trans "Co-authors complete their own data via a secure link" %}</li>
+        <li class="mb-2"><i class="bi bi-check2-circle"></i> {% trans "Reviewer comments assigned and tracked" %}</li>
+      </ul>
+    </div>
+  </div>
+  <div class="auth-main">
+    <div class="auth-card">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="d-lg-none fw-bold text-primary"><i class="bi bi-journal-check"></i> {{ SITE_NAME }}</div>
+        <form action="{% url 'set_language' %}" method="post" class="ms-auto">{% csrf_token %}
+          <input type="hidden" name="next" value="{{ request.get_full_path }}">
+          <input type="hidden" name="language" value="{% if LANG == 'ar' %}en{% else %}ar{% endif %}">
+          <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-translate"></i> {% if LANG == 'ar' %}English{% else %}العربية{% endif %}</button>
+        </form>
+      </div>
+      {% block auth %}{% endblock %}
+    </div>
+  </div>
+</div>
+{% endblock %}

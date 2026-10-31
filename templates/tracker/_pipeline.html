@@ -1,0 +1,9 @@
+{% load i18n tracker_tags %}
+{% for c in counts %}
+<div class="d-flex align-items-center gap-2 mb-2 small">
+  <a href="{% url 'paper_list' %}?status={{ c.code }}" class="text-decoration-none" style="min-width:9.5rem">{{ c.label }}</a>
+  <div class="progress flex-grow-1" style="height:.55rem"><div class="progress-bar bg-{{ c.code|status_color }}" style="width:{{ c.pct }}%"></div></div>
+  <span class="fw-semibold" style="min-width:1.5rem;text-align:end">{{ c.count }}</span>
+</div>
+{% empty %}<div class="text-muted-rt small">{% trans "No papers yet." %}</div>
+{% endfor %}

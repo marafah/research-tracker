@@ -1,0 +1,80 @@
+{% load static i18n %}<!doctype html>
+{% get_current_language as LANG %}{% get_current_language_bidi as RTL %}
+<html lang="{{ LANG }}" dir="{% if RTL %}rtl{% else %}ltr{% endif %}" data-bs-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{{ SITE_NAME }}{% endblock %} · {{ SITE_NAME }}</title>
+  <script>
+    try { const t = localStorage.getItem("rt-theme") || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+          document.documentElement.setAttribute("data-bs-theme", t); } catch (e) {}
+  </script>
+  {% if RTL %}<link rel="stylesheet" href="{% static 'vendor/bootstrap/bootstrap.rtl.min.css' %}">
+  {% else %}<link rel="stylesheet" href="{% static 'vendor/bootstrap/bootstrap.min.css' %}">{% endif %}
+  <link rel="stylesheet" href="{% static 'vendor/bootstrap-icons/bootstrap-icons.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/app.css' %}">
+  {% block head %}{% endblock %}
+</head>
+<body>
+{% if user.is_authenticated %}
+<nav class="navbar navbar-expand-lg navbar-dark navbar-rt mb-4">
+  <div class="container-xl">
+    <a class="navbar-brand" href="{% url 'dashboard' %}"><span class="brand-icon"><i class="bi bi-journal-check"></i></span> {{ SITE_NAME }}</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav"><span class="navbar-toggler-icon"></span></button>
+    <div class="collapse navbar-collapse" id="nav">
+      {% with u=request.resolver_match.url_name %}
+      <ul class="navbar-nav me-auto gap-lg-1">
+        <li class="nav-item"><a class="nav-link {% if u == 'dashboard' %}active{% endif %}" href="{% url 'dashboard' %}"><i class="bi bi-speedometer2"></i> {% trans "Dashboard" %}</a></li>
+        <li class="nav-item"><a class="nav-link {% if u == 'paper_list' or u == 'paper_detail' %}active{% endif %}" href="{% url 'paper_list' %}"><i class="bi bi-file-earmark-text"></i> {% trans "Papers" %}</a></li>
+        <li class="nav-item"><a class="nav-link {% if u == 'paper_board' %}active{% endif %}" href="{% url 'paper_board' %}"><i class="bi bi-kanban"></i> {% trans "Board" %}</a></li>
+        <li class="nav-item"><a class="nav-link {% if u == 'deadline_list' %}active{% endif %}" href="{% url 'deadline_list' %}"><i class="bi bi-alarm"></i> {% trans "Deadlines" %}</a></li>
+        <li class="nav-item"><a class="nav-link {% if 'group' in u %}active{% endif %}" href="{% url 'group_list' %}"><i class="bi bi-people"></i> {% trans "Groups" %}</a></li>
+        <li class="nav-item"><a class="nav-link {% if 'journal' in u %}active{% endif %}" href="{% url 'journal_list' %}"><i class="bi bi-building"></i> {% trans "Journals" %}</a></li>
+        <li class="nav-item"><a class="nav-link {% if u == 'reports' %}active{% endif %}" href="{% url 'reports' %}"><i class="bi bi-bar-chart"></i> {% trans "Reports" %}</a></li>
+      </ul>
+      {% endwith %}
+      <div class="d-flex align-items-center gap-2 nav-actions">
+        <a href="{% url 'paper_create' %}" class="btn btn-sm btn-light"><i class="bi bi-plus-lg"></i> {% trans "New paper" %}</a>
+        <form action="{% url 'set_language' %}" method="post" class="m-0">{% csrf_token %}
+          <input type="hidden" name="next" value="{{ request.get_full_path }}">
+          <input type="hidden" name="language" value="{% if LANG == 'ar' %}en{% else %}ar{% endif %}">
+          <button class="btn btn-sm btn-outline-light" type="submit">{% if LANG == 'ar' %}English{% else %}العربية{% endif %}</button>
+        </form>
+        <button class="btn btn-sm btn-outline-light" type="button" id="theme-toggle" title="{% trans 'Toggle dark mode' %}"><i class="bi bi-circle-half"></i></button>
+        <div class="dropdown">
+          <button class="btn btn-sm btn-outline-light dropdown-toggle" data-bs-toggle="dropdown"><i class="bi bi-person-circle"></i></button>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li><span class="dropdown-item-text small text-muted-rt">{{ user.email }}</span></li>
+            <li><a class="dropdown-item" href="{% url 'profile' %}">{% trans "My profile" %}</a></li>
+            <li><a class="dropdown-item" href="{% url 'password_change' %}">{% trans "Change password" %}</a></li>
+            {% if user.is_staff %}<li><a class="dropdown-item" href="{% url 'admin:index' %}">{% trans "Administration" %}</a></li>{% endif %}
+            <li><hr class="dropdown-divider"></li>
+            <li><form method="post" action="{% url 'logout' %}">{% csrf_token %}<button class="dropdown-item">{% trans "Log out" %}</button></form></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+{% endif %}
+<main class="{% block main_class %}container-xl pb-5{% endblock %}">
+  {% for message in messages %}
+  <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags|default:'info' }}{% endif %} alert-dismissible fade show" role="alert">
+    {{ message }}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+  {% endfor %}
+  {% block content %}{% endblock %}
+</main>
+{% block footer %}<footer class="text-center small text-muted-rt pb-4 no-print">
+  {{ SITE_NAME }} · {% trans "Open-source research publication tracker" %}
+</footer>{% endblock %}
+<script src="{% static 'vendor/bootstrap/bootstrap.bundle.min.js' %}"></script>
+<script>
+  document.getElementById("theme-toggle")?.addEventListener("click", () => {
+    const el = document.documentElement, t = el.getAttribute("data-bs-theme") === "dark" ? "light" : "dark";
+    el.setAttribute("data-bs-theme", t); try { localStorage.setItem("rt-theme", t); } catch (e) {}
+  });
+</script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

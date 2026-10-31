@@ -1,0 +1,33 @@
+{% extends "base.html" %}{% load i18n tracker_tags %}
+{% block title %}{% trans "Board" %}{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h3 class="mb-0">{% trans "Publication board" %}</h3>
+  <div class="d-flex gap-2">
+    {% if show_all %}<a href="?" class="btn btn-outline-secondary btn-sm"><i class="bi bi-eye-slash"></i> {% trans "Hide empty stages" %}</a>
+    {% else %}<a href="?all=1" class="btn btn-outline-secondary btn-sm"><i class="bi bi-eye"></i> {% trans "Show all stages" %}</a>{% endif %}
+    <a href="{% url 'paper_list' %}?{{ request.GET.urlencode }}" class="btn btn-outline-primary btn-sm"><i class="bi bi-list-ul"></i> {% trans "List view" %}</a>
+  </div>
+</div>
+{% include "tracker/_filters.html" %}
+<div class="board">
+{% for col in columns %}
+  <div class="board-col">
+    <h6><span><span class="board-dot bg-{{ col.status|status_color }}"></span>{{ col.label }}</span><span class="count">{{ col.papers|length }}</span></h6>
+    {% for p in col.papers %}{% with s=p.current_submission nd=p.next_deadline %}
+    <div class="board-card">
+      <a class="title" href="{{ p.get_absolute_url }}">{{ p.label }}</a>{% if p.priority >= 3 %}<span class="badge text-bg-danger mt-1">{{ p.get_priority_display }}</span>{% endif %}
+      <div class="meta">{{ p.get_type_display }}{% if s %} · {{ s.journal.name|truncatechars:32 }}{% endif %}</div>
+      {% if nd %}<div class="mt-1 small"><i class="bi bi-alarm"></i> {{ nd.due_at|date:"j M" }} {% due_badge nd %}</div>{% endif %}
+      <form method="post" action="{% url 'paper_status' p.pk %}" class="mt-2">{% csrf_token %}
+        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+        <select name="status" class="form-select form-select-sm" onchange="this.form.submit()" aria-label="{% trans 'Move to' %}">
+          {% for code, label in statuses %}<option value="{{ code }}" {% if code == p.status %}selected{% endif %}>{{ label }}</option>{% endfor %}
+        </select>
+      </form>
+    </div>
+    {% endwith %}{% empty %}<div class="board-empty">{% trans "Empty" %}</div>{% endfor %}
+  </div>
+{% endfor %}
+</div>
+{% endblock %}

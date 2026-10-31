@@ -1,0 +1,12 @@
+{% load i18n %}
+<form method="get" class="card card-body mb-3 no-print">
+  <div class="row g-2 align-items-end">
+    <div class="col-md-3"><label class="form-label" for="{{ form.q.id_for_label }}">{{ form.q.label }}</label>{{ form.q }}</div>
+    <div class="col-md-2"><label class="form-label" for="{{ form.status.id_for_label }}">{{ form.status.label }}</label>{{ form.status }}</div>
+    <div class="col-md-2"><label class="form-label" for="{{ form.type.id_for_label }}">{{ form.type.label }}</label>{{ form.type }}</div>
+    <div class="col-md-2"><label class="form-label" for="{{ form.group.id_for_label }}">{{ form.group.label }}</label>{{ form.group }}</div>
+    <div class="col-md-1"><div class="form-check">{{ form.mine }} <label class="form-check-label" for="{{ form.mine.id_for_label }}">{{ form.mine.label }}</label></div></div>
+    <div class="col-md-2 d-flex gap-1"><button class="btn btn-primary w-100"><i class="bi bi-funnel"></i> {% trans "Filter" %}</button>
+      <a class="btn btn-outline-secondary" href="{{ request.path }}" title="{% trans 'Reset' %}"><i class="bi bi-x-lg"></i></a></div>
+  </div>
+</form>

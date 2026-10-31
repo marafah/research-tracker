@@ -1,0 +1,9 @@
+{
+  "name": "Research Tracker",
+  "image": "mcr.microsoft.com/devcontainers/python:3.12",
+  "postCreateCommand": "pip install -r requirements.txt && DEBUG=1 python manage.py migrate && DEBUG=1 python manage.py seed_demo",
+  "postAttachCommand": "DEBUG=1 python manage.py runserver 0.0.0.0:8000",
+  "forwardPorts": [8000],
+  "portsAttributes": { "8000": { "label": "Research Tracker", "onAutoForward": "openPreview" } },
+  "containerEnv": { "DEBUG": "1", "ALLOWED_HOSTS": "*", "CSRF_TRUSTED_ORIGINS": "https://*.app.github.dev" }
+}

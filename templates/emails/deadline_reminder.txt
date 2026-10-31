@@ -1,0 +1,10 @@
+{% load i18n %}{% blocktrans with name=user.display_name %}Dear {{ name }},{% endblocktrans %}
+
+{% if days_left < 0 %}{% blocktrans with n=overdue_days %}Overdue by {{ n }} day(s){% endblocktrans %}{% elif days_left == 0 %}{% trans "Due today" %}{% else %}{% blocktrans with n=days_left %}{{ n }} day(s) left{% endblocktrans %}{% endif %}
+
+{% trans "Task" %}: {{ deadline.title }}
+{% trans "Paper" %}: {{ paper.title }}
+{% trans "Due" %}: {{ deadline.due_at|date:"l j F Y, H:i" }}
+{% if deadline.submission %}{% trans "Venue" %}: {{ deadline.submission.journal.name }}{% endif %}
+
+{{ SITE_URL }}{% url 'paper_detail' paper.pk %}

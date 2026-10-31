@@ -1,0 +1,20 @@
+{% extends "base.html" %}{% load i18n %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+<div class="row justify-content-center"><div class="col-lg-9">
+  {% if back %}<a href="{{ back.get_absolute_url }}" class="small text-decoration-none"><i class="bi bi-arrow-left"></i> {{ back }}</a>{% endif %}
+  <h3 class="mt-2 mb-3">{{ title }}</h3>
+  {% if help %}<div class="alert alert-info small"><i class="bi bi-lightbulb"></i> {{ help }}</div>{% endif %}
+  <div class="card"><div class="card-body">
+    <form method="post" {% if multipart %}enctype="multipart/form-data"{% endif %} novalidate>{% csrf_token %}
+      {% include "includes/form_fields.html" %}
+      <div class="mt-4 d-flex gap-2 flex-wrap">
+        <button class="btn btn-primary" type="submit"><i class="bi bi-check-lg"></i> {% trans "Save" %}</button>
+        {% if extra_submit %}<button class="btn btn-outline-primary" type="submit" name="request_data" value="1"><i class="bi bi-envelope"></i> {{ extra_submit }}</button>{% endif %}
+        {% if add_journal %}<a class="btn btn-outline-secondary" href="{% url 'journal_create' %}?next={{ request.path|urlencode }}"><i class="bi bi-plus"></i> {% trans "Journal not in the list? Add it" %}</a>{% endif %}
+        <a class="btn btn-link" href="{% if back %}{{ back.get_absolute_url }}{% else %}{% url 'dashboard' %}{% endif %}">{% trans "Cancel" %}</a>
+      </div>
+    </form>
+  </div></div>
+</div></div>
+{% endblock %}

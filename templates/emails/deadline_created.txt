@@ -1,0 +1,7 @@
+{% load i18n %}{% blocktrans with name=user.display_name %}Dear {{ name }},{% endblocktrans %}
+
+{% trans "A new deadline has been assigned to you:" %}
+{{ deadline.title }} — {{ paper.title }}
+{% trans "Due" %}: {{ deadline.due_at|date:"l j F Y, H:i" }}
+
+{{ SITE_URL }}{% url 'paper_detail' paper.pk %}

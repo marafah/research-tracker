@@ -1,0 +1,48 @@
+{% extends "base.html" %}{% load i18n tracker_tags %}
+{% block title %}{{ group.name }}{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="d-flex align-items-center gap-3"><div class="avatar avatar-lg">{{ group.name|slice:":1"|upper }}</div>
+    <div><h3 class="mb-0">{{ group.name }}</h3><div class="text-muted-rt small">{{ group.institution }}</div></div></div>
+  {% if manage %}<a href="{% url 'group_edit' group.pk %}" class="btn btn-outline-primary btn-sm"><i class="bi bi-pencil"></i> {% trans "Edit" %}</a>{% endif %}
+</div>
+{% if group.description %}<p class="text-muted-rt">{{ group.description }}</p>{% endif %}
+<div class="row g-3">
+  <div class="col-lg-7">
+    <div class="card mb-3"><div class="card-header d-flex justify-content-between"><span><i class="bi bi-people"></i> {% trans "Members" %} ({{ memberships|length }})</span></div>
+      <div class="table-responsive"><table class="table align-middle mb-0 small">
+        <thead><tr><th>{% trans "Name" %}</th><th>{% trans "Affiliation" %}</th><th>{% trans "Role" %}</th>{% if manage %}<th></th>{% endif %}</tr></thead>
+        <tbody>{% for mem in memberships %}<tr>
+          <td><div class="d-flex align-items-center gap-2"><div class="avatar">{{ mem.user.display_name|slice:":1"|upper }}</div>
+            <div><div class="fw-semibold">{{ mem.user.display_name }}</div><div class="text-muted-rt">{{ mem.user.email }}</div></div></div></td>
+          <td>{{ mem.user.affiliation|default:"—" }}{% if mem.user.missing_profile_fields %}<div class="text-warning"><i class="bi bi-exclamation-triangle"></i> {% trans "incomplete profile" %}</div>{% endif %}</td>
+          <td>{% if manage %}<form method="post" action="{% url 'member_update' group.pk mem.pk %}" class="m-0">{% csrf_token %}<input type="hidden" name="action" value="role">
+              <select name="role" class="form-select form-select-sm" style="min-width:11rem" onchange="this.form.submit()">{% for code, label in roles %}<option value="{{ code }}" {% if code == mem.role %}selected{% endif %}>{{ label }}</option>{% endfor %}</select></form>
+              {% else %}<span class="badge text-bg-light">{{ mem.get_role_display }}</span>{% endif %}</td>
+          {% if manage %}<td><form method="post" action="{% url 'member_update' group.pk mem.pk %}" onsubmit="return confirm('{% trans "Remove this member?" %}')">{% csrf_token %}<input type="hidden" name="action" value="remove"><button class="btn btn-sm btn-link text-danger"><i class="bi bi-person-dash"></i></button></form></td>{% endif %}
+        </tr>{% endfor %}</tbody></table></div></div>
+
+    <div class="card"><div class="card-header"><i class="bi bi-file-earmark-text"></i> {% trans "Papers" %} ({{ papers|length }})</div>
+      <ul class="list-group list-group-flush">{% for p in papers %}
+        <li class="list-group-item d-flex justify-content-between align-items-center"><a href="{{ p.get_absolute_url }}">{{ p.label }}</a>{% status_badge p %}</li>
+      {% empty %}<li class="list-group-item small text-muted-rt">{% trans "No papers yet." %}</li>{% endfor %}</ul></div>
+  </div>
+  {% if manage %}
+  <div class="col-lg-5">
+    <div class="card mb-3"><div class="card-header"><i class="bi bi-envelope-plus"></i> {% trans "Invite a researcher" %}</div><div class="card-body">
+      <form method="post" action="{% url 'group_invite' group.pk %}">{% csrf_token %}{% with form=invite_form %}{% include "includes/form_fields.html" %}{% endwith %}
+        <button class="btn btn-primary mt-3 w-100"><i class="bi bi-send"></i> {% trans "Send invitation" %}</button></form>
+      <p class="small text-muted-rt mt-2 mb-0">{% trans "External collaborators only see the papers they are authors on." %}</p>
+    </div></div>
+    {% if invitations %}<div class="card"><div class="card-header">{% trans "Pending invitations" %}</div>
+      <ul class="list-group list-group-flush small">{% for inv in invitations %}
+        <li class="list-group-item"><div class="d-flex justify-content-between"><div><strong>{{ inv.email }}</strong> · {{ inv.get_role_display }}
+          <div class="text-muted-rt">{% if inv.is_valid %}{% trans "expires" %} {{ inv.expires_at|date:"j M" }}{% else %}<span class="text-danger">{% trans "expired" %}</span>{% endif %}</div></div>
+          <form method="post" action="{% url 'invitation_revoke' group.pk inv.pk %}">{% csrf_token %}<button class="btn btn-sm btn-link text-danger">{% trans "Revoke" %}</button></form></div>
+          <div class="input-group input-group-sm mt-1"><input class="form-control" readonly value="{{ inv.get_accept_url }}" onclick="this.select()">
+            <button class="btn btn-outline-secondary" type="button" onclick="navigator.clipboard.writeText(this.previousElementSibling.value)"><i class="bi bi-clipboard"></i></button></div></li>
+      {% endfor %}</ul></div>{% endif %}
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

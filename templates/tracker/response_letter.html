@@ -1,0 +1,26 @@
+{% extends "base.html" %}{% load i18n %}
+{% block title %}{% trans "Response to reviewers" %}{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3 no-print">
+  <a href="{{ paper.get_absolute_url }}#submission-{{ sub.pk }}" class="small text-decoration-none"><i class="bi bi-arrow-left"></i> {{ paper.label }}</a>
+  <button class="btn btn-primary btn-sm" onclick="window.print()"><i class="bi bi-printer"></i> {% trans "Print / Save as PDF" %}</button>
+</div>
+<div class="card letter" dir="ltr" lang="en"><div class="card-body p-4 p-md-5">
+  <h4 class="text-center mb-1">Response to Reviewers</h4>
+  <p class="text-center text-muted-rt mb-4">{{ sub.journal.name }}{% if sub.manuscript_id %} — Manuscript {{ sub.manuscript_id }}{% endif %} — Round {{ round }}</p>
+  <p><strong>Title:</strong> {{ paper.title }}</p>
+  <p>Dear Editor and Reviewers,</p>
+  <p>We thank you for the careful reading of our manuscript and the constructive comments. We have revised the manuscript accordingly. Below we respond point by point; reviewer comments are shown in <em>italics</em> and our responses follow.</p>
+  {% for reviewer, comments in reviewers.items %}
+    <h5 class="mt-4 border-bottom pb-1">{{ reviewer }}</h5>
+    {% for c in comments %}
+      <div class="mb-3">
+        <p class="mb-1 fst-italic comment-text"><strong>Comment {{ c.number|default:forloop.counter }}:</strong> {{ c.comment }}</p>
+        <p class="mb-1 comment-text"><strong>Response:</strong> {% if c.response %}{{ c.response }}{% else %}<span class="text-danger no-print-hide">[response pending — {{ c.assigned_to|default:"unassigned" }}]</span>{% endif %}</p>
+        {% if c.changes_location %}<p class="small text-muted-rt mb-0"><strong>Changes in manuscript:</strong> {{ c.changes_location }}</p>{% endif %}
+      </div>
+    {% endfor %}
+  {% empty %}<p class="text-muted-rt">No comments recorded for this round.</p>{% endfor %}
+  <p class="mt-4">Sincerely,<br>{% for a in paper.authors.all %}{% if a.is_corresponding %}{{ a.name }}{% endif %}{% endfor %}<br>on behalf of all authors</p>
+</div></div>
+{% endblock %}

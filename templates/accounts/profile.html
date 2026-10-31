@@ -1,0 +1,21 @@
+{% extends "base.html" %}{% load i18n %}
+{% block title %}{% trans "My profile" %}{% endblock %}
+{% block content %}
+<div class="page-header"><div class="d-flex align-items-center gap-3"><div class="avatar avatar-lg">{{ user.display_name|slice:":1"|upper }}</div>
+  <div><h3 class="mb-0">{{ user.display_name }}</h3><div class="text-muted-rt small">{{ user.email }}</div></div></div></div>
+<div class="row g-3">
+  <div class="col-lg-8"><div class="card"><div class="card-header">{% trans "Profile & preferences" %}</div><div class="card-body">
+    <p class="small text-muted-rt">{% trans "These details are reused automatically whenever you are added as a co-author." %}</p>
+    <form method="post" novalidate>{% csrf_token %}{% include "includes/form_fields.html" %}
+      <button class="btn btn-primary mt-4"><i class="bi bi-check-lg"></i> {% trans "Save" %}</button></form></div></div></div>
+  <div class="col-lg-4">
+    <div class="card" id="calendar"><div class="card-header"><i class="bi bi-calendar-plus"></i> {% trans "Calendar sync" %}</div><div class="card-body small">
+      <p>{% trans "Subscribe to this private link in Google Calendar, Outlook or Apple Calendar to see all your deadlines:" %}</p>
+      <div class="input-group input-group-sm mb-2"><input class="form-control" readonly value="{{ calendar_url }}" onclick="this.select()">
+        <button class="btn btn-outline-secondary" type="button" onclick="navigator.clipboard.writeText(this.previousElementSibling.value)"><i class="bi bi-clipboard"></i></button></div>
+      <p class="text-muted-rt">{% trans "Keep it secret. If it leaks, regenerate it." %}</p>
+      <form method="post">{% csrf_token %}<button class="btn btn-sm btn-outline-danger" name="reset_calendar" value="1">{% trans "Regenerate link" %}</button></form>
+    </div></div>
+  </div>
+</div>
+{% endblock %}

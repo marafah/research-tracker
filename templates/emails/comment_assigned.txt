@@ -1,0 +1,5 @@
+{% load i18n %}{% blocktrans with s=sender.display_name %}{{ s }} assigned you a reviewer comment to address:{% endblocktrans %}
+{{ paper.title }} — {{ comment.submission.journal.name }}
+{{ comment.reviewer }} #{{ comment.number }}: {{ comment.comment }}
+
+{{ SITE_URL }}{% url 'paper_detail' paper.pk %}

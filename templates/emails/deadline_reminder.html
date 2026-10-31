@@ -1,0 +1,16 @@
+{% extends "emails/_base.html" %}{% load i18n %}
+{% block banner %}<tr><td style="padding:12px 24px;font-weight:bold;color:#ffffff;background:{% if days_left < 0 %}#b42318{% elif days_left <= 3 %}#d97706{% else %}#0e7490{% endif %}">
+{% if days_left < 0 %}{% blocktrans with n=overdue_days %}Overdue by {{ n }} day(s){% endblocktrans %}{% elif days_left == 0 %}{% trans "Due today" %}{% else %}{% blocktrans with n=days_left %}{{ n }} day(s) left{% endblocktrans %}{% endif %}</td></tr>{% endblock %}
+{% block body %}
+<p>{% blocktrans with name=user.display_name %}Dear {{ name }},{% endblocktrans %}</p>
+<p>{% trans "This is a reminder for the following deadline:" %}</p>
+<table cellpadding="6" style="border-collapse:collapse;width:100%;font-size:14px;background:#f8fafc;border-radius:6px">
+  <tr><td style="color:#6b7280;width:130px">{% trans "Task" %}</td><td><strong>{{ deadline.title }}</strong></td></tr>
+  <tr><td style="color:#6b7280">{% trans "Paper" %}</td><td>{{ paper.title }}</td></tr>
+  <tr><td style="color:#6b7280">{% trans "Due" %}</td><td><strong>{{ deadline.due_at|date:"l j F Y, H:i" }}</strong></td></tr>
+  {% if deadline.submission %}<tr><td style="color:#6b7280">{% trans "Venue" %}</td><td>{{ deadline.submission.journal.name }}{% if deadline.submission.manuscript_id %} ({{ deadline.submission.manuscript_id }}){% endif %}</td></tr>{% endif %}
+  {% if deadline.notes %}<tr><td style="color:#6b7280">{% trans "Notes" %}</td><td>{{ deadline.notes|linebreaksbr }}</td></tr>{% endif %}
+</table>
+{% url 'paper_detail' paper.pk as purl %}{% with href=SITE_URL|add:purl label=_("Open the paper") %}{% include "emails/_button.html" %}{% endwith %}
+<p style="color:#6b7280;font-size:13px">{% trans "When it is done, mark the deadline as completed to stop the reminders." %}</p>
+{% endblock %}

@@ -1,0 +1,5 @@
+{% load i18n %}{% blocktrans with by=inv.invited_by.display_name g=inv.group.name %}{{ by }} invited you to join the research group {{ g }}.{% endblocktrans %}
+
+{{ inv.message }}
+
+{{ url }}

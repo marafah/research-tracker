@@ -1,0 +1,7 @@
+{% extends "emails/_base.html" %}{% load i18n %}
+{% block body %}
+<p>{% blocktrans with s=sender.display_name %}{{ s }} assigned you a reviewer comment to address:{% endblocktrans %}</p>
+<p><strong>{{ paper.title }}</strong> — {{ comment.submission.journal.name }}</p>
+<p style="background:#f8fafc;padding:12px;border-radius:6px;font-style:italic">{{ comment.reviewer }} #{{ comment.number }}: {{ comment.comment|linebreaksbr }}</p>
+{% url 'paper_detail' paper.pk as purl %}{% with href=SITE_URL|add:purl label=_("Open the paper") %}{% include "emails/_button.html" %}{% endwith %}
+{% endblock %}

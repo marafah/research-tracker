@@ -1,0 +1,7 @@
+{% load i18n %}{% blocktrans with name=author.name %}Dear {{ name }},{% endblocktrans %}
+
+{% blocktrans with s=sender.display_name %}{{ s }} is preparing the following manuscript, on which you are a co-author:{% endblocktrans %}
+{{ paper.title }}
+
+{% trans "Please confirm your name, affiliation, country, ORCID and contribution, and approve the submission. It takes one minute and no account is needed." %}
+{{ url }}

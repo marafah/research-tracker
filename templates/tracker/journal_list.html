@@ -1,0 +1,21 @@
+{% extends "base.html" %}{% load i18n %}
+{% block title %}{% trans "Journals & venues" %}{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div><h3 class="mb-0">{% trans "Journals & venues" %}</h3><div class="text-muted-rt small">{% trans "Shared catalogue with your own statistics per venue" %}</div></div>
+  <a href="{% url 'journal_create' %}" class="btn btn-primary btn-sm"><i class="bi bi-plus-lg"></i> {% trans "Add venue" %}</a>
+</div>
+<form class="mb-3" method="get"><div class="input-group"><span class="input-group-text"><i class="bi bi-search"></i></span>
+  <input name="q" value="{{ q }}" class="form-control" placeholder="{% trans 'Search by name, publisher or ISSN' %}"><button class="btn btn-primary">{% trans "Search" %}</button></div></form>
+<div class="card"><div class="table-responsive"><table class="table table-hover align-middle mb-0">
+  <thead><tr><th>{% trans "Name" %}</th><th>{% trans "Publisher" %}</th><th>{% trans "Type" %}</th><th>{% trans "Quartile" %}</th><th>{% trans "Indexing" %}</th><th>{% trans "Submissions" %}</th></tr></thead>
+  <tbody>{% for j in journals %}<tr>
+    <td><a href="{{ j.get_absolute_url }}" class="fw-semibold text-decoration-none">{{ j.name }}</a>
+      {% if j.flagged %}<span class="badge text-bg-danger">{% trans "Questionable" %}</span>{% endif %}
+      {% if j.open_access %}<span class="badge text-bg-light">OA</span>{% endif %}<div class="small text-muted-rt">{{ j.issn }}</div></td>
+    <td class="small">{{ j.publisher|default:"—" }}</td><td class="small">{{ j.get_kind_display }}</td>
+    <td>{% if j.quartile %}<span class="badge quartile-{{ j.quartile|lower }}">{{ j.quartile }}</span>{% else %}—{% endif %}</td>
+    <td class="small">{{ j.indexing|default:"—" }}</td><td>{{ j.n }}</td></tr>
+  {% empty %}<tr><td colspan="6" class="text-center text-muted-rt py-5">{% trans "No venues yet." %}</td></tr>{% endfor %}</tbody>
+</table></div></div>
+{% endblock %}

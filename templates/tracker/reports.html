@@ -1,0 +1,32 @@
+{% extends "base.html" %}{% load i18n %}
+{% block title %}{% trans "Reports" %}{% endblock %}
+{% block content %}
+<div class="page-header no-print">
+  <div><h3 class="mb-0">{% trans "Reports" %}</h3><div class="text-muted-rt small">{% trans "Ready for annual reports and promotion files" %}</div></div>
+  <div class="d-flex gap-2"><a href="{% url 'export_csv' %}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-filetype-csv"></i> {% trans "Export CSV" %}</a>
+    <button onclick="window.print()" class="btn btn-primary btn-sm"><i class="bi bi-printer"></i> {% trans "Print / PDF" %}</button></div>
+</div>
+<div class="row g-3 mb-3">
+  <div class="col-6 col-md-3"><div class="card stat-card"><div class="card-body"><div class="stat-label">{% trans "Submissions" %}</div><div class="stat-value">{{ total_submissions }}</div></div></div></div>
+  <div class="col-6 col-md-3"><div class="card stat-card"><div class="card-body"><div class="stat-label">{% trans "Acceptance rate" %}</div><div class="stat-value text-success">{{ accept_rate }}%</div></div></div></div>
+  <div class="col-6 col-md-3"><div class="card stat-card"><div class="card-body"><div class="stat-label">{% trans "Avg. first decision" %}</div><div class="stat-value">{{ avg_decision_days|default_if_none:"—" }}<small class="fs-6 text-muted-rt"> {% trans "days" %}</small></div></div></div></div>
+  <div class="col-6 col-md-3"><div class="card stat-card"><div class="card-body"><div class="stat-label">{% trans "Accepted / published" %}</div><div class="stat-value">{{ published|length }}</div></div></div></div>
+</div>
+<div class="row g-3">
+  <div class="col-lg-8">
+    <div class="card"><div class="card-header d-flex justify-content-between align-items-center"><span><i class="bi bi-award"></i> {% trans "Accepted & published works" %}</span>
+      <form method="get" class="no-print m-0"><select name="year" class="form-select form-select-sm" onchange="this.form.submit()">
+        <option value="">{% trans "All years" %}</option>{% for y in years %}<option value="{{ y }}" {% if year == y|stringformat:"s" %}selected{% endif %}>{{ y }}</option>{% endfor %}</select></form></div>
+      <ol class="list-group list-group-numbered list-group-flush small">{% for p in published %}
+        <li class="list-group-item" dir="ltr">{{ p.citation }} <span class="badge text-bg-light">{{ p.get_status_display }}</span></li>
+      {% empty %}<li class="list-group-item text-muted-rt">{% trans "Nothing for this period." %}</li>{% endfor %}</ol></div>
+  </div>
+  <div class="col-lg-4">
+    <div class="card mb-3"><div class="card-header"><i class="bi bi-diagram-3"></i> {% trans "Pipeline" %}</div><div class="card-body">{% include "tracker/_pipeline.html" %}</div></div>
+    <div class="card"><div class="card-header"><i class="bi bi-building"></i> {% trans "By venue" %}</div>
+      <table class="table table-sm small mb-0"><thead><tr><th>{% trans "Venue" %}</th><th>#</th><th>✓</th><th>✗</th></tr></thead>
+      <tbody>{% for r in per_journal %}<tr><td>{{ r.journal__name|truncatechars:34 }}</td><td>{{ r.total }}</td><td class="text-success">{{ r.accepted }}</td><td class="text-danger">{{ r.rejected }}</td></tr>
+      {% empty %}<tr><td colspan="4" class="text-muted-rt">—</td></tr>{% endfor %}</tbody></table></div>
+  </div>
+</div>
+{% endblock %}
