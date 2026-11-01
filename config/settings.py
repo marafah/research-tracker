@@ -175,3 +175,10 @@ LOGGING = {
     "handlers": {"console": {"class": "logging.StreamHandler"}},
     "root": {"handlers": ["console"], "level": os.environ.get("LOG_LEVEL", "INFO")},
 }
+
+# --- GitHub Codespaces: trust the forwarded-port origins so forms (CSRF) work ---
+if os.environ.get("CODESPACE_NAME"):
+    _cs = os.environ["CODESPACE_NAME"]
+    _dom = os.environ.get("GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN", "app.github.dev")
+    CSRF_TRUSTED_ORIGINS += [f"https://{_cs}-8000.{_dom}", "https://localhost:8000", "http://localhost:8000"]
+    ALLOWED_HOSTS += ["localhost", "127.0.0.1", f".{_dom}"]
