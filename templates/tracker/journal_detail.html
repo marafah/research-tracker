@@ -1,33 +1,41 @@
 {% extends "base.html" %}{% load i18n tracker_tags %}
 {% block title %}{{ journal.name }}{% endblock %}
 {% block content %}
-<div class="page-header">
-  <div><div class="small text-muted-rt">{{ journal.get_kind_display }} · {{ journal.publisher }}</div>
-    <h3 class="mb-1">{{ journal.name }}</h3>
-    <div class="d-flex gap-1 flex-wrap">{% if journal.quartile %}<span class="badge quartile-{{ journal.quartile|lower }}">{{ journal.quartile }}</span>{% endif %}
-      {% if journal.indexed_scopus %}<span class="badge text-bg-primary">Scopus</span>{% endif %}{% if journal.indexed_wos %}<span class="badge text-bg-info">Web of Science</span>{% endif %}
-      {% if journal.open_access %}<span class="badge text-bg-light">{% trans "Open access" %}</span>{% endif %}
-      {% if journal.flagged %}<span class="badge text-bg-danger"><i class="bi bi-exclamation-triangle"></i> {% trans "Questionable venue" %}</span>{% endif %}</div></div>
-  <a href="{% url 'journal_edit' journal.pk %}" class="btn btn-outline-primary btn-sm"><i class="bi bi-pencil"></i> {% trans "Edit" %}</a>
+<div class="crumbs"><a href="{% url 'journal_list' %}">{% trans "Journals" %}</a></div>
+<div class="page-head">
+  <div class="d-flex gap-3 align-items-center">
+    <span class="rec-ico" style="--t:#2f5bea;width:56px;height:56px;font-size:1.5rem;border-radius:15px"><i class="bi bi-journal-text"></i></span>
+    <div><h1>{{ journal.name }}</h1>
+      <div class="d-flex gap-2 flex-wrap mt-2">
+        <span class="chip">{{ journal.get_kind_display }}</span>{% if journal.publisher %}<span class="chip"><i class="bi bi-building"></i> {{ journal.publisher }}</span>{% endif %}
+        {% if journal.quartile %}<span class="badge quartile-{{ journal.quartile|lower }} align-self-center">{{ journal.quartile }}</span>{% endif %}
+        {% if journal.indexed_scopus %}<span class="badge bg-primary-subtle text-primary-emphasis align-self-center">Scopus</span>{% endif %}{% if journal.indexed_wos %}<span class="badge bg-info-subtle text-info-emphasis align-self-center">Web of Science</span>{% endif %}
+        {% if journal.open_access %}<span class="badge bg-success-subtle text-success-emphasis align-self-center">{% trans "Open access" %}</span>{% endif %}
+        {% if journal.flagged %}<span class="badge bg-danger-subtle text-danger-emphasis align-self-center"><i class="bi bi-exclamation-triangle"></i> {% trans "Questionable venue" %}</span>{% endif %}
+      </div></div>
+  </div>
+  <a href="{% url 'journal_edit' journal.pk %}" class="btn btn-ghost"><i class="bi bi-pencil"></i> {% trans "Edit" %}</a>
 </div>
-<div class="row g-3 mb-3">
-  <div class="col-6 col-md-3"><div class="card stat-card"><div class="card-body"><div class="stat-label">{% trans "Submissions" %}</div><div class="stat-value">{{ stats.total }}</div></div></div></div>
-  <div class="col-6 col-md-3"><div class="card stat-card"><div class="card-body"><div class="stat-label">{% trans "Accepted" %}</div><div class="stat-value text-success">{{ stats.accepted }}</div></div></div></div>
-  <div class="col-6 col-md-3"><div class="card stat-card"><div class="card-body"><div class="stat-label">{% trans "Rejected" %}</div><div class="stat-value text-danger">{{ stats.rejected }}</div></div></div></div>
-  <div class="col-6 col-md-3"><div class="card stat-card"><div class="card-body"><div class="stat-label">{% trans "Avg. first decision" %}</div><div class="stat-value">{{ stats.avg_first_decision_days|default_if_none:"—" }}<small class="fs-6 text-muted-rt"> {% trans "days" %}</small></div></div></div></div>
+<div class="row g-3 mb-4">
+  <div class="col-6 col-lg-3"><div class="card kpi"><span class="ic tone-primary"><i class="bi bi-send"></i></span><div><div class="label">{% trans "Submissions" %}</div><div class="value">{{ stats.total }}</div></div></div></div>
+  <div class="col-6 col-lg-3"><div class="card kpi"><span class="ic tone-success"><i class="bi bi-patch-check"></i></span><div><div class="label">{% trans "Accepted" %}</div><div class="value">{{ stats.accepted }}</div></div></div></div>
+  <div class="col-6 col-lg-3"><div class="card kpi"><span class="ic tone-danger"><i class="bi bi-x-octagon"></i></span><div><div class="label">{% trans "Rejected" %}</div><div class="value">{{ stats.rejected }}</div></div></div></div>
+  <div class="col-6 col-lg-3"><div class="card kpi"><span class="ic tone-warning"><i class="bi bi-stopwatch"></i></span><div><div class="label">{% trans "Avg. first decision" %}</div><div class="value">{{ stats.avg_first_decision_days|default_if_none:"—" }}<small class="fs-6 text-muted-rt"> {% trans "days" %}</small></div></div></div></div>
 </div>
-<div class="row g-3">
-  <div class="col-md-4"><div class="card"><div class="card-body small">
-    {% if journal.issn %}<div class="mb-1">ISSN: {{ journal.issn }}</div>{% endif %}{% if journal.eissn %}<div class="mb-1">e-ISSN: {{ journal.eissn }}</div>{% endif %}
-    {% if journal.impact_factor %}<div class="mb-1">{% trans "Impact factor" %}: {{ journal.impact_factor }}</div>{% endif %}
-    {% if journal.apc_amount %}<div class="mb-1">APC: {{ journal.apc_amount }} {{ journal.apc_currency }}</div>{% endif %}
-    {% if journal.website %}<div class="mb-1"><a href="{{ journal.website }}" target="_blank" rel="noopener">{% trans "Website" %}</a></div>{% endif %}
-    {% if journal.submission_portal %}<div class="mb-1"><a href="{{ journal.submission_portal }}" target="_blank" rel="noopener">{% trans "Submission portal" %}</a></div>{% endif %}
-    {% if journal.notes %}<p class="comment-text mt-2 mb-0">{{ journal.notes }}</p>{% endif %}</div></div></div>
-  <div class="col-md-8"><div class="card"><div class="card-header">{% trans "Our submissions to this venue" %}</div>
-    <ul class="list-group list-group-flush small">{% for s in subs %}
-      <li class="list-group-item d-flex justify-content-between align-items-center"><div><a href="{{ s.get_absolute_url }}">{{ s.paper.label }}</a>
-        <div class="text-muted-rt">{{ s.submitted_at|date:"j M Y"|default:"—" }}{% if s.manuscript_id %} · {{ s.manuscript_id }}{% endif %}</div></div>{% status_badge s "decision" %}</li>
-    {% empty %}<li class="list-group-item text-muted-rt">{% trans "None yet." %}</li>{% endfor %}</ul></div></div>
+<div class="row g-4">
+  <div class="col-lg-4"><div class="card"><div class="card-header"><h2 class="card-title-rt"><span class="ic tone-slate"><i class="bi bi-info-circle"></i></span>{% trans "Details" %}</h2></div><div class="card-body">
+    <div class="kv" style="grid-template-columns:1fr 1fr">
+      <div><div class="k">ISSN</div><div class="v">{{ journal.issn|default:"—" }}</div></div><div><div class="k">e-ISSN</div><div class="v">{{ journal.eissn|default:"—" }}</div></div>
+      <div><div class="k">{% trans "Impact factor" %}</div><div class="v">{{ journal.impact_factor|default:"—" }}</div></div>
+      <div><div class="k">APC</div><div class="v">{% if journal.apc_amount %}{{ journal.apc_amount }} {{ journal.apc_currency }}{% else %}—{% endif %}</div></div>
+    </div>
+    <div class="d-flex gap-2 mt-3 flex-wrap">{% if journal.website %}<a class="btn btn-sm btn-ghost" href="{{ journal.website }}" target="_blank" rel="noopener"><i class="bi bi-globe"></i> {% trans "Website" %}</a>{% endif %}
+      {% if journal.submission_portal %}<a class="btn btn-sm btn-soft" href="{{ journal.submission_portal }}" target="_blank" rel="noopener"><i class="bi bi-box-arrow-up-right"></i> {% trans "Submission portal" %}</a>{% endif %}</div>
+    {% if journal.notes %}<p class="comment-text small text-muted-rt mt-3 mb-0">{{ journal.notes }}</p>{% endif %}
+  </div></div></div>
+  <div class="col-lg-8"><div class="card"><div class="card-header"><h2 class="card-title-rt"><span class="ic tone-primary"><i class="bi bi-list-check"></i></span>{% trans "Our submissions to this venue" %}</h2></div>
+    {% for s in subs %}<a class="list-row" href="{{ s.get_absolute_url }}"><div class="grow"><div class="t text-truncate">{{ s.paper.label }}</div><div class="s">{{ s.submitted_at|date:"j M Y"|default:"—" }}{% if s.manuscript_id %} · {{ s.manuscript_id }}{% endif %}</div></div>{% status_badge s "decision" %}</a>
+    {% empty %}<div class="empty py-4"><div class="ic"><i class="bi bi-inbox"></i></div><div class="small">{% trans "None yet." %}</div></div>{% endfor %}
+  </div></div>
 </div>
 {% endblock %}

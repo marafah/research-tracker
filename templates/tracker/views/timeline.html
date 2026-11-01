@@ -1,0 +1,28 @@
+{% load i18n tracker_tags %}
+{% if papers %}
+<div class="card">
+  <div class="card-header flex-wrap">
+    <h2 class="card-title-rt"><span class="ic tone-primary"><i class="bi bi-bar-chart-steps"></i></span>{% trans "Publication timeline" %} <span class="text-muted-rt fw-normal small">{% trans "last 12 months → next 3" %}</span></h2>
+    <div class="tl-legend">{% for color, label in tl.legend %}<span><i style="background:{{ color }}"></i>{{ label }}</span>{% endfor %}<span><i class="diamond"></i>{% trans "Deadline" %}</span></div>
+  </div>
+  <div class="tl-wrap">
+    <div class="tl">
+      <div class="tl-head">
+        <div class="tl-name"></div>
+        <div class="tl-track">{% for mo in tl.months %}<div class="tl-month {% if mo.is_now %}now{% endif %}" style="inset-inline-start:{{ mo.left|stringformat:'.3f' }}%;width:{{ mo.width|stringformat:'.3f' }}%">{{ mo.label|date:"M" }}{% if mo.label.month == 1 %} <b>{{ mo.label|date:"Y" }}</b>{% endif %}</div>{% endfor %}</div>
+      </div>
+      {% for r in tl.rows %}
+      <div class="tl-row">
+        <div class="tl-name"><a href="{{ r.paper.get_absolute_url }}" class="text-truncate d-block fw-semibold">{{ r.paper.label }}</a><div class="small text-muted-rt text-truncate">{{ r.paper.get_status_display }}{% with s=r.paper.current_submission %}{% if s %} · {{ s.journal.name }}{% endif %}{% endwith %}</div></div>
+        <div class="tl-track">
+          {% for mo in tl.months %}<span class="tl-grid" style="inset-inline-start:{{ mo.left|stringformat:'.3f' }}%"></span>{% endfor %}
+          <span class="tl-today" style="inset-inline-start:{{ tl.today|stringformat:'.3f' }}%"></span>
+          {% for sg in r.segs %}<span class="tl-seg" style="inset-inline-start:{{ sg.left|stringformat:'.3f' }}%;width:{{ sg.width|stringformat:'.3f' }}%;background:{{ sg.color }}" title="{{ sg.title }}" data-bs-toggle="tooltip"></span>{% endfor %}
+          {% for mk in r.marks %}<span class="tl-mark {% if mk.overdue %}late{% endif %}" style="inset-inline-start:{{ mk.left|stringformat:'.3f' }}%" title="{{ mk.title }}" data-bs-toggle="tooltip"></span>{% endfor %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% else %}{% include "tracker/views/_empty.html" %}{% endif %}

@@ -1,47 +1,54 @@
 {% extends "base.html" %}{% load i18n tracker_tags %}
 {% block title %}{{ group.name }}{% endblock %}
 {% block content %}
-<div class="page-header">
-  <div class="d-flex align-items-center gap-3"><div class="avatar avatar-lg">{{ group.name|slice:":1"|upper }}</div>
-    <div><h3 class="mb-0">{{ group.name }}</h3><div class="text-muted-rt small">{{ group.institution }}</div></div></div>
-  {% if manage %}<a href="{% url 'group_edit' group.pk %}" class="btn btn-outline-primary btn-sm"><i class="bi bi-pencil"></i> {% trans "Edit" %}</a>{% endif %}
+<div class="card mb-4 overflow-hidden">
+  <div style="height:96px;background:linear-gradient(120deg,#1a2f6b,#2f5bea 60%,#10b3a3)"></div>
+  <div class="card-body pt-0 d-flex flex-wrap justify-content-between align-items-end gap-3">
+    <div class="d-flex align-items-end gap-3">
+      <span class="avatar avatar-xl {{ group|avatar_class }}" style="margin-top:-34px;border:4px solid var(--rt-surface)">{{ group.name|initials }}</span>
+      <div><div class="crumbs mb-0"><a href="{% url 'group_list' %}">{% trans "Research groups" %}</a></div><h1 class="h3 fw-bold m-0">{{ group.name }}</h1><div class="small text-muted-rt">{{ group.institution }}</div></div>
+    </div>
+    <div class="d-flex gap-2"><span class="chip"><i class="bi bi-people"></i> {{ memberships|length }} {% trans "members" %}</span><span class="chip"><i class="bi bi-file-earmark-text"></i> {{ papers|length }} {% trans "papers" %}</span>
+      {% if manage %}<a href="{% url 'group_edit' group.pk %}" class="btn btn-ghost btn-sm"><i class="bi bi-pencil"></i> {% trans "Edit" %}</a>{% endif %}</div>
+  </div>
+  {% if group.description %}<div class="px-4 pb-4 text-muted-rt">{{ group.description }}</div>{% endif %}
 </div>
-{% if group.description %}<p class="text-muted-rt">{{ group.description }}</p>{% endif %}
-<div class="row g-3">
-  <div class="col-lg-7">
-    <div class="card mb-3"><div class="card-header d-flex justify-content-between"><span><i class="bi bi-people"></i> {% trans "Members" %} ({{ memberships|length }})</span></div>
-      <div class="table-responsive"><table class="table align-middle mb-0 small">
-        <thead><tr><th>{% trans "Name" %}</th><th>{% trans "Affiliation" %}</th><th>{% trans "Role" %}</th>{% if manage %}<th></th>{% endif %}</tr></thead>
-        <tbody>{% for mem in memberships %}<tr>
-          <td><div class="d-flex align-items-center gap-2"><div class="avatar">{{ mem.user.display_name|slice:":1"|upper }}</div>
-            <div><div class="fw-semibold">{{ mem.user.display_name }}</div><div class="text-muted-rt">{{ mem.user.email }}</div></div></div></td>
-          <td>{{ mem.user.affiliation|default:"—" }}{% if mem.user.missing_profile_fields %}<div class="text-warning"><i class="bi bi-exclamation-triangle"></i> {% trans "incomplete profile" %}</div>{% endif %}</td>
-          <td>{% if manage %}<form method="post" action="{% url 'member_update' group.pk mem.pk %}" class="m-0">{% csrf_token %}<input type="hidden" name="action" value="role">
-              <select name="role" class="form-select form-select-sm" style="min-width:11rem" onchange="this.form.submit()">{% for code, label in roles %}<option value="{{ code }}" {% if code == mem.role %}selected{% endif %}>{{ label }}</option>{% endfor %}</select></form>
-              {% else %}<span class="badge text-bg-light">{{ mem.get_role_display }}</span>{% endif %}</td>
-          {% if manage %}<td><form method="post" action="{% url 'member_update' group.pk mem.pk %}" onsubmit="return confirm('{% trans "Remove this member?" %}')">{% csrf_token %}<input type="hidden" name="action" value="remove"><button class="btn btn-sm btn-link text-danger"><i class="bi bi-person-dash"></i></button></form></td>{% endif %}
-        </tr>{% endfor %}</tbody></table></div></div>
-
-    <div class="card"><div class="card-header"><i class="bi bi-file-earmark-text"></i> {% trans "Papers" %} ({{ papers|length }})</div>
-      <ul class="list-group list-group-flush">{% for p in papers %}
-        <li class="list-group-item d-flex justify-content-between align-items-center"><a href="{{ p.get_absolute_url }}">{{ p.label }}</a>{% status_badge p %}</li>
-      {% empty %}<li class="list-group-item small text-muted-rt">{% trans "No papers yet." %}</li>{% endfor %}</ul></div>
+<div class="row g-4">
+  <div class="col-xl-8">
+    <div class="card mb-4">
+      <div class="card-header"><h2 class="card-title-rt"><span class="ic tone-primary"><i class="bi bi-people"></i></span>{% trans "Members" %}</h2></div>
+      {% for mem in memberships %}
+      <div class="list-row">
+        <span class="avatar {{ mem.user|avatar_class }}">{{ mem.user|initials }}</span>
+        <div class="grow"><div class="t">{{ mem.user.display_name }} {% if mem.user.is_external %}<span class="badge bg-secondary-subtle text-secondary-emphasis">{% trans "external" %}</span>{% endif %}</div>
+          <div class="s text-truncate">{{ mem.user.email }}{% if mem.user.affiliation %} · {{ mem.user.affiliation }}{% endif %}</div>
+          {% if mem.user.missing_profile_fields %}<div class="small text-warning"><i class="bi bi-exclamation-triangle"></i> {% trans "incomplete profile" %}</div>{% endif %}</div>
+        {% if manage %}
+        <form method="post" action="{% url 'member_update' group.pk mem.pk %}" class="m-0">{% csrf_token %}<input type="hidden" name="action" value="role">
+          <select name="role" class="form-select form-select-sm" style="min-width:11rem" onchange="this.form.submit()">{% for code, label in roles %}<option value="{{ code }}" {% if code == mem.role %}selected{% endif %}>{{ label }}</option>{% endfor %}</select></form>
+        <form method="post" action="{% url 'member_update' group.pk mem.pk %}" onsubmit="return confirm('{% trans "Remove this member?" %}')">{% csrf_token %}<input type="hidden" name="action" value="remove"><button class="btn btn-ghost btn-icon btn-sm text-danger" title="{% trans 'Remove' %}"><i class="bi bi-person-dash"></i></button></form>
+        {% else %}<span class="chip">{{ mem.get_role_display }}</span>{% endif %}
+      </div>
+      {% endfor %}
+    </div>
+    <div class="card">
+      <div class="card-header"><h2 class="card-title-rt"><span class="ic tone-info"><i class="bi bi-file-earmark-text"></i></span>{% trans "Papers" %}</h2><a href="{% url 'paper_list' %}?group={{ group.pk }}" class="small">{% trans "Open in workspace" %}</a></div>
+      {% for p in papers %}<a class="list-row" href="{{ p.get_absolute_url }}"><div class="grow"><div class="t text-truncate">{{ p.label }}</div><div class="s">{{ p.get_type_display }}</div></div>{% status_badge p %}</a>
+      {% empty %}<div class="empty py-4"><div class="ic"><i class="bi bi-file-earmark-plus"></i></div><div class="small">{% trans "No papers yet." %}</div></div>{% endfor %}
+    </div>
   </div>
   {% if manage %}
-  <div class="col-lg-5">
-    <div class="card mb-3"><div class="card-header"><i class="bi bi-envelope-plus"></i> {% trans "Invite a researcher" %}</div><div class="card-body">
-      <form method="post" action="{% url 'group_invite' group.pk %}">{% csrf_token %}{% with form=invite_form %}{% include "includes/form_fields.html" %}{% endwith %}
+  <div class="col-xl-4">
+    <div class="card mb-4"><div class="card-header"><h2 class="card-title-rt"><span class="ic tone-success"><i class="bi bi-envelope-plus"></i></span>{% trans "Invite a researcher" %}</h2></div><div class="card-body">
+      <form method="post" action="{% url 'group_invite' group.pk %}">{% csrf_token %}{% with form=invite_form %}{% include "includes/form_fields.html" with full=1 %}{% endwith %}
         <button class="btn btn-primary mt-3 w-100"><i class="bi bi-send"></i> {% trans "Send invitation" %}</button></form>
-      <p class="small text-muted-rt mt-2 mb-0">{% trans "External collaborators only see the papers they are authors on." %}</p>
+      <p class="small text-muted-rt mt-3 mb-0"><i class="bi bi-shield-lock"></i> {% trans "External collaborators only see the papers they are authors on." %}</p>
     </div></div>
-    {% if invitations %}<div class="card"><div class="card-header">{% trans "Pending invitations" %}</div>
-      <ul class="list-group list-group-flush small">{% for inv in invitations %}
-        <li class="list-group-item"><div class="d-flex justify-content-between"><div><strong>{{ inv.email }}</strong> · {{ inv.get_role_display }}
-          <div class="text-muted-rt">{% if inv.is_valid %}{% trans "expires" %} {{ inv.expires_at|date:"j M" }}{% else %}<span class="text-danger">{% trans "expired" %}</span>{% endif %}</div></div>
-          <form method="post" action="{% url 'invitation_revoke' group.pk inv.pk %}">{% csrf_token %}<button class="btn btn-sm btn-link text-danger">{% trans "Revoke" %}</button></form></div>
-          <div class="input-group input-group-sm mt-1"><input class="form-control" readonly value="{{ inv.get_accept_url }}" onclick="this.select()">
-            <button class="btn btn-outline-secondary" type="button" onclick="navigator.clipboard.writeText(this.previousElementSibling.value)"><i class="bi bi-clipboard"></i></button></div></li>
-      {% endfor %}</ul></div>{% endif %}
+    {% if invitations %}<div class="card"><div class="card-header"><h2 class="card-title-rt"><span class="ic tone-warning"><i class="bi bi-hourglass"></i></span>{% trans "Pending invitations" %}</h2></div>
+      {% for inv in invitations %}<div class="list-row align-items-start"><div class="grow"><div class="t text-truncate">{{ inv.email }}</div><div class="s">{{ inv.get_role_display }} · {% if inv.is_valid %}{% trans "expires" %} {{ inv.expires_at|date:"j M" }}{% else %}<span class="text-danger">{% trans "expired" %}</span>{% endif %}</div>
+        <div class="copy-field mt-2"><input class="form-control form-control-sm" readonly value="{{ inv.get_accept_url }}" onclick="this.select()"><button class="btn btn-ghost btn-icon btn-sm" type="button" data-copy><i class="bi bi-clipboard"></i></button></div></div>
+        <form method="post" action="{% url 'invitation_revoke' group.pk inv.pk %}">{% csrf_token %}<button class="btn btn-ghost btn-sm text-danger">{% trans "Revoke" %}</button></form></div>{% endfor %}
+    </div>{% endif %}
   </div>
   {% endif %}
 </div>

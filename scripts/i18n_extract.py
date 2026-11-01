@@ -50,7 +50,7 @@ def _joined(chunk):
 
 
 def _scan_python(src, singles, plurals):
-    for m in re.finditer(r"\b(?:_|gettext|gettext_lazy)\(\s*((?:(?:" + STR + r")\s*)+)\)", src):
+    for m in re.finditer(r"\b(?:_|_l|gettext|gettext_lazy)\(\s*((?:(?:" + STR + r")\s*)+)\)", src):
         singles[_joined(m.group(1))] = 1
     for m in re.finditer(r"\bngettext\(\s*(" + STR + r")\s*,\s*(" + STR + r")", src):
         plurals[(_joined(m.group(1)), _joined(m.group(4)))] = 1

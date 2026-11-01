@@ -208,3 +208,4 @@ class PaperFilterForm(BootstrapMixin, forms.Form):
     def __init__(self, *args, groups=None, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["group"].queryset = groups
+        self.fields["q"].widget.attrs["placeholder"] = _("Search titles, keywords, journals…")

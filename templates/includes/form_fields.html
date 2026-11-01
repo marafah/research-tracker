@@ -1,17 +1,19 @@
-{% load i18n %}{% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
+{% load i18n %}{% if form.non_field_errors %}<div class="alert alert-danger py-2 small"><i class="bi bi-exclamation-circle"></i> {{ form.non_field_errors|join:" " }}</div>{% endif %}
 {% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
 <div class="row g-3">
 {% for field in form.visible_fields %}
   {% if field.field.widget.input_type == "checkbox" %}
-  <div class="col-md-6"><div class="form-check mt-md-4">
-    {{ field }} <label class="form-check-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
-    {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}{{ field.errors }}
-  </div></div>
+  <div class="{% if full %}col-12{% else %}col-md-6{% endif %}">
+    <label class="d-flex gap-3 align-items-start p-3 rounded-3 border h-100" style="border-color:var(--rt-border)!important;cursor:pointer" for="{{ field.id_for_label }}">
+      <span class="form-check form-switch m-0">{{ field }}</span>
+      <span><span class="fw-semibold d-block small">{{ field.label }}</span>{% if field.help_text %}<span class="form-text d-block m-0">{{ field.help_text }}</span>{% endif %}{{ field.errors }}</span>
+    </label>
+  </div>
   {% else %}
-  <div class="{% if field.field.widget.attrs.rows or field.name == 'title' or field.name == 'comment' or field.name == 'response' %}col-12{% else %}col-md-6{% endif %}">
+  <div class="{% if full or field.field.widget.attrs.rows or field.name == 'title' or field.name == 'comment' or field.name == 'response' or field.name == 'file' %}col-12{% else %}col-md-6{% endif %}">
     <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}{% if field.field.required %} <span class="text-danger">*</span>{% endif %}</label>
     {{ field }}
-    {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}{{ field.errors }}
+    {% if field.help_text %}<div class="form-text">{{ field.help_text|safe }}</div>{% endif %}{{ field.errors }}
   </div>
   {% endif %}
 {% endfor %}

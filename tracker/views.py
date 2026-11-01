@@ -26,6 +26,15 @@ from .services import apply_submission_change, log_activity, notify_new_deadline
 User = get_user_model()
 
 
+def _greeting():
+    h = timezone.localtime().hour
+    if h < 12:
+        return _("Good morning")
+    if h < 18:
+        return _("Good afternoon")
+    return _("Good evening")
+
+
 # ---------------------------------------------------------------------------
 # Dashboard
 # ---------------------------------------------------------------------------
@@ -60,6 +69,9 @@ def dashboard(request):
                          if p.authors_missing_data()][:8],
         "activity": m.Activity.objects.filter(paper__in=papers).select_related("user", "paper")[:12],
         "profile_missing": user.missing_profile_fields(),
+        "week_count": open_dl.filter(due_at__gte=now, due_at__lte=now + timedelta(days=7)).count(),
+        "greeting": _greeting(),
+        "recent_papers": papers.order_by("-updated_at")[:5],
     }
     return render(request, "tracker/dashboard.html", ctx)
 
@@ -90,24 +102,70 @@ def _filtered_papers(request):
     return form, qs
 
 
+def _qs(request, **changes):
+    params = request.GET.copy()
+    for k, v in changes.items():
+        if v in (None, ""):
+            params.pop(k, None)
+        else:
+            params[k] = v
+    return params.urlencode()
+
+
+@login_required
+def papers_workspace(request, force_view=None):
+    from . import workspace as ws
+    view = force_view or request.GET.get("view") or request.session.get("papers_view", "cards")
+    if view not in ws.VIEW_KEYS:
+        view = "cards"
+    request.session["papers_view"] = view
+    groups = visible_groups(request.user)
+    form = f.PaperFilterForm(request.GET or None, groups=groups)
+    data = form.cleaned_data if form.is_valid() else {}
+    base = (visible_papers(request.user)
+            .select_related("group", "lead")
+            .prefetch_related("submissions__journal", "submissions__events", "deadlines", "authors__user"))
+    without_type = ws.apply_filters(base, data, request.user, skip_type=True)
+    papers = list(ws.apply_filters(base, data, request.user))
+    group_by = request.GET.get("group_by", request.session.get("papers_group_by", "status"))
+    if group_by not in dict(ws.GROUP_BY):
+        group_by = "status"
+    request.session["papers_group_by"] = group_by
+    ctx = {
+        "form": form, "papers": papers, "view": view, "group_by": group_by,
+        "views": [{"key": k, "label": l, "icon": i, "url": "?" + _qs(request, view=k), "active": k == view}
+                  for k, l, i in ws.VIEWS],
+        "chips": [c | {"url": "?" + _qs(request, type=c["key"])}
+                  for c in ws.type_chips(without_type, data.get("type"))],
+        "group_choices": ws.GROUP_BY, "kpi": ws.kpis(papers),
+        "statuses": m.Paper.Status.choices, "type_icons": ws.TYPE_ICONS, "type_colors": ws.TYPE_COLORS,
+        "show_all": bool(request.GET.get("all")), "qs_base": _qs(request),
+    }
+    if view == "cards":
+        ctx["groups"] = ws.grouped(papers, group_by)
+    elif view == "timeline":
+        ctx["tl"] = ws.timeline(papers)
+    elif view == "calendar":
+        ctx["cal"] = ws.month_calendar(papers, request.GET.get("month"),
+                                       first_weekday=5 if request.LANGUAGE_CODE == "ar" else 6)
+        ctx["month_url"] = lambda mth: "?" + _qs(request, month=mth)
+        ctx["prev_url"] = "?" + _qs(request, month=ctx["cal"]["prev"])
+        ctx["next_url"] = "?" + _qs(request, month=ctx["cal"]["next"])
+        ctx["this_url"] = "?" + _qs(request, month=ctx["cal"]["this"])
+    elif view == "board":
+        ctx["columns"] = ws.board_columns(papers, ctx["show_all"])
+        ctx["toggle_all_url"] = "?" + _qs(request, all=None if ctx["show_all"] else "1")
+    return render(request, "tracker/papers.html", ctx)
+
+
 @login_required
 def paper_list(request):
-    form, qs = _filtered_papers(request)
-    return render(request, "tracker/paper_list.html", {"form": form, "papers": qs})
+    return papers_workspace(request)
 
 
 @login_required
 def paper_board(request):
-    form, qs = _filtered_papers(request)
-    columns = []
-    for st in m.Paper.PIPELINE + [m.Paper.Status.REJECTED, m.Paper.Status.ON_HOLD]:
-        items = [p for p in qs if p.status == st]
-        if not items and not request.GET.get("all"):
-            continue
-        columns.append({"status": st, "label": m.Paper.Status(st).label, "papers": items})
-    return render(request, "tracker/paper_board.html",
-                  {"form": form, "columns": columns, "statuses": m.Paper.Status.choices,
-                   "show_all": bool(request.GET.get("all"))})
+    return papers_workspace(request, force_view="board")
 
 
 @login_required
@@ -337,18 +395,43 @@ def deadline_delete(request, pk, dl_pk):
 
 @login_required
 def deadline_list(request):
+    from . import workspace as ws
     papers = visible_papers(request.user)
     qs = (m.Deadline.objects.filter(paper__in=papers).select_related("paper", "submission__journal")
           .prefetch_related("assignees"))
     show = request.GET.get("show", "open")
-    if show == "open":
-        qs = qs.filter(completed_at__isnull=True).order_by("due_at")
-    elif show == "mine":
-        qs = qs.filter(completed_at__isnull=True).filter(
-            Q(assignees=request.user) | Q(paper__lead=request.user)).distinct().order_by("due_at")
-    elif show == "done":
-        qs = qs.filter(completed_at__isnull=False).order_by("-completed_at")
-    return render(request, "tracker/deadline_list.html", {"deadlines": qs, "show": show})
+    view = request.GET.get("view", "list")
+    if show == "mine":
+        qs = qs.filter(Q(assignees=request.user) | Q(paper__lead=request.user)).distinct()
+    now = timezone.now()
+    week = now + timedelta(days=7)
+    month = now + timedelta(days=30)
+    open_qs = qs.filter(completed_at__isnull=True).order_by("due_at")
+    buckets = [
+        {"key": "overdue", "label": _("Overdue"), "icon": "bi-exclamation-octagon", "tone": "danger",
+         "items": list(open_qs.filter(due_at__lt=now))},
+        {"key": "week", "label": _("Next 7 days"), "icon": "bi-lightning-charge", "tone": "warning",
+         "items": list(open_qs.filter(due_at__gte=now, due_at__lt=week))},
+        {"key": "month", "label": _("Next 30 days"), "icon": "bi-calendar-week", "tone": "primary",
+         "items": list(open_qs.filter(due_at__gte=week, due_at__lt=month))},
+        {"key": "later", "label": _("Later"), "icon": "bi-calendar3", "tone": "slate",
+         "items": list(open_qs.filter(due_at__gte=month))},
+    ]
+    if show == "done":
+        buckets = [{"key": "done", "label": _("Completed"), "icon": "bi-check2-all", "tone": "success",
+                    "items": list(qs.filter(completed_at__isnull=False).order_by("-completed_at")[:100])}]
+    ctx = {"buckets": buckets, "show": show, "view": view,
+           "counts": {"open": qs.filter(completed_at__isnull=True).count(),
+                      "overdue": len(buckets[0]["items"]) if show != "done" else 0,
+                      "week": len(buckets[1]["items"]) if show != "done" else 0,
+                      "done": qs.filter(completed_at__isnull=False).count()}}
+    if view == "calendar":
+        ctx["cal"] = ws.month_calendar(list(papers), request.GET.get("month"),
+                                       first_weekday=5 if request.LANGUAGE_CODE == "ar" else 6)
+        ctx["prev_url"] = "?" + _qs(request, month=ctx["cal"]["prev"])
+        ctx["next_url"] = "?" + _qs(request, month=ctx["cal"]["next"])
+        ctx["this_url"] = "?" + _qs(request, month=ctx["cal"]["this"])
+    return render(request, "tracker/deadline_list.html", ctx)
 
 
 # ---------------------------------------------------------------------------
@@ -602,10 +685,18 @@ def member_update(request, pk, mem_pk):
 @login_required
 def journal_list(request):
     q = request.GET.get("q", "")
-    qs = m.Journal.objects.annotate(n=Count("submissions"))
+    quartile = request.GET.get("quartile", "")
+    view = request.GET.get("view", "cards")
+    qs = m.Journal.objects.annotate(n=Count("submissions")).order_by("-n", "name")
     if q:
         qs = qs.filter(Q(name__icontains=q) | Q(publisher__icontains=q) | Q(issn__icontains=q))
-    return render(request, "tracker/journal_list.html", {"journals": qs, "q": q})
+    if quartile in ("Q1", "Q2", "Q3", "Q4"):
+        qs = qs.filter(quartile=quartile)
+    elif quartile == "flagged":
+        qs = qs.filter(flagged=True)
+    chips = [("", _("All")), ("Q1", "Q1"), ("Q2", "Q2"), ("Q3", "Q3"), ("Q4", "Q4"), ("flagged", _("Questionable"))]
+    return render(request, "tracker/journal_list.html", {"journals": qs, "q": q, "quartile": quartile,
+                                                         "view": view, "quartile_chips": chips})
 
 
 @login_required
@@ -661,7 +752,27 @@ def reports(request):
         "avg_decision_days": round(sum((s.first_decision_at - s.submitted_at).days for s in decided) /
                                    len(decided)) if decided else None,
         "per_journal": per_journal,
+        "per_year": _per_year(subs),
     })
+
+
+def _per_year(subs):
+    rows = {}
+    for sub in subs:
+        y = timezone.localtime(sub.submitted_at).year
+        r = rows.setdefault(y, {"year": y, "submitted": 0, "accepted": 0, "rejected": 0})
+        r["submitted"] += 1
+        if sub.decision == "accepted":
+            r["accepted"] += 1
+        elif sub.decision in ("rejected", "desk_rejected"):
+            r["rejected"] += 1
+    out = sorted(rows.values(), key=lambda r: r["year"])[-6:]
+    peak = max([r["submitted"] for r in out] + [1])
+    for r in out:
+        r["h_sub"] = round(100 * r["submitted"] / peak)
+        r["h_acc"] = round(100 * r["accepted"] / peak)
+        r["h_rej"] = round(100 * r["rejected"] / peak)
+    return out
 
 
 @login_required

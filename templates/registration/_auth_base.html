@@ -1,32 +1,38 @@
 {% extends "base.html" %}{% load i18n %}
-{% block main_class %}container-fluid p-0{% endblock %}{% block footer %}{% endblock %}
-{% block content %}{% get_current_language as LANG %}
+{% block shell %}{% get_current_language as LANG %}
 <div class="auth-shell">
-  <div class="auth-side d-none d-lg-flex">
+  <section class="auth-art">
+    <a href="/" class="d-flex align-items-center gap-2 text-white fw-bold text-decoration-none fs-5">
+      <span class="sb-logo"><i class="bi bi-journal-bookmark-fill"></i></span> {{ SITE_NAME }}</a>
     <div>
-      <div class="brand-mark brand-mark-light mb-3"><i class="bi bi-journal-check"></i></div>
-      <h2 class="fw-bold">{{ SITE_NAME }}</h2>
-      <p class="lead opacity-75">{% trans "Track every paper from idea to publication — submissions, revisions, deadlines and co-authors in one place." %}</p>
-      <ul class="list-unstyled mt-4 opacity-90">
-        <li class="mb-2"><i class="bi bi-check2-circle"></i> {% trans "Every journal attempt with full history" %}</li>
-        <li class="mb-2"><i class="bi bi-check2-circle"></i> {% trans "Automatic email reminders before deadlines" %}</li>
-        <li class="mb-2"><i class="bi bi-check2-circle"></i> {% trans "Co-authors complete their own data via a secure link" %}</li>
-        <li class="mb-2"><i class="bi bi-check2-circle"></i> {% trans "Reviewer comments assigned and tracked" %}</li>
-      </ul>
+      <div class="badge rounded-pill mb-3 px-3 py-2" style="background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2)"><i class="bi bi-stars"></i> {% trans "For researchers & research groups" %}</div>
+      <h2 class="fw-bold mb-3">{% trans "Every paper, every deadline, every co-author — in one place." %}</h2>
+      <p class="lead mb-4">{% trans "Track submissions from idea to publication, never miss a revision deadline, and collect co-author data without the email chase." %}</p>
+      <div class="mock mb-4">
+        <div class="mrow"><i class="bi bi-file-earmark-text"></i><span class="flex-grow-1">Computers &amp; Security</span><span class="mpill" style="background:#fef3c7;color:#92400e">{% trans "Major revision" %}</span></div>
+        <div class="mrow"><i class="bi bi-file-earmark-text"></i><span class="flex-grow-1">Expert Systems with Applications</span><span class="mpill" style="background:#dbeafe;color:#1e40af">{% trans "Under review" %}</span></div>
+        <div class="mrow"><i class="bi bi-file-earmark-text"></i><span class="flex-grow-1">J. Network &amp; Computer Applications</span><span class="mpill" style="background:#dcfce7;color:#166534">{% trans "Accepted" %}</span></div>
+        <div class="mrow"><i class="bi bi-alarm"></i><span class="mbar"></span><span class="small">{% trans "in 7 days" %}</span></div>
+      </div>
+      <div class="row g-3" style="max-width:520px">
+        <div class="col-sm-6"><div class="auth-feature"><span class="ic"><i class="bi bi-bell"></i></span><div><b>{% trans "Smart reminders" %}</b><span>{% trans "Email alerts before every deadline" %}</span></div></div></div>
+        <div class="col-sm-6"><div class="auth-feature"><span class="ic"><i class="bi bi-people"></i></span><div><b>{% trans "Team-ready" %}</b><span>{% trans "Internal & external collaborators" %}</span></div></div></div>
+      </div>
     </div>
-  </div>
-  <div class="auth-main">
+    <div class="small" style="color:rgba(255,255,255,.55)"><i class="bi bi-shield-lock"></i> {% trans "Open-source · Self-hostable · Your data stays private" %}</div>
+  </section>
+  <section class="auth-form">
     <div class="auth-card">
-      <div class="d-flex justify-content-between align-items-center mb-4">
-        <div class="d-lg-none fw-bold text-primary"><i class="bi bi-journal-check"></i> {{ SITE_NAME }}</div>
+      <div class="d-flex justify-content-between align-items-center mb-5">
+        <a href="/" class="d-flex d-lg-none align-items-center gap-2 fw-bold text-decoration-none" style="color:var(--rt-text)"><span class="sb-logo" style="width:32px;height:32px;font-size:.95rem"><i class="bi bi-journal-bookmark-fill"></i></span>{{ SITE_NAME }}</a>
         <form action="{% url 'set_language' %}" method="post" class="ms-auto">{% csrf_token %}
           <input type="hidden" name="next" value="{{ request.get_full_path }}">
           <input type="hidden" name="language" value="{% if LANG == 'ar' %}en{% else %}ar{% endif %}">
-          <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-translate"></i> {% if LANG == 'ar' %}English{% else %}العربية{% endif %}</button>
+          <button class="btn btn-ghost btn-sm"><i class="bi bi-translate"></i> {% if LANG == 'ar' %}English{% else %}العربية{% endif %}</button>
         </form>
       </div>
       {% block auth %}{% endblock %}
     </div>
-  </div>
+  </section>
 </div>
 {% endblock %}

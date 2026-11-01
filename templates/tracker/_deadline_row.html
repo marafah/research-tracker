@@ -1,18 +1,16 @@
 {% load i18n tracker_tags %}
-<li class="list-group-item urgency-{{ d.urgency }}">
-  <div class="d-flex justify-content-between align-items-start gap-2">
-    <div class="flex-grow-1">
-      <div class="fw-semibold">{{ d.title }}</div>
-      <div class="small"><a href="{{ d.paper.get_absolute_url }}#deadlines">{{ d.paper.label }}</a>
-        <span class="text-muted-rt">· {{ d.get_kind_display }} · {{ d.due_at|date:"D j M Y, H:i" }}</span></div>
-      {% with people=d.assignees.all %}{% if people %}<div class="small text-muted-rt"><i class="bi bi-person"></i> {% for u in people %}{{ u.display_name }}{% if not forloop.last %}, {% endif %}{% endfor %}</div>{% endif %}{% endwith %}
-    </div>
-    <div class="text-end d-flex flex-column align-items-end gap-1">
-      {% due_badge d %}
-      <form method="post" action="{% url 'deadline_toggle' d.paper_id d.pk %}" class="m-0">{% csrf_token %}
-        <input type="hidden" name="next" value="{{ request.get_full_path }}">
-        <button class="btn btn-sm btn-outline-success py-0" title="{% trans 'Mark done' %}">{% if d.is_done %}<i class="bi bi-arrow-counterclockwise"></i>{% else %}<i class="bi bi-check2"></i>{% endif %}</button>
-      </form>
-    </div>
+<div class="dl {{ d.urgency }}">
+  <div class="dl-date"><div class="m">{{ d.due_at|date:"M" }}</div><div class="d">{{ d.due_at|date:"j" }}</div></div>
+  <div class="grow">
+    <div class="t text-truncate">{{ d.title }}</div>
+    <div class="s text-truncate"><a href="{{ d.paper.get_absolute_url }}#deadlines">{{ d.paper.label }}</a> · {{ d.get_kind_display }} · {{ d.due_at|date:"H:i" }}</div>
   </div>
-</li>
+  {% with people=d.assignees.all %}{% if people %}<div class="avatar-stack d-none d-sm-inline-flex">{% for u in people|slice:":3" %}<span class="avatar avatar-sm {{ u|avatar_class }}" title="{{ u.display_name }}">{{ u|initials }}</span>{% endfor %}</div>{% endif %}{% endwith %}
+  <div class="d-flex align-items-center gap-2">
+    {% due_badge d %}
+    <form method="post" action="{% url 'deadline_toggle' d.paper_id d.pk %}" class="m-0">{% csrf_token %}
+      <input type="hidden" name="next" value="{{ request.get_full_path }}">
+      <button class="btn btn-ghost btn-icon btn-sm" title="{% if d.is_done %}{% trans 'Reopen' %}{% else %}{% trans 'Mark done' %}{% endif %}">{% if d.is_done %}<i class="bi bi-arrow-counterclockwise"></i>{% else %}<i class="bi bi-check2 text-success"></i>{% endif %}</button>
+    </form>
+  </div>
+</div>

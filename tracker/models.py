@@ -288,6 +288,9 @@ class Paper(models.Model):
     def next_deadline(self):
         return self.deadlines.filter(completed_at__isnull=True).order_by("due_at").first()
 
+    def keywords_list(self):
+        return [k.strip() for k in self.keywords.replace("؛", ",").replace(";", ",").split(",") if k.strip()]
+
     def authors_missing_data(self):
         return [a for a in self.authors.all() if a.missing_fields()]
 
@@ -418,6 +421,15 @@ class Submission(models.Model):
     @property
     def is_rejected(self):
         return self.decision in (self.Decision.REJECTED, self.Decision.DESK_REJECTED, self.Decision.TRANSFER)
+
+    @property
+    def done_comments(self):
+        return sum(1 for c in self.review_comments.all() if c.state in ("done", "rebutted"))
+
+    @property
+    def done_pct(self):
+        total = len(self.review_comments.all())
+        return round(100 * self.done_comments / total) if total else 0
 
     @property
     def days_in_review(self):

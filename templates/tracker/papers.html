@@ -1,0 +1,66 @@
+{% extends "base.html" %}{% load i18n tracker_tags %}
+{% block title %}{% trans "Papers" %}{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div><div class="eyebrow">{% trans "Workspace" %}</div><h1>{% trans "Papers & proposals" %}</h1>
+    <div class="sub">{% trans "Every work your groups are writing, submitting and publishing" %}</div></div>
+  <div class="d-flex gap-2 flex-wrap">
+    <div class="dropdown">
+      <button class="btn btn-ghost dropdown-toggle" data-bs-toggle="dropdown"><i class="bi bi-box-arrow-up"></i> {% trans "Export" %}</button>
+      <ul class="dropdown-menu dropdown-menu-end">
+        <li><a class="dropdown-item" href="{% url 'export_csv' %}"><i class="bi bi-file-earmark-spreadsheet"></i> {% trans "Excel / CSV" %}</a></li>
+        <li><a class="dropdown-item" href="{% url 'reports' %}"><i class="bi bi-printer"></i> {% trans "Publications report (PDF)" %}</a></li>
+        <li><a class="dropdown-item" href="{% url 'profile' %}#calendar"><i class="bi bi-calendar-plus"></i> {% trans "Deadlines to my calendar (.ics)" %}</a></li>
+      </ul>
+    </div>
+    <a href="{% url 'paper_create' %}" class="btn btn-primary"><i class="bi bi-plus-lg"></i> {% trans "New paper" %}</a>
+  </div>
+</div>
+
+<!-- KPI strip -->
+<div class="ws-kpis mb-3">
+  <div><b>{{ kpi.total }}</b><span>{% trans "Records" %}</span></div>
+  <div><b>{{ kpi.active }}</b><span>{% trans "Active" %}</span></div>
+  <div><b>{{ kpi.review }}</b><span>{% trans "Under review" %}</span></div>
+  <div class="{% if kpi.overdue %}bad{% endif %}"><b>{{ kpi.overdue }}</b><span>{% trans "Overdue deadlines" %}</span></div>
+  <div class="good"><b>{{ kpi.published }}</b><span>{% trans "Accepted / published" %}</span></div>
+</div>
+
+<!-- View switcher + search -->
+<div class="ws-bar">
+  <nav class="ws-views" role="tablist">
+    {% for v in views %}<a href="{{ v.url }}" class="{% if v.active %}on{% endif %}" role="tab"><i class="bi {{ v.icon }}"></i> <span>{{ v.label }}</span></a>{% endfor %}
+  </nav>
+  <form method="get" class="ws-search" role="search">
+    {% for k, val in request.GET.items %}{% if k != "q" %}<input type="hidden" name="{{ k }}" value="{{ val }}">{% endif %}{% endfor %}
+    <i class="bi bi-search"></i>{{ form.q }}
+  </form>
+</div>
+
+<!-- Filters -->
+<form method="get" class="ws-filters">
+  {% for c in chips %}
+    <a href="{{ c.url }}" class="ws-chip {% if c.active %}on{% endif %}" style="--c: {{ c.color }}"><i class="bi {{ c.icon }}"></i> {{ c.label }} <span>{{ c.count }}</span></a>
+  {% endfor %}
+  <span class="ws-sep"></span>
+  <input type="hidden" name="view" value="{{ view }}">{% if request.GET.type %}<input type="hidden" name="type" value="{{ request.GET.type }}">{% endif %}
+  {% if request.GET.q %}<input type="hidden" name="q" value="{{ request.GET.q }}">{% endif %}
+  {% if request.GET.month %}<input type="hidden" name="month" value="{{ request.GET.month }}">{% endif %}
+  <select name="status" class="form-select form-select-sm" onchange="this.form.submit()" aria-label="{% trans 'Status' %}">{% for val, lab in form.fields.status.choices %}<option value="{{ val }}" {% if request.GET.status == val %}selected{% endif %}>{{ lab }}</option>{% endfor %}</select>
+  <select name="group" class="form-select form-select-sm" onchange="this.form.submit()" aria-label="{% trans 'Group' %}"><option value="">{% trans "All groups" %}</option>{% for g in form.fields.group.queryset %}<option value="{{ g.pk }}" {% if request.GET.group == g.pk|stringformat:"s" %}selected{% endif %}>{{ g.name }}</option>{% endfor %}</select>
+  {% if view == "cards" %}
+  <label class="ws-gpick"><i class="bi bi-collection"></i> {% trans "Group by" %}
+    <select name="group_by" class="form-select form-select-sm" onchange="this.form.submit()">{% for k, lab in group_choices %}<option value="{{ k }}" {% if group_by == k %}selected{% endif %}>{{ lab }}</option>{% endfor %}</select></label>
+  {% endif %}
+  <label class="ws-mine"><span class="form-check form-switch m-0"><input class="form-check-input" type="checkbox" name="mine" value="on" {% if request.GET.mine %}checked{% endif %} onchange="this.form.submit()"></span>{% trans "Only mine" %}</label>
+  {% if request.GET.status or request.GET.group or request.GET.mine or request.GET.q or request.GET.type %}<a href="?view={{ view }}" class="btn btn-sm btn-link text-muted-rt"><i class="bi bi-x-circle"></i> {% trans "Clear filters" %}</a>{% endif %}
+</form>
+
+<div class="ws-body ws-{{ view }}">
+  {% if view == "cards" %}{% include "tracker/views/cards.html" %}
+  {% elif view == "table" %}{% include "tracker/views/table.html" %}
+  {% elif view == "timeline" %}{% include "tracker/views/timeline.html" %}
+  {% elif view == "calendar" %}{% include "tracker/views/calendar.html" %}
+  {% else %}{% include "tracker/views/board.html" %}{% endif %}
+</div>
+{% endblock %}

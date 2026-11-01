@@ -1,97 +1,97 @@
 {% extends "base.html" %}{% load i18n tracker_tags %}
 {% block title %}{% trans "Dashboard" %}{% endblock %}
 {% block content %}
-<div class="page-hero d-flex justify-content-between align-items-center flex-wrap gap-3">
-  <div>
-    <h3 class="mb-1">{% blocktrans with name=user.display_name %}Welcome, {{ name }}{% endblocktrans %}</h3>
-    <div class="sub small"><i class="bi bi-calendar3"></i> {% now "l, j F Y" %} · {% blocktrans count n=total %}{{ n }} work tracked{% plural %}{{ n }} works tracked{% endblocktrans %}</div>
+<section class="hero">
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+    <div>
+      <div class="small text-white-50 mb-1"><i class="bi bi-calendar3"></i> {% now "l, j F Y" %}</div>
+      <h1>{{ greeting }}, {{ user.display_name }}</h1>
+      <div class="sub">
+        {% if overdue %}<i class="bi bi-exclamation-triangle"></i> {% blocktrans count n=overdue|length %}{{ n }} deadline is overdue{% plural %}{{ n }} deadlines are overdue{% endblocktrans %} ·{% endif %}
+        {% blocktrans count n=week_count %}{{ n }} deadline this week{% plural %}{{ n }} deadlines this week{% endblocktrans %}
+      </div>
+    </div>
+    <div class="d-flex gap-2">
+      <a href="{% url 'paper_board' %}" class="btn btn-glass"><i class="bi bi-kanban"></i> {% trans "Board" %}</a>
+      <a href="{% url 'paper_create' %}" class="btn btn-light fw-semibold"><i class="bi bi-plus-lg"></i> {% trans "New paper" %}</a>
+    </div>
   </div>
-  <div class="d-flex gap-2 position-relative" style="z-index:1">
-    <a href="{% url 'paper_board' %}" class="btn btn-outline-light btn-sm"><i class="bi bi-kanban"></i> {% trans "Board" %}</a>
-    <a href="{% url 'paper_create' %}" class="btn btn-light btn-sm"><i class="bi bi-plus-lg"></i> {% trans "New paper" %}</a>
-  </div>
-</div>
+</section>
 
 {% if profile_missing %}
-<div class="alert alert-warning small"><i class="bi bi-person-exclamation"></i>
-  {% trans "Your profile is missing:" %} <strong>{{ profile_missing|join:", " }}</strong>.
-  {% trans "Co-authors need these for submissions." %} <a href="{% url 'profile' %}">{% trans "Complete profile" %}</a>
+<div class="alert alert-soft-warning d-flex align-items-center gap-3 small">
+  <i class="bi bi-person-exclamation fs-4 text-warning"></i>
+  <div class="flex-grow-1">{% trans "Your profile is missing:" %} <strong>{{ profile_missing|join:", " }}</strong>. {% trans "Co-authors need these for submissions." %}</div>
+  <a href="{% url 'profile' %}" class="btn btn-sm btn-ghost">{% trans "Complete profile" %}</a>
 </div>
 {% endif %}
 
-<div class="row g-3 mb-3">
-  <div class="col-6 col-md-4 col-xl"><div class="card stat-card h-100"><div class="card-body"><span class="stat-icon tone-primary"><i class="bi bi-folder2-open"></i></span>
-    <div class="stat-label">{% trans "Active works" %}</div><div class="stat-value">{{ active }}</div></div></div></div>
-  <div class="col-6 col-md-4 col-xl"><div class="card stat-card h-100"><div class="card-body"><span class="stat-icon tone-info"><i class="bi bi-hourglass-split"></i></span>
-    <div class="stat-label">{% trans "Under review" %}</div><div class="stat-value text-primary">{{ under_review }}</div></div></div></div>
-  <div class="col-6 col-md-4 col-xl"><div class="card stat-card h-100"><div class="card-body"><span class="stat-icon tone-danger"><i class="bi bi-exclamation-octagon"></i></span>
-    <div class="stat-label">{% trans "Overdue" %}</div><div class="stat-value {% if overdue %}text-danger{% endif %}">{{ overdue|length }}</div></div></div></div>
-  <div class="col-6 col-md-4 col-xl"><div class="card stat-card h-100"><div class="card-body"><span class="stat-icon tone-success"><i class="bi bi-patch-check"></i></span>
-    <div class="stat-label">{% trans "Accepted this year" %}</div><div class="stat-value text-success">{{ accepted_year }}</div></div></div></div>
-  <div class="col-6 col-md-4 col-xl"><div class="card stat-card h-100"><div class="card-body"><span class="stat-icon tone-gold"><i class="bi bi-award"></i></span>
-    <div class="stat-label">{% trans "Published this year" %}</div><div class="stat-value text-success">{{ published_year }}</div></div></div></div>
+<div class="row g-3 mb-4">
+  <div class="col-6 col-xl-3"><div class="card kpi"><span class="ic tone-primary"><i class="bi bi-folder2-open"></i></span><div><div class="label">{% trans "Active works" %}</div><div class="value">{{ active }}</div><div class="hint">{% blocktrans with n=total %}of {{ n }} in total{% endblocktrans %}</div></div></div></div>
+  <div class="col-6 col-xl-3"><div class="card kpi"><span class="ic tone-info"><i class="bi bi-hourglass-split"></i></span><div><div class="label">{% trans "Under review" %}</div><div class="value">{{ under_review }}</div><div class="hint">{% trans "Waiting for editors" %}</div></div></div></div>
+  <div class="col-6 col-xl-3"><div class="card kpi"><span class="ic {% if overdue %}tone-danger{% else %}tone-warning{% endif %}"><i class="bi bi-alarm"></i></span><div><div class="label">{% trans "Overdue" %}</div><div class="value {% if overdue %}text-danger{% endif %}">{{ overdue|length }}</div><div class="hint">{% blocktrans with n=week_count %}{{ n }} due this week{% endblocktrans %}</div></div></div></div>
+  <div class="col-6 col-xl-3"><div class="card kpi"><span class="ic tone-success"><i class="bi bi-patch-check"></i></span><div><div class="label">{% trans "Accepted this year" %}</div><div class="value">{{ accepted_year }}</div><div class="hint">{% blocktrans with n=published_year %}{{ n }} published{% endblocktrans %}</div></div></div></div>
 </div>
 
-<div class="row g-3">
-  <div class="col-lg-7">
-    {% if overdue %}
-    <div class="card mb-3 border-danger"><div class="card-header text-danger"><i class="bi bi-exclamation-octagon"></i> {% trans "Overdue" %}</div>
-      <ul class="list-group list-group-flush">
+<div class="row g-4">
+  <div class="col-xl-8">
+    <div class="card mb-4">
+      <div class="card-header">
+        <h2 class="card-title-rt"><span class="ic tone-warning"><i class="bi bi-calendar-event"></i></span>{% trans "Upcoming deadlines" %}</h2>
+        <a class="btn btn-sm btn-ghost" href="{% url 'deadline_list' %}">{% trans "All deadlines" %} <i class="bi bi-arrow-right-short"></i></a>
+      </div>
       {% for d in overdue %}{% include "tracker/_deadline_row.html" %}{% endfor %}
-      </ul></div>
-    {% endif %}
+      {% for d in upcoming %}{% include "tracker/_deadline_row.html" %}{% endfor %}
+      {% if not overdue and not upcoming %}<div class="empty"><div class="ic tone-success"><i class="bi bi-calendar-check"></i></div><h6>{% trans "You're all clear" %}</h6><div class="small">{% trans "No deadlines in the next 30 days." %}</div></div>{% endif %}
+    </div>
 
-    <div class="card mb-3"><div class="card-header d-flex justify-content-between"><span><i class="bi bi-calendar-event"></i> {% trans "Next 30 days" %}</span>
-      <a class="small" href="{% url 'deadline_list' %}">{% trans "All deadlines" %}</a></div>
-      <ul class="list-group list-group-flush">
-      {% for d in upcoming %}{% include "tracker/_deadline_row.html" %}
-      {% empty %}<li class="list-group-item text-muted-rt small">{% trans "No deadlines in the next 30 days." %}</li>{% endfor %}
-      </ul></div>
-
-    <div class="card mb-3"><div class="card-header"><i class="bi bi-lightning"></i> {% trans "Needs action" %}</div>
-      <ul class="list-group list-group-flush">
-      {% for p in action_papers %}
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-          <a href="{{ p.get_absolute_url }}">{{ p.label }}</a> {% status_badge p %}</li>
-      {% empty %}<li class="list-group-item text-muted-rt small">{% trans "Nothing needs action right now." %}</li>{% endfor %}
-      </ul></div>
+    <div class="row g-4">
+      <div class="col-md-6">
+        <div class="card h-100">
+          <div class="card-header"><h2 class="card-title-rt"><span class="ic tone-danger"><i class="bi bi-lightning-charge"></i></span>{% trans "Needs action" %}</h2></div>
+          {% for p in action_papers %}
+            <a class="list-row" href="{{ p.get_absolute_url }}"><div class="grow"><div class="t text-truncate">{{ p.label }}</div><div class="s">{{ p.current_submission.journal.name|default:p.get_type_display }}</div></div>{% status_badge p %}</a>
+          {% empty %}<div class="empty py-4"><div class="ic tone-success"><i class="bi bi-check2-all"></i></div><div class="small">{% trans "Nothing needs action right now." %}</div></div>{% endfor %}
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="card h-100">
+          <div class="card-header"><h2 class="card-title-rt"><span class="ic tone-violet"><i class="bi bi-chat-square-text"></i></span>{% trans "My reviewer-comment tasks" %}</h2></div>
+          {% for c in my_comments %}
+            <a class="list-row" href="{{ c.submission.paper.get_absolute_url }}#submission-{{ c.submission_id }}"><div class="grow"><div class="t text-truncate">{{ c.comment }}</div><div class="s text-truncate">{{ c.reviewer }} #{{ c.number }} · {{ c.submission.paper.label }}</div></div>{% status_badge c "state" %}</a>
+          {% empty %}<div class="empty py-4"><div class="ic"><i class="bi bi-inbox"></i></div><div class="small">{% trans "No open comments assigned to you." %}</div></div>{% endfor %}
+        </div>
+      </div>
+    </div>
   </div>
 
-  <div class="col-lg-5">
-    <div class="card mb-3"><div class="card-header"><i class="bi bi-person-check"></i> {% trans "My reviewer-comment tasks" %}</div>
-      <ul class="list-group list-group-flush">
-      {% for c in my_comments %}
-        <li class="list-group-item small">
-          <a href="{{ c.submission.paper.get_absolute_url }}#submission-{{ c.submission_id }}">{{ c.submission.paper.label }}</a>
-          <span class="text-muted-rt">· {{ c.reviewer }} #{{ c.number }}</span>
-          <div class="text-truncate">{{ c.comment }}</div>
-        </li>
-      {% empty %}<li class="list-group-item text-muted-rt small">{% trans "No open comments assigned to you." %}</li>{% endfor %}
-      </ul></div>
+  <div class="col-xl-4">
+    <div class="card mb-4">
+      <div class="card-header"><h2 class="card-title-rt"><span class="ic tone-primary"><i class="bi bi-diagram-3"></i></span>{% trans "Pipeline" %}</h2><a href="{% url 'reports' %}" class="small">{% trans "Reports" %}</a></div>
+      <div class="card-body">{% include "tracker/_pipeline.html" %}</div>
+    </div>
 
     {% if missing_data %}
-    <div class="card mb-3"><div class="card-header"><i class="bi bi-person-lines-fill"></i> {% trans "Missing co-author data" %}</div>
-      <ul class="list-group list-group-flush">
-      {% for p in missing_data %}
-        <li class="list-group-item small"><a href="{{ p.get_absolute_url }}#authors">{{ p.label }}</a>
-          <div class="text-muted-rt">{% for a in p.authors_missing_data %}{{ a.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</div></li>
+    <div class="card mb-4">
+      <div class="card-header"><h2 class="card-title-rt"><span class="ic tone-warning"><i class="bi bi-person-lines-fill"></i></span>{% trans "Missing co-author data" %}</h2></div>
+      {% for p in missing_data|slice:":5" %}
+        <a class="list-row" href="{{ p.get_absolute_url }}#authors"><div class="grow"><div class="t text-truncate">{{ p.label }}</div>
+          <div class="s text-truncate">{% for a in p.authors_missing_data %}{{ a.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</div></div><i class="bi bi-chevron-right text-muted-rt"></i></a>
       {% endfor %}
-      </ul></div>
+    </div>
     {% endif %}
 
-    <div class="card mb-3"><div class="card-header"><i class="bi bi-diagram-3"></i> {% trans "Pipeline" %}</div>
+    <div class="card">
+      <div class="card-header"><h2 class="card-title-rt"><span class="ic tone-slate"><i class="bi bi-clock-history"></i></span>{% trans "Recent activity" %}</h2></div>
       <div class="card-body">
-        {% include "tracker/_pipeline.html" %}
-      </div></div>
-
-    <div class="card"><div class="card-header"><i class="bi bi-clock-history"></i> {% trans "Recent activity" %}</div>
-      <ul class="list-group list-group-flush small">
-      {% for a in activity %}
-        <li class="list-group-item"><strong>{{ a.user|default:"—" }}</strong> {{ a.verb }}
-          {% if a.paper %}· <a href="{{ a.paper.get_absolute_url }}">{{ a.paper.label|truncatechars:40 }}</a>{% endif %}
-          <div class="text-muted-rt">{{ a.created_at|timesince }}</div></li>
-      {% empty %}<li class="list-group-item text-muted-rt">{% trans "No activity yet." %}</li>{% endfor %}
-      </ul></div>
+        <ul class="timeline small">
+        {% for a in activity|slice:":8" %}
+          <li><span class="tdot"></span><strong>{{ a.user|default:"—" }}</strong> {{ a.verb }}{% if a.paper %} · <a href="{{ a.paper.get_absolute_url }}">{{ a.paper.label|truncatechars:38 }}</a>{% endif %}
+            <div class="text-muted-rt fs-7">{{ a.created_at|timesince }}</div></li>
+        {% empty %}<li class="text-muted-rt">{% trans "No activity yet." %}</li>{% endfor %}
+        </ul>
+      </div>
+    </div>
   </div>
 </div>
 {% endblock %}

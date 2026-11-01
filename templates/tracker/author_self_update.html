@@ -1,21 +1,18 @@
-{% extends "base.html" %}{% load i18n %}
+{% extends "public_base.html" %}{% load i18n %}
 {% block title %}{% trans "Author details" %}{% endblock %}
-{% block content %}
-<div class="public-wrap">
-  <div class="text-center mb-4"><div class="brand-mark mx-auto mb-2"><i class="bi bi-journal-check"></i></div>
-    <h4 class="mb-0">{{ SITE_NAME }}</h4></div>
-  <div class="card shadow-sm"><div class="card-body p-4">
-  {% if done %}
-    <div class="text-center py-4"><i class="bi bi-check-circle-fill text-success" style="font-size:3rem"></i>
-      <h5 class="mt-3">{% trans "Thank you!" %}</h5><p class="text-muted-rt">{% trans "Your details were saved and the research team has been notified." %}</p></div>
-  {% else %}
-    <h5>{% trans "Please confirm your author details" %}</h5>
-    <p class="small text-muted-rt mb-1">{% trans "Paper" %}:</p>
-    <p class="fw-semibold">{{ author.paper.title }}</p>
+{% block public_content %}
+<div class="card shadow-sm">
+{% if done %}
+  <div class="empty py-5"><div class="ic tone-success"><i class="bi bi-check-circle"></i></div><h4 class="fw-bold">{% trans "Thank you!" %}</h4><p>{% trans "Your details were saved and the research team has been notified." %}</p></div>
+{% else %}
+  <div class="card-body p-4">
+    <div class="eyebrow">{% trans "Co-author confirmation" %}</div>
+    <h1 class="h4 fw-bold">{% trans "Please confirm your author details" %}</h1>
+    <div class="alert alert-soft-info small d-flex gap-2 mt-3"><i class="bi bi-file-earmark-text text-primary fs-5"></i><div><div class="text-muted-rt">{% trans "Paper" %}</div><div class="fw-semibold bidi">{{ author.paper.title }}</div></div></div>
     <form method="post" novalidate>{% csrf_token %}{% include "includes/form_fields.html" %}
-      <button class="btn btn-primary mt-4 w-100"><i class="bi bi-check-lg"></i> {% trans "Save my details" %}</button></form>
-  {% endif %}
-  </div></div>
-  <p class="text-center small text-muted-rt mt-3"><i class="bi bi-shield-lock"></i> {% trans "This private link only lets you edit your own author entry." %}</p>
+      <button class="btn btn-primary btn-lg w-100 mt-4"><i class="bi bi-check-lg"></i> {% trans "Save my details" %}</button></form>
+  </div>
+{% endif %}
 </div>
+<p class="text-center small text-muted-rt mt-3"><i class="bi bi-shield-lock"></i> {% trans "This private link only lets you edit your own author entry." %}</p>
 {% endblock %}

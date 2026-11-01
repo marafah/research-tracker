@@ -1,0 +1,5 @@
+<div class="stepper {% if halted %}halted{% endif %}">
+  {% for s in steps %}
+  <div class="st {{ s.state }}"><div class="bub">{% if s.state == "done" %}<i class="bi bi-check-lg"></i>{% elif s.state == "current" and halted %}<i class="bi bi-x-lg"></i>{% else %}{{ s.n }}{% endif %}</div><span>{{ s.label }}</span></div>
+  {% endfor %}
+</div>

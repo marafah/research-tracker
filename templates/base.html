@@ -1,9 +1,10 @@
-{% load static i18n %}<!doctype html>
+{% load static i18n tracker_tags %}<!doctype html>
 {% get_current_language as LANG %}{% get_current_language_bidi as RTL %}
 <html lang="{{ LANG }}" dir="{% if RTL %}rtl{% else %}ltr{% endif %}" data-bs-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
   <title>{% block title %}{{ SITE_NAME }}{% endblock %} · {{ SITE_NAME }}</title>
   <script>
     try { const t = localStorage.getItem("rt-theme") || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
@@ -16,64 +17,132 @@
   {% block head %}{% endblock %}
 </head>
 <body>
+{% block shell %}
 {% if user.is_authenticated %}
-<nav class="navbar navbar-expand-lg navbar-dark navbar-rt mb-4">
-  <div class="container-xl">
-    <a class="navbar-brand" href="{% url 'dashboard' %}"><span class="brand-icon"><i class="bi bi-journal-check"></i></span> {{ SITE_NAME }}</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav"><span class="navbar-toggler-icon"></span></button>
-    <div class="collapse navbar-collapse" id="nav">
-      {% with u=request.resolver_match.url_name %}
-      <ul class="navbar-nav me-auto gap-lg-1">
-        <li class="nav-item"><a class="nav-link {% if u == 'dashboard' %}active{% endif %}" href="{% url 'dashboard' %}"><i class="bi bi-speedometer2"></i> {% trans "Dashboard" %}</a></li>
-        <li class="nav-item"><a class="nav-link {% if u == 'paper_list' or u == 'paper_detail' %}active{% endif %}" href="{% url 'paper_list' %}"><i class="bi bi-file-earmark-text"></i> {% trans "Papers" %}</a></li>
-        <li class="nav-item"><a class="nav-link {% if u == 'paper_board' %}active{% endif %}" href="{% url 'paper_board' %}"><i class="bi bi-kanban"></i> {% trans "Board" %}</a></li>
-        <li class="nav-item"><a class="nav-link {% if u == 'deadline_list' %}active{% endif %}" href="{% url 'deadline_list' %}"><i class="bi bi-alarm"></i> {% trans "Deadlines" %}</a></li>
-        <li class="nav-item"><a class="nav-link {% if 'group' in u %}active{% endif %}" href="{% url 'group_list' %}"><i class="bi bi-people"></i> {% trans "Groups" %}</a></li>
-        <li class="nav-item"><a class="nav-link {% if 'journal' in u %}active{% endif %}" href="{% url 'journal_list' %}"><i class="bi bi-building"></i> {% trans "Journals" %}</a></li>
-        <li class="nav-item"><a class="nav-link {% if u == 'reports' %}active{% endif %}" href="{% url 'reports' %}"><i class="bi bi-bar-chart"></i> {% trans "Reports" %}</a></li>
-      </ul>
-      {% endwith %}
-      <div class="d-flex align-items-center gap-2 nav-actions">
-        <a href="{% url 'paper_create' %}" class="btn btn-sm btn-light"><i class="bi bi-plus-lg"></i> {% trans "New paper" %}</a>
+{% with u=request.resolver_match.url_name %}
+<div class="app">
+  <!-- Sidebar (offcanvas on small screens) -->
+  <aside class="sidebar offcanvas-lg offcanvas-start" tabindex="-1" id="sidebar" aria-label="{% trans 'Main navigation' %}">
+    <div class="d-flex align-items-center justify-content-between">
+      <a class="sb-brand" href="{% url 'dashboard' %}">
+        <span class="sb-logo"><i class="bi bi-journal-bookmark-fill"></i></span>
+        <span>{{ SITE_NAME }}<small>{% trans "Publication tracker" %}</small></span>
+      </a>
+      <button type="button" class="btn-close btn-close-white d-lg-none me-3 ms-3" data-bs-dismiss="offcanvas" data-bs-target="#sidebar" aria-label="{% trans 'Close' %}"></button>
+    </div>
+    <div class="sb-cta"><a href="{% url 'paper_create' %}" class="btn btn-primary w-100"><i class="bi bi-plus-lg"></i> {% trans "New paper" %}</a></div>
+    <nav class="sb-scroll">
+      <div class="sb-section">{% trans "Workspace" %}</div>
+      <a class="sb-link {% if u == 'dashboard' %}active{% endif %}" href="{% url 'dashboard' %}"><i class="bi bi-grid-1x2"></i> {% trans "Dashboard" %}</a>
+      <a class="sb-link {% if u == 'paper_list' or u == 'paper_detail' or u == 'paper_edit' or u == 'paper_create' %}active{% endif %}" href="{% url 'paper_list' %}"><i class="bi bi-file-earmark-text"></i> {% trans "Papers" %}</a>
+      <a class="sb-link {% if u == 'paper_board' %}active{% endif %}" href="{% url 'paper_board' %}"><i class="bi bi-kanban"></i> {% trans "Board" %}</a>
+      <a class="sb-link {% if u == 'deadline_list' %}active{% endif %}" href="{% url 'deadline_list' %}"><i class="bi bi-alarm"></i> {% trans "Deadlines" %}
+        {% if nav_overdue %}<span class="sb-count danger">{{ nav_overdue }}</span>{% elif nav_open_deadlines %}<span class="sb-count">{{ nav_open_deadlines }}</span>{% endif %}</a>
+      <div class="sb-section">{% trans "Network" %}</div>
+      <a class="sb-link {% if 'group' in u or 'member' in u or 'invit' in u %}active{% endif %}" href="{% url 'group_list' %}"><i class="bi bi-people"></i> {% trans "Research groups" %}</a>
+      <a class="sb-link {% if 'journal' in u %}active{% endif %}" href="{% url 'journal_list' %}"><i class="bi bi-journals"></i> {% trans "Journals" %}</a>
+      <div class="sb-section">{% trans "Insights" %}</div>
+      <a class="sb-link {% if u == 'reports' %}active{% endif %}" href="{% url 'reports' %}"><i class="bi bi-bar-chart-line"></i> {% trans "Reports" %}</a>
+      <a class="sb-link" href="{% url 'export_csv' %}"><i class="bi bi-download"></i> {% trans "Export CSV" %}</a>
+      {% if user.is_staff %}<a class="sb-link" href="{% url 'admin:index' %}"><i class="bi bi-shield-lock"></i> {% trans "Administration" %}</a>{% endif %}
+    </nav>
+    <a href="{% url 'profile' %}" class="sb-user text-decoration-none">
+      <span class="avatar {{ user|avatar_class }}">{{ user|initials }}</span>
+      <span class="min-w-0"><span class="name d-block text-truncate">{{ user.display_name }}</span><span class="mail d-block text-truncate">{{ user.email }}</span></span>
+    </a>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <button class="icon-btn d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar" aria-label="{% trans 'Menu' %}"><i class="bi bi-list"></i></button>
+      <form class="search d-none d-md-block" action="{% url 'paper_list' %}" method="get" role="search">
+        <i class="bi bi-search"></i>
+        <input class="form-control" type="search" name="q" value="{{ request.GET.q }}" placeholder="{% trans 'Search papers, journals, manuscript IDs…' %}">
+      </form>
+      <div class="ms-auto d-flex align-items-center gap-2">
+        <a href="{% url 'paper_list' %}" class="icon-btn d-md-none" aria-label="{% trans 'Search' %}"><i class="bi bi-search"></i></a>
+        <a href="{% url 'deadline_list' %}?show=mine" class="icon-btn" title="{% trans 'My deadlines' %}">
+          <i class="bi bi-bell"></i>{% if nav_overdue %}<span class="dot"></span>{% endif %}</a>
+        <button class="icon-btn" type="button" id="theme-toggle" title="{% trans 'Toggle dark mode' %}"><i class="bi bi-moon-stars"></i></button>
         <form action="{% url 'set_language' %}" method="post" class="m-0">{% csrf_token %}
           <input type="hidden" name="next" value="{{ request.get_full_path }}">
           <input type="hidden" name="language" value="{% if LANG == 'ar' %}en{% else %}ar{% endif %}">
-          <button class="btn btn-sm btn-outline-light" type="submit">{% if LANG == 'ar' %}English{% else %}العربية{% endif %}</button>
+          <button class="btn btn-ghost lang-btn" type="submit"><i class="bi bi-translate"></i> <span class="d-none d-sm-inline">{% if LANG == 'ar' %}English{% else %}العربية{% endif %}</span></button>
         </form>
-        <button class="btn btn-sm btn-outline-light" type="button" id="theme-toggle" title="{% trans 'Toggle dark mode' %}"><i class="bi bi-circle-half"></i></button>
         <div class="dropdown">
-          <button class="btn btn-sm btn-outline-light dropdown-toggle" data-bs-toggle="dropdown"><i class="bi bi-person-circle"></i></button>
+          <button class="btn p-0 border-0 d-flex align-items-center gap-2" data-bs-toggle="dropdown" aria-label="{% trans 'Account' %}">
+            <span class="avatar {{ user|avatar_class }}">{{ user|initials }}</span>
+            <i class="bi bi-chevron-down small text-muted-rt d-none d-sm-inline"></i>
+          </button>
           <ul class="dropdown-menu dropdown-menu-end">
-            <li><span class="dropdown-item-text small text-muted-rt">{{ user.email }}</span></li>
-            <li><a class="dropdown-item" href="{% url 'profile' %}">{% trans "My profile" %}</a></li>
-            <li><a class="dropdown-item" href="{% url 'password_change' %}">{% trans "Change password" %}</a></li>
-            {% if user.is_staff %}<li><a class="dropdown-item" href="{% url 'admin:index' %}">{% trans "Administration" %}</a></li>{% endif %}
+            <li class="px-2 py-2"><div class="fw-semibold">{{ user.display_name }}</div><div class="small text-muted-rt">{{ user.email }}</div></li>
             <li><hr class="dropdown-divider"></li>
-            <li><form method="post" action="{% url 'logout' %}">{% csrf_token %}<button class="dropdown-item">{% trans "Log out" %}</button></form></li>
+            <li><a class="dropdown-item" href="{% url 'profile' %}"><i class="bi bi-person"></i> {% trans "My profile" %}</a></li>
+            <li><a class="dropdown-item" href="{% url 'profile' %}#calendar"><i class="bi bi-calendar-plus"></i> {% trans "Calendar sync" %}</a></li>
+            <li><a class="dropdown-item" href="{% url 'password_change' %}"><i class="bi bi-key"></i> {% trans "Change password" %}</a></li>
+            {% if user.is_staff %}<li><a class="dropdown-item" href="{% url 'admin:index' %}"><i class="bi bi-shield-lock"></i> {% trans "Administration" %}</a></li>{% endif %}
+            <li><hr class="dropdown-divider"></li>
+            <li><form method="post" action="{% url 'logout' %}">{% csrf_token %}<button class="dropdown-item text-danger"><i class="bi bi-box-arrow-right"></i> {% trans "Log out" %}</button></form></li>
           </ul>
         </div>
       </div>
-    </div>
+    </header>
+
+    <main class="content">
+      {% block content %}{% endblock %}
+    </main>
+    <footer class="app-footer d-flex justify-content-between flex-wrap gap-2 no-print">
+      <span>{{ SITE_NAME }} · {% trans "Open-source research publication tracker" %}</span>
+      <span><i class="bi bi-shield-check"></i> {% trans "Your research data is private to your groups" %}</span>
+    </footer>
   </div>
-</nav>
+</div>
+{% endwith %}
+{% else %}
+  <main class="public-wrap">{% block anon_content %}{% endblock %}</main>
 {% endif %}
-<main class="{% block main_class %}container-xl pb-5{% endblock %}">
+{% endblock shell %}
+
+{% if messages %}
+<div class="toast-stack no-print">
   {% for message in messages %}
-  <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags|default:'info' }}{% endif %} alert-dismissible fade show" role="alert">
-    {{ message }}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  <div class="alert alert-dismissible fade show" role="alert">
+    {% if message.tags == 'error' %}<i class="bi bi-x-circle-fill text-danger fs-5"></i>{% elif message.tags == 'warning' %}<i class="bi bi-exclamation-triangle-fill text-warning fs-5"></i>{% elif message.tags == 'success' %}<i class="bi bi-check-circle-fill text-success fs-5"></i>{% else %}<i class="bi bi-info-circle-fill text-primary fs-5"></i>{% endif %}
+    <div class="flex-grow-1 small pe-4">{{ message }}</div>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
   </div>
   {% endfor %}
-  {% block content %}{% endblock %}
-</main>
-{% block footer %}<footer class="text-center small text-muted-rt pb-4 no-print">
-  {{ SITE_NAME }} · {% trans "Open-source research publication tracker" %}
-</footer>{% endblock %}
+</div>
+{% endif %}
+
 <script src="{% static 'vendor/bootstrap/bootstrap.bundle.min.js' %}"></script>
 <script>
-  document.getElementById("theme-toggle")?.addEventListener("click", () => {
-    const el = document.documentElement, t = el.getAttribute("data-bs-theme") === "dark" ? "light" : "dark";
-    el.setAttribute("data-bs-theme", t); try { localStorage.setItem("rt-theme", t); } catch (e) {}
-  });
+  (function () {
+    const btn = document.getElementById("theme-toggle");
+    const icon = () => { if (btn) btn.querySelector("i").className = document.documentElement.getAttribute("data-bs-theme") === "dark" ? "bi bi-sun" : "bi bi-moon-stars"; };
+    icon();
+    btn?.addEventListener("click", () => {
+      const el = document.documentElement, t = el.getAttribute("data-bs-theme") === "dark" ? "light" : "dark";
+      el.setAttribute("data-bs-theme", t); try { localStorage.setItem("rt-theme", t); } catch (e) {} icon();
+    });
+    document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => new bootstrap.Tooltip(el));
+    // Auto-dismiss toasts
+    setTimeout(() => document.querySelectorAll(".toast-stack .alert").forEach(a => bootstrap.Alert.getOrCreateInstance(a).close()), 7000);
+    // Copy buttons
+    document.addEventListener("click", e => {
+      const b = e.target.closest("[data-copy]"); if (!b) return;
+      const inp = document.querySelector(b.dataset.copy) || b.previousElementSibling;
+      navigator.clipboard?.writeText(inp.value);
+      const i = b.querySelector("i"); if (i) { const old = i.className; i.className = "bi bi-check2"; setTimeout(() => i.className = old, 1500); }
+    });
+    // Remember active tab via URL hash
+    if (location.hash) {
+      const key = location.hash.split("-")[0];
+      const tab = [...document.querySelectorAll('[data-bs-toggle="tab"]')].find(t => t.dataset.bsTarget.startsWith(key));
+      if (tab) { bootstrap.Tab.getOrCreateInstance(tab).show(); setTimeout(() => document.querySelector(location.hash)?.scrollIntoView({block: "start"}), 60); }
+    }
+    document.querySelectorAll('[data-bs-toggle="tab"]').forEach(t => t.addEventListener("shown.bs.tab", ev => history.replaceState(null, "", ev.target.dataset.bsTarget)));
+  })();
 </script>
 {% block scripts %}{% endblock %}
 </body>

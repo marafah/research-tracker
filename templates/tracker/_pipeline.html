@@ -1,9 +1,11 @@
 {% load i18n tracker_tags %}
+{% if counts %}
+<div class="stackbar mb-3">{% for c in counts %}<span style="width:{{ c.pct }}%;background:{{ c.code|status_hex }}" title="{{ c.label }}: {{ c.count }}"></span>{% endfor %}</div>
 {% for c in counts %}
-<div class="d-flex align-items-center gap-2 mb-2 small">
-  <a href="{% url 'paper_list' %}?status={{ c.code }}" class="text-decoration-none" style="min-width:9.5rem">{{ c.label }}</a>
-  <div class="progress flex-grow-1" style="height:.55rem"><div class="progress-bar bg-{{ c.code|status_color }}" style="width:{{ c.pct }}%"></div></div>
-  <span class="fw-semibold" style="min-width:1.5rem;text-align:end">{{ c.count }}</span>
+<div class="pipe-row">
+  <a href="{% url 'paper_list' %}?status={{ c.code }}" class="d-flex align-items-center gap-2 text-truncate"><span style="width:9px;height:9px;border-radius:3px;background:{{ c.code|status_hex }};flex:0 0 auto"></span>{{ c.label }}</a>
+  <div class="progress"><div class="progress-bar" style="width:{{ c.pct }}%;background:{{ c.code|status_hex }}"></div></div>
+  <span class="fw-bold text-end">{{ c.count }}</span>
 </div>
-{% empty %}<div class="text-muted-rt small">{% trans "No papers yet." %}</div>
 {% endfor %}
+{% else %}<div class="empty py-3"><div class="ic"><i class="bi bi-diagram-3"></i></div><h6>{% trans "No papers yet." %}</h6></div>{% endif %}

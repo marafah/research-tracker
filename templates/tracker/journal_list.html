@@ -1,21 +1,46 @@
-{% extends "base.html" %}{% load i18n %}
+{% extends "base.html" %}{% load i18n tracker_tags %}
 {% block title %}{% trans "Journals & venues" %}{% endblock %}
 {% block content %}
-<div class="page-header">
-  <div><h3 class="mb-0">{% trans "Journals & venues" %}</h3><div class="text-muted-rt small">{% trans "Shared catalogue with your own statistics per venue" %}</div></div>
-  <a href="{% url 'journal_create' %}" class="btn btn-primary btn-sm"><i class="bi bi-plus-lg"></i> {% trans "Add venue" %}</a>
+<div class="page-head">
+  <div><div class="eyebrow">{% trans "Network" %}</div><h1>{% trans "Journals & venues" %}</h1><div class="sub">{% trans "Shared catalogue with your own statistics per venue" %}</div></div>
+  <a href="{% url 'journal_create' %}" class="btn btn-primary"><i class="bi bi-plus-lg"></i> {% trans "Add venue" %}</a>
 </div>
-<form class="mb-3" method="get"><div class="input-group"><span class="input-group-text"><i class="bi bi-search"></i></span>
-  <input name="q" value="{{ q }}" class="form-control" placeholder="{% trans 'Search by name, publisher or ISSN' %}"><button class="btn btn-primary">{% trans "Search" %}</button></div></form>
-<div class="card"><div class="table-responsive"><table class="table table-hover align-middle mb-0">
+<div class="ws-bar">
+  <nav class="ws-views">
+    <a href="?view=cards&q={{ q|urlencode }}" class="{% if view != 'table' %}on{% endif %}"><i class="bi bi-grid-3x2-gap"></i> {% trans "Cards" %}</a>
+    <a href="?view=table&q={{ q|urlencode }}" class="{% if view == 'table' %}on{% endif %}"><i class="bi bi-list-ul"></i> {% trans "Table" %}</a>
+  </nav>
+  <form class="ws-search" method="get"><input type="hidden" name="view" value="{{ view }}"><i class="bi bi-search"></i><input name="q" value="{{ q }}" class="form-control" placeholder="{% trans 'Search by name, publisher or ISSN' %}"></form>
+</div>
+<div class="ws-filters">
+  {% for k, label in quartile_chips %}<a href="?view={{ view }}&q={{ q|urlencode }}&quartile={{ k }}" class="ws-chip {% if quartile == k %}on{% endif %}" style="--c:#2f5bea">{{ label }}</a>{% endfor %}
+</div>
+{% if view == "table" %}
+<div class="card table-card"><div class="table-responsive"><table class="table table-hover align-middle">
   <thead><tr><th>{% trans "Name" %}</th><th>{% trans "Publisher" %}</th><th>{% trans "Type" %}</th><th>{% trans "Quartile" %}</th><th>{% trans "Indexing" %}</th><th>{% trans "Submissions" %}</th></tr></thead>
   <tbody>{% for j in journals %}<tr>
-    <td><a href="{{ j.get_absolute_url }}" class="fw-semibold text-decoration-none">{{ j.name }}</a>
-      {% if j.flagged %}<span class="badge text-bg-danger">{% trans "Questionable" %}</span>{% endif %}
-      {% if j.open_access %}<span class="badge text-bg-light">OA</span>{% endif %}<div class="small text-muted-rt">{{ j.issn }}</div></td>
+    <td><a href="{{ j.get_absolute_url }}" class="row-title">{{ j.name }}</a> {% if j.flagged %}<span class="badge bg-danger-subtle text-danger-emphasis">{% trans "Questionable" %}</span>{% endif %}{% if j.open_access %} <span class="badge bg-success-subtle text-success-emphasis">OA</span>{% endif %}<div class="small text-muted-rt">{{ j.issn }}</div></td>
     <td class="small">{{ j.publisher|default:"—" }}</td><td class="small">{{ j.get_kind_display }}</td>
     <td>{% if j.quartile %}<span class="badge quartile-{{ j.quartile|lower }}">{{ j.quartile }}</span>{% else %}—{% endif %}</td>
-    <td class="small">{{ j.indexing|default:"—" }}</td><td>{{ j.n }}</td></tr>
-  {% empty %}<tr><td colspan="6" class="text-center text-muted-rt py-5">{% trans "No venues yet." %}</td></tr>{% endfor %}</tbody>
+    <td class="small">{{ j.indexing|default:"—" }}</td><td><span class="count-pill">{{ j.n }}</span></td></tr>
+  {% empty %}<tr><td colspan="6"><div class="empty"><div class="ic"><i class="bi bi-journals"></i></div><h6>{% trans "No venues yet." %}</h6></div></td></tr>{% endfor %}</tbody>
 </table></div></div>
+{% else %}
+<div class="rec-grid">
+{% for j in journals %}
+  <a href="{{ j.get_absolute_url }}" class="card card-link text-decoration-none p-3 d-flex flex-column gap-2">
+    <div class="d-flex justify-content-between align-items-start gap-2">
+      <span class="rec-ico" style="--t:{% if j.kind == 'conference' %}#7c3aed{% else %}#2f5bea{% endif %}"><i class="bi {% if j.kind == 'conference' %}bi-easel{% elif j.kind == 'funder' %}bi-cash-coin{% else %}bi-journal-text{% endif %}"></i></span>
+      <div class="d-flex gap-1 flex-wrap justify-content-end">{% if j.quartile %}<span class="badge quartile-{{ j.quartile|lower }}">{{ j.quartile }}</span>{% endif %}{% if j.open_access %}<span class="badge bg-success-subtle text-success-emphasis">OA</span>{% endif %}{% if j.flagged %}<span class="badge bg-danger-subtle text-danger-emphasis"><i class="bi bi-exclamation-triangle"></i></span>{% endif %}</div>
+    </div>
+    <div class="fw-bold" style="color:var(--rt-text)">{{ j.name }}</div>
+    <div class="small text-muted-rt">{{ j.publisher|default:"—" }} · {{ j.get_kind_display }}</div>
+    <div class="d-flex justify-content-between align-items-center mt-auto pt-2" style="border-top:1px dashed var(--rt-border)">
+      <span class="small text-muted-rt">{{ j.indexing|default:"—" }}</span>
+      <span class="chip"><i class="bi bi-send"></i> {{ j.n }}</span>
+    </div>
+  </a>
+{% empty %}<div class="card"><div class="empty"><div class="ic"><i class="bi bi-journals"></i></div><h6>{% trans "No venues yet." %}</h6></div></div>{% endfor %}
+</div>
+{% endif %}
 {% endblock %}

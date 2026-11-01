@@ -1,0 +1,9 @@
+{% load i18n tracker_tags %}
+{% if papers %}
+  {% for g in groups %}
+  <section class="ws-group">
+    {% if g.label %}<h3 class="ws-ghead" style="--c: {% if g.status %}{{ g.status|status_hex }}{% elif g.type %}{{ type_colors|get_item:g.type }}{% else %}var(--bs-primary){% endif %}"><span class="dotc"></span>{{ g.label }} <span class="count-pill">{{ g.papers|length }}</span></h3>{% endif %}
+    <div class="rec-grid">{% for p in g.papers %}{% include "tracker/views/_card.html" %}{% endfor %}</div>
+  </section>
+  {% endfor %}
+{% else %}{% include "tracker/views/_empty.html" %}{% endif %}
