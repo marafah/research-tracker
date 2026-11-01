@@ -3,7 +3,7 @@
 <p>{% blocktrans with name=user.display_name %}Dear {{ name }},{% endblocktrans %}</p>
 <p>{% trans "A new deadline has been assigned to you:" %}</p>
 <p style="font-size:17px"><strong>{{ deadline.title }}</strong><br><span style="color:#6b7280">{{ paper.title }}</span></p>
-<p>{% trans "Due" %}: <strong>{{ deadline.due_at|date:"l j F Y, H:i" }}</strong></p>
+<p>{% trans "Due" %}: <strong>{{ deadline.due_at|date:"d/m/Y · H:i" }}</strong></p>
 <p style="color:#6b7280;font-size:13px">{% blocktrans with d=deadline.reminder_offsets|join:", " %}You will be reminded {{ d }} days before.{% endblocktrans %}</p>
 {% url 'paper_detail' paper.pk as purl %}{% with href=SITE_URL|add:purl label=_("Open the paper") %}{% include "emails/_button.html" %}{% endwith %}
 {% endblock %}

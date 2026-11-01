@@ -4,5 +4,5 @@
 <p>{% blocktrans with by=inv.invited_by.display_name g=inv.group.name %}{{ by }} invited you to join the research group <strong>{{ g }}</strong>.{% endblocktrans %}</p>
 {% if inv.message %}<p style="border-inline-start:3px solid #0ea5a4;padding-inline-start:12px;color:#374151">{{ inv.message|linebreaksbr }}</p>{% endif %}
 {% with href=url label=_("Accept invitation") %}{% include "emails/_button.html" %}{% endwith %}
-<p style="color:#6b7280;font-size:13px">{% blocktrans with d=inv.expires_at|date:"j F Y" %}The invitation expires on {{ d }}.{% endblocktrans %}</p>
+<p style="color:#6b7280;font-size:13px">{% blocktrans with d=inv.expires_at|date:"d/m/Y" %}The invitation expires on {{ d }}.{% endblocktrans %}</p>
 {% endblock %}

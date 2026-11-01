@@ -4,7 +4,7 @@
 <p>{% trans "Here is your research summary for the coming two weeks." %}</p>
 {% if deadlines %}<h3 style="font-size:16px;margin:18px 0 6px;color:#16324f">{% trans "Deadlines" %}</h3>
 <table cellpadding="6" style="border-collapse:collapse;width:100%;font-size:14px">{% for d in deadlines %}
-<tr style="border-bottom:1px solid #eef2f7"><td style="white-space:nowrap;{% if d.is_overdue %}color:#b42318;font-weight:bold{% endif %}">{{ d.due_at|date:"D j M" }}</td><td><strong>{{ d.title }}</strong><br><span style="color:#6b7280">{{ d.paper.label }}</span></td></tr>{% endfor %}</table>{% endif %}
+<tr style="border-bottom:1px solid #eef2f7"><td style="white-space:nowrap;{% if d.is_overdue %}color:#b42318;font-weight:bold{% endif %}">{{ d.due_at|date:"D d/m" }}</td><td><strong>{{ d.title }}</strong><br><span style="color:#6b7280">{{ d.paper.label }}</span></td></tr>{% endfor %}</table>{% endif %}
 {% if comments %}<h3 style="font-size:16px;margin:18px 0 6px;color:#16324f">{% trans "Reviewer comments assigned to you" %}</h3>
 <ul style="padding-inline-start:18px">{% for c in comments %}<li>{{ c.submission.paper.label }} — {{ c.reviewer }} #{{ c.number }}: {{ c.comment|truncatechars:120 }}</li>{% endfor %}</ul>{% endif %}
 {% if action_papers %}<h3 style="font-size:16px;margin:18px 0 6px;color:#16324f">{% trans "Papers needing action" %}</h3>

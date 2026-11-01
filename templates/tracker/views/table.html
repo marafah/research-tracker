@@ -6,13 +6,13 @@
   <tbody>
   {% for p in papers %}{% with s=p.current_submission nd=p.next_deadline %}
     <tr>
-      <td style="min-width:280px;max-width:420px"><div class="d-flex gap-3 align-items-center">
+      <td class="t-stripe" style="--c:{{ p.status|status_hex }};min-width:280px;max-width:420px"><div class="d-flex gap-3 align-items-center">
         <span class="rec-ico" style="--t: {{ type_colors|get_item:p.type }}"><i class="bi {{ type_icons|get_item:p.type }}"></i></span>
         <div class="min-w-0"><a href="{{ p.get_absolute_url }}" class="row-title d-block text-truncate">{{ p.label }}</a>
           <div class="small text-muted-rt text-truncate">{{ p.get_type_display }} · {{ p.group.name }}{% if p.priority >= 3 %} · <span class="text-danger"><i class="bi bi-flag-fill"></i></span>{% endif %}</div></div></div></td>
       <td>{% status_badge p %}</td>
-      <td class="small" style="max-width:230px">{% if s %}<div class="fw-medium text-truncate">{{ s.journal.name }}</div><div class="text-muted-rt text-truncate">{{ s.journal.publisher }}{% if s.manuscript_id %} · {{ s.manuscript_id }}{% endif %}</div>{% else %}<span class="text-muted-rt">—</span>{% endif %}</td>
-      <td class="small text-nowrap">{% if s.submitted_at %}{{ s.submitted_at|date:"j M Y" }}<div class="text-muted-rt">{% blocktrans with n=s.days_in_review %}{{ n }} days{% endblocktrans %}</div>{% else %}<span class="text-muted-rt">—</span>{% endif %}</td>
+      <td class="small" style="max-width:230px">{% if s %}<div class="fw-semibold text-truncate"><i class="bi bi-journal-bookmark-fill" style="color:#4f46e5"></i> {{ s.journal.name }}{% if s.journal.quartile %} <span class="badge quartile-{{ s.journal.quartile|lower }}">{{ s.journal.quartile }}</span>{% endif %}</div><div class="text-muted-rt text-truncate">{{ s.journal.publisher }}{% if s.manuscript_id %} · {{ s.manuscript_id }}{% endif %}</div>{% else %}<span class="text-muted-rt">—</span>{% endif %}</td>
+      <td class="small text-nowrap">{% if s.submitted_at %}<span class="chip c num" style="--c:#2563eb"><i class="bi bi-send-fill"></i>{{ s.submitted_at|date:"d/m/Y" }}</span><div class="text-muted-rt">{% blocktrans with n=s.days_in_review %}{{ n }} days{% endblocktrans %}</div>{% else %}<span class="text-muted-rt">—</span>{% endif %}</td>
       <td class="small">{% if nd %}{% due_badge nd %}<div class="text-muted-rt text-truncate mt-1" style="max-width:190px">{{ nd.title }}</div>{% else %}<span class="text-muted-rt">—</span>{% endif %}</td>
       <td><div class="avatar-stack">{% for a in p.authors.all|slice:":4" %}<span class="avatar avatar-sm {{ a.user|default:a.name|avatar_class }}" title="{{ a.name }}">{{ a.name|initials }}</span>{% endfor %}</div></td>
     </tr>

@@ -33,18 +33,18 @@
     <div class="sb-cta"><a href="{% url 'paper_create' %}" class="btn btn-primary w-100"><i class="bi bi-plus-lg"></i> {% trans "New paper" %}</a></div>
     <nav class="sb-scroll">
       <div class="sb-section">{% trans "Workspace" %}</div>
-      <a class="sb-link {% if u == 'dashboard' %}active{% endif %}" href="{% url 'dashboard' %}"><i class="bi bi-grid-1x2"></i> {% trans "Dashboard" %}</a>
-      <a class="sb-link {% if u == 'paper_list' or u == 'paper_detail' or u == 'paper_edit' or u == 'paper_create' %}active{% endif %}" href="{% url 'paper_list' %}"><i class="bi bi-file-earmark-text"></i> {% trans "Papers" %}</a>
-      <a class="sb-link {% if u == 'paper_board' %}active{% endif %}" href="{% url 'paper_board' %}"><i class="bi bi-kanban"></i> {% trans "Board" %}</a>
-      <a class="sb-link {% if u == 'deadline_list' %}active{% endif %}" href="{% url 'deadline_list' %}"><i class="bi bi-alarm"></i> {% trans "Deadlines" %}
+      <a class="sb-link {% if u == 'dashboard' %}active{% endif %}" href="{% url 'dashboard' %}" style="--c:#60a5fa"><span class="sb-ic"><i class="bi bi-grid-1x2-fill"></i></span> {% trans "Dashboard" %}</a>
+      <a class="sb-link {% if u == 'paper_list' or u == 'paper_detail' or u == 'paper_edit' or u == 'paper_create' %}active{% endif %}" href="{% url 'paper_list' %}" style="--c:#a78bfa"><span class="sb-ic"><i class="bi bi-file-earmark-text-fill"></i></span> {% trans "Papers" %}</a>
+      <a class="sb-link {% if u == 'paper_board' %}active{% endif %}" href="{% url 'paper_board' %}" style="--c:#34d399"><span class="sb-ic"><i class="bi bi-kanban-fill"></i></span> {% trans "Board" %}</a>
+      <a class="sb-link {% if u == 'deadline_list' %}active{% endif %}" href="{% url 'deadline_list' %}" style="--c:#f472b6"><span class="sb-ic"><i class="bi bi-alarm-fill"></i></span> {% trans "Deadlines" %}
         {% if nav_overdue %}<span class="sb-count danger">{{ nav_overdue }}</span>{% elif nav_open_deadlines %}<span class="sb-count">{{ nav_open_deadlines }}</span>{% endif %}</a>
       <div class="sb-section">{% trans "Network" %}</div>
-      <a class="sb-link {% if 'group' in u or 'member' in u or 'invit' in u %}active{% endif %}" href="{% url 'group_list' %}"><i class="bi bi-people"></i> {% trans "Research groups" %}</a>
-      <a class="sb-link {% if 'journal' in u %}active{% endif %}" href="{% url 'journal_list' %}"><i class="bi bi-journals"></i> {% trans "Journals" %}</a>
+      <a class="sb-link {% if 'group' in u or 'member' in u or 'invit' in u %}active{% endif %}" href="{% url 'group_list' %}" style="--c:#fbbf24"><span class="sb-ic"><i class="bi bi-people-fill"></i></span> {% trans "Research groups" %}</a>
+      <a class="sb-link {% if 'journal' in u %}active{% endif %}" href="{% url 'journal_list' %}" style="--c:#22d3ee"><span class="sb-ic"><i class="bi bi-journals"></i></span> {% trans "Journals" %}</a>
       <div class="sb-section">{% trans "Insights" %}</div>
-      <a class="sb-link {% if u == 'reports' %}active{% endif %}" href="{% url 'reports' %}"><i class="bi bi-bar-chart-line"></i> {% trans "Reports" %}</a>
-      <a class="sb-link" href="{% url 'export_csv' %}"><i class="bi bi-download"></i> {% trans "Export CSV" %}</a>
-      {% if user.is_staff %}<a class="sb-link" href="{% url 'admin:index' %}"><i class="bi bi-shield-lock"></i> {% trans "Administration" %}</a>{% endif %}
+      <a class="sb-link {% if u == 'reports' %}active{% endif %}" href="{% url 'reports' %}" style="--c:#fb923c"><span class="sb-ic"><i class="bi bi-bar-chart-line-fill"></i></span> {% trans "Reports" %}</a>
+      <a class="sb-link" href="{% url 'export_csv' %}" style="--c:#4ade80"><span class="sb-ic"><i class="bi bi-cloud-arrow-down-fill"></i></span> {% trans "Export CSV" %}</a>
+      {% if user.is_staff %}<a class="sb-link" href="{% url 'admin:index' %}" style="--c:#f87171"><span class="sb-ic"><i class="bi bi-shield-lock-fill"></i></span> {% trans "Administration" %}</a>{% endif %}
     </nav>
     <a href="{% url 'profile' %}" class="sb-user text-decoration-none">
       <span class="avatar {{ user|avatar_class }}">{{ user|initials }}</span>
@@ -61,9 +61,9 @@
       </form>
       <div class="ms-auto d-flex align-items-center gap-2">
         <a href="{% url 'paper_list' %}" class="icon-btn d-md-none" aria-label="{% trans 'Search' %}"><i class="bi bi-search"></i></a>
-        <a href="{% url 'deadline_list' %}?show=mine" class="icon-btn" title="{% trans 'My deadlines' %}">
-          <i class="bi bi-bell"></i>{% if nav_overdue %}<span class="dot"></span>{% endif %}</a>
-        <button class="icon-btn" type="button" id="theme-toggle" title="{% trans 'Toggle dark mode' %}"><i class="bi bi-moon-stars"></i></button>
+        <a href="{% url 'deadline_list' %}?show=mine" class="icon-btn" style="--c:#db2777" title="{% trans 'My deadlines' %}">
+          <i class="bi bi-bell-fill"></i>{% if nav_overdue %}<span class="dot"></span>{% endif %}</a>
+        <button class="icon-btn" style="--c:#7c3aed" type="button" id="theme-toggle" title="{% trans 'Toggle dark mode' %}"><i class="bi bi-moon-stars"></i></button>
         <form action="{% url 'set_language' %}" method="post" class="m-0">{% csrf_token %}
           <input type="hidden" name="next" value="{{ request.get_full_path }}">
           <input type="hidden" name="language" value="{% if LANG == 'ar' %}en{% else %}ar{% endif %}">

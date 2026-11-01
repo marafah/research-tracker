@@ -2,26 +2,26 @@
 {% block title %}{% trans "Reports" %}{% endblock %}
 {% block content %}
 <div class="page-head">
-  <div><div class="eyebrow">{% trans "Insights" %}</div><h1>{% trans "Reports" %}</h1><div class="sub">{% trans "Ready for annual reports and promotion files" %}</div></div>
-  <div class="d-flex gap-2 no-print"><a href="{% url 'export_csv' %}" class="btn btn-ghost"><i class="bi bi-download"></i> {% trans "Export CSV" %}</a>
+  <div class="ph-title"><span class="ico lg solid" style="--c:#ea580c"><i class="bi bi-bar-chart-line-fill"></i></span><div><div class="eyebrow">{% trans "Insights" %}</div><h1>{% trans "Reports" %}</h1><div class="sub">{% trans "Ready for annual reports and promotion files" %}</div></div></div>
+  <div class="d-flex gap-2 no-print"><a href="{% url 'export_csv' %}" class="btn btn-ghost"><i class="bi bi-cloud-arrow-down-fill" style="color:#16a34a"></i> {% trans "Export CSV" %}</a>
     <button onclick="window.print()" class="btn btn-primary"><i class="bi bi-printer"></i> {% trans "Print / PDF" %}</button></div>
 </div>
 <div class="row g-3 mb-4">
-  <div class="col-6 col-xl-3"><div class="card kpi"><span class="ic tone-primary"><i class="bi bi-send"></i></span><div><div class="label">{% trans "Submissions" %}</div><div class="value">{{ total_submissions }}</div></div></div></div>
-  <div class="col-6 col-xl-3"><div class="card kpi"><span class="ic tone-success"><i class="bi bi-graph-up-arrow"></i></span><div><div class="label">{% trans "Acceptance rate" %}</div><div class="value">{{ accept_rate }}%</div></div></div></div>
-  <div class="col-6 col-xl-3"><div class="card kpi"><span class="ic tone-warning"><i class="bi bi-stopwatch"></i></span><div><div class="label">{% trans "Avg. first decision" %}</div><div class="value">{{ avg_decision_days|default_if_none:"—" }}<small class="fs-6 text-muted-rt"> {% trans "days" %}</small></div></div></div></div>
-  <div class="col-6 col-xl-3"><div class="card kpi"><span class="ic tone-violet"><i class="bi bi-award"></i></span><div><div class="label">{% trans "Accepted / published" %}</div><div class="value">{{ published|length }}</div></div></div></div>
+  <div class="col-6 col-xl-3"><div class="stat" style="--c:#2563eb"><div class="s-top"><span class="s-ic"><i class="bi bi-send-fill"></i></span></div><div class="s-value">{{ total_submissions }}</div><div class="s-label">{% trans "Submissions" %}</div></div></div>
+  <div class="col-6 col-xl-3"><div class="stat" style="--c:#16a34a"><div class="s-top"><span class="s-ic"><i class="bi bi-graph-up-arrow"></i></span></div><div class="s-value">{{ accept_rate }}%</div><div class="s-label">{% trans "Acceptance rate" %}</div><div class="s-bar"><span style="width:{{ accept_rate }}%"></span></div></div></div>
+  <div class="col-6 col-xl-3"><div class="stat" style="--c:#ea580c"><div class="s-top"><span class="s-ic"><i class="bi bi-stopwatch-fill"></i></span></div><div class="s-value">{{ avg_decision_days|default_if_none:"—" }} <small class="fs-6">{% trans "days" %}</small></div><div class="s-label">{% trans "Avg. first decision" %}</div></div></div>
+  <div class="col-6 col-xl-3"><div class="stat" style="--c:#7c3aed"><div class="s-top"><span class="s-ic"><i class="bi bi-award-fill"></i></span></div><div class="s-value">{{ published|length }}</div><div class="s-label">{% trans "Accepted / published" %}</div></div></div>
 </div>
 <div class="row g-4 mb-4">
   <div class="col-lg-7">
     <div class="card h-100"><div class="card-header"><h2 class="card-title-rt"><span class="ic tone-primary"><i class="bi bi-bar-chart"></i></span>{% trans "Submissions per year" %}</h2>
-      <div class="tl-legend"><span><i style="background:#2f5bea"></i>{% trans "Submitted" %}</span><span><i style="background:#22a05e"></i>{% trans "Accepted" %}</span><span><i style="background:#e5484d"></i>{% trans "Rejected" %}</span></div></div>
+      <div class="tl-legend"><span><i style="background:#2563eb"></i>{% trans "Submitted" %}</span><span><i style="background:#16a34a"></i>{% trans "Accepted" %}</span><span><i style="background:#dc2626"></i>{% trans "Rejected" %}</span></div></div>
       <div class="card-body">
         {% if per_year %}<div class="bars">{% for r in per_year %}
           <div class="bar-col"><div class="bar-stack">
-            <span style="height:{{ r.h_sub }}%;background:#2f5bea" title="{% trans 'Submitted' %}: {{ r.submitted }}"><b>{{ r.submitted }}</b></span>
-            <span style="height:{{ r.h_acc }}%;background:#22a05e" title="{% trans 'Accepted' %}: {{ r.accepted }}"></span>
-            <span style="height:{{ r.h_rej }}%;background:#e5484d" title="{% trans 'Rejected' %}: {{ r.rejected }}"></span>
+            <span style="height:{{ r.h_sub }}%;background:#2563eb" title="{% trans 'Submitted' %}: {{ r.submitted }}"><b>{{ r.submitted }}</b></span>
+            <span style="height:{{ r.h_acc }}%;background:#16a34a" title="{% trans 'Accepted' %}: {{ r.accepted }}"></span>
+            <span style="height:{{ r.h_rej }}%;background:#dc2626" title="{% trans 'Rejected' %}: {{ r.rejected }}"></span>
           </div><div class="bar-label">{{ r.year }}</div></div>{% endfor %}</div>
         {% else %}<div class="empty"><div class="ic"><i class="bi bi-bar-chart"></i></div><div class="small">{% trans "No submissions yet." %}</div></div>{% endif %}
       </div></div>
@@ -30,14 +30,14 @@
     <div class="card h-100"><div class="card-header"><h2 class="card-title-rt"><span class="ic tone-success"><i class="bi bi-pie-chart"></i></span>{% trans "Acceptance" %}</h2></div>
       <div class="card-body d-flex align-items-center gap-4 flex-wrap">
         <div class="donut" style="--p: {{ accept_rate }}"><div><b>{{ accept_rate }}%</b><span>{% trans "accepted" %}</span></div></div>
-        <div class="flex-grow-1">{% include "tracker/_pipeline.html" %}</div>
+        <div class="legend-list" style="min-width:180px">{% for c in counts %}<a href="{% url 'paper_list' %}?status={{ c.code }}"><i style="background:{{ c.code|status_hex }}"></i><span class="text-truncate">{{ c.label }}</span><b>{{ c.count }}</b></a>{% endfor %}</div>
       </div></div>
   </div>
 </div>
 <div class="row g-4">
   <div class="col-lg-8">
     <div class="card"><div class="card-header"><h2 class="card-title-rt"><span class="ic tone-violet"><i class="bi bi-award"></i></span>{% trans "Accepted & published works" %}</h2>
-      <form method="get" class="no-print m-0"><select name="year" class="form-select form-select-sm" onchange="this.form.submit()">
+      <form method="get" class="no-print m-0"><select name="year" class="form-select form-select-sm" style="min-width:8.5rem" onchange="this.form.submit()">
         <option value="">{% trans "All years" %}</option>{% for y in years %}<option value="{{ y }}" {% if year == y|stringformat:"s" %}selected{% endif %}>{{ y }}</option>{% endfor %}</select></form></div>
       {% for p in published %}<div class="list-row align-items-start"><span class="count-pill mt-1">{{ forloop.counter }}</span><div class="grow small" dir="ltr" style="text-align:start">{{ p.citation }}</div>{% status_badge p %}</div>
       {% empty %}<div class="empty"><div class="ic"><i class="bi bi-award"></i></div><div class="small">{% trans "Nothing for this period." %}</div></div>{% endfor %}

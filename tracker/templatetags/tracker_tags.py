@@ -17,9 +17,23 @@ STATUS_COLORS = {
     "open": "danger", "in_progress": "warning", "done": "success", "rebutted": "info",
 }
 
-# Hex colours used for board column accents / pipeline bars.
-STATUS_HEX = {"secondary": "#94a3b8", "info": "#10b3a3", "primary": "#2f5bea", "warning": "#f59e0b",
-              "success": "#22a05e", "danger": "#e5484d", "dark": "#475569"}
+# A distinct, flat colour for every status so pipelines, badges and boards read at a glance.
+STATUS_HEX = {
+    "idea": "#64748b", "proposal": "#0891b2", "drafting": "#0d9488", "internal_review": "#0284c7",
+    "ready": "#4f46e5", "submitted": "#2563eb", "under_review": "#7c3aed", "major_revision": "#ea580c",
+    "minor_revision": "#d97706", "resubmitted": "#6366f1", "accepted": "#16a34a", "proofs": "#65a30d",
+    "published": "#059669", "rejected": "#dc2626", "withdrawn": "#475569", "on_hold": "#a16207",
+    "draft": "#64748b", "with_editor": "#2563eb", "major": "#ea580c", "minor": "#d97706",
+    "revision_submitted": "#6366f1", "desk_rejected": "#dc2626", "transfer": "#be123c",
+    "open": "#dc2626", "in_progress": "#d97706", "done": "#16a34a", "rebutted": "#0891b2",
+}
+STATUS_ICONS = {
+    "idea": "bi-lightbulb", "proposal": "bi-file-earmark-richtext", "drafting": "bi-pencil-square",
+    "internal_review": "bi-people", "ready": "bi-check2-square", "submitted": "bi-send",
+    "under_review": "bi-hourglass-split", "major_revision": "bi-arrow-repeat", "minor_revision": "bi-wrench-adjustable",
+    "resubmitted": "bi-send-check", "accepted": "bi-patch-check", "proofs": "bi-file-earmark-check",
+    "published": "bi-award", "rejected": "bi-x-octagon", "withdrawn": "bi-box-arrow-left", "on_hold": "bi-pause-circle",
+}
 
 
 @register.filter
@@ -29,7 +43,12 @@ def status_color(value):
 
 @register.filter
 def status_hex(value):
-    return STATUS_HEX[STATUS_COLORS.get(value, "secondary")]
+    return STATUS_HEX.get(value, "#64748b")
+
+
+@register.filter
+def status_icon(value):
+    return STATUS_ICONS.get(value, "bi-circle")
 
 
 def _soft(color):
@@ -40,15 +59,15 @@ def _soft(color):
 def status_badge(obj, field="status"):
     value = getattr(obj, field)
     label = getattr(obj, f"get_{field}_display")()
-    return format_html('<span class="badge status-badge {}">{}</span>', _soft(status_color(value)), label)
+    return format_html('<span class="sbadge" style="--s:{}">{}</span>', status_hex(value), label)
 
 
 @register.simple_tag
 def due_badge(deadline):
     if deadline.is_done:
-        return format_html('<span class="due {}"><i class="bi bi-check2"></i>{}</span>', _soft("success"), _("Done"))
+        return format_html('<span class="due due-done"><i class="bi bi-check2"></i>{}</span>', _("Done"))
     d = deadline.days_left
-    color = {"overdue": "danger", "danger": "danger", "warning": "warning", "ok": "secondary"}[deadline.urgency]
+    color = {"overdue": "due-overdue", "danger": "due-danger", "warning": "due-warning", "ok": "due-ok"}[deadline.urgency]
     if d < 0:
         text = ngettext("%(n)s day overdue", "%(n)s days overdue", -d) % {"n": -d}
     elif d == 0:
@@ -58,7 +77,7 @@ def due_badge(deadline):
     else:
         text = ngettext("in %(n)s day", "in %(n)s days", d) % {"n": d}
     icon = "bi-exclamation-triangle-fill" if d < 0 else "bi-clock"
-    return format_html('<span class="due {}"><i class="bi {}"></i>{}</span>', _soft(color), icon, text)
+    return format_html('<span class="due {}"><i class="bi {}"></i>{}</span>', color, icon, text)
 
 
 @register.filter
@@ -112,3 +131,15 @@ def paper_stepper(paper):
 @register.filter
 def get_item(d, key):
     return d.get(key)
+
+
+@register.filter
+def type_hex(value):
+    from tracker.workspace import TYPE_COLORS
+    return TYPE_COLORS.get(value, "#64748b")
+
+
+@register.filter
+def type_icon(value):
+    from tracker.workspace import TYPE_ICONS
+    return TYPE_ICONS.get(value, "bi-file-earmark")

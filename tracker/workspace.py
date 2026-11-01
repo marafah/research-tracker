@@ -13,12 +13,12 @@ from django.utils.translation import gettext_lazy as _l
 
 from . import models as m
 
-VIEWS = [
-    ("cards", _l("All records"), "bi-grid-3x2-gap"),
-    ("table", _l("Table"), "bi-list-ul"),
-    ("timeline", _l("Timeline"), "bi-bar-chart-steps"),
-    ("calendar", _l("Calendar"), "bi-calendar3"),
-    ("board", _l("Board"), "bi-kanban"),
+VIEWS = [  # key, label, icon, colour
+    ("cards", _l("All records"), "bi-grid-3x2-gap-fill", "#2563eb"),
+    ("table", _l("Table"), "bi-table", "#0891b2"),
+    ("timeline", _l("Timeline"), "bi-bar-chart-steps", "#7c3aed"),
+    ("calendar", _l("Calendar"), "bi-calendar3-week-fill", "#ea580c"),
+    ("board", _l("Board"), "bi-kanban-fill", "#16a34a"),
 ]
 VIEW_KEYS = [v[0] for v in VIEWS]
 
@@ -36,25 +36,25 @@ TYPE_ICONS = {
     "proposal": "bi-lightbulb", "thesis": "bi-mortarboard", "other": "bi-file-earmark",
 }
 TYPE_COLORS = {
-    "journal": "#2f5bea", "conference": "#7c3aed", "chapter": "#0891b2", "review": "#0d9488",
+    "journal": "#2563eb", "conference": "#9333ea", "chapter": "#0891b2", "review": "#0d9488",
     "proposal": "#d97706", "thesis": "#db2777", "other": "#64748b",
 }
 
 # Colour of the timeline segment that *starts* with each event.
 PHASE = {
     "prep": ("#94a3b8", _l("Preparation")),
-    m.Submission.Decision.SUBMITTED: ("#2f5bea", _l("Submitted")),
-    m.Submission.Decision.WITH_EDITOR: ("#2f5bea", _l("With editor")),
-    m.Submission.Decision.UNDER_REVIEW: ("#4f74ff", _l("Under review")),
-    m.Submission.Decision.MAJOR: ("#f59e0b", _l("Major revision")),
-    m.Submission.Decision.MINOR: ("#fbbf24", _l("Minor revision")),
-    m.Submission.Decision.REVISION_SUBMITTED: ("#6366f1", _l("Revision submitted")),
-    m.Submission.Decision.ACCEPTED: ("#22a05e", _l("Accepted")),
-    m.Submission.Decision.REJECTED: ("#e5484d", _l("Rejected")),
-    m.Submission.Decision.DESK_REJECTED: ("#e5484d", _l("Desk rejected")),
-    m.Submission.Decision.TRANSFER: ("#e5484d", _l("Transfer offered")),
+    m.Submission.Decision.SUBMITTED: ("#2563eb", _l("Submitted")),
+    m.Submission.Decision.WITH_EDITOR: ("#2563eb", _l("With editor")),
+    m.Submission.Decision.UNDER_REVIEW: ("#7c3aed", _l("Under review")),
+    m.Submission.Decision.MAJOR: ("#ea580c", _l("Major revision")),
+    m.Submission.Decision.MINOR: ("#d97706", _l("Minor revision")),
+    m.Submission.Decision.REVISION_SUBMITTED: ("#4f46e5", _l("Revision submitted")),
+    m.Submission.Decision.ACCEPTED: ("#16a34a", _l("Accepted")),
+    m.Submission.Decision.REJECTED: ("#dc2626", _l("Rejected")),
+    m.Submission.Decision.DESK_REJECTED: ("#dc2626", _l("Desk rejected")),
+    m.Submission.Decision.TRANSFER: ("#be123c", _l("Transfer offered")),
     m.Submission.Decision.WITHDRAWN: ("#475569", _l("Withdrawn")),
-    "published": ("#15803d", _l("Published")),
+    "published": ("#059669", _l("Published")),
 }
 
 
@@ -188,8 +188,8 @@ def timeline(papers, months_back=12, months_ahead=3):
             if right <= 0 or left >= 100:
                 continue
             segs.append({"left": left, "width": max(right - left, .6), "color": color,
-                         "title": f"{label}{' · ' + venue if venue else ''} · {timezone.localtime(when):%d %b %Y}"})
-        marks = [{"left": pos(d.due_at), "title": f"{d.title} · {timezone.localtime(d.due_at):%d %b %Y}",
+                         "title": f"{label}{' · ' + venue if venue else ''} · {timezone.localtime(when):%d/%m/%Y}"})
+        marks = [{"left": pos(d.due_at), "title": f"{d.title} · {timezone.localtime(d.due_at):%d/%m/%Y}",
                   "overdue": d.is_overdue}
                  for d in p.deadlines.all() if d.completed_at is None and 0 <= pos(d.due_at) <= 100]
         last = max([first] + [e[0] for e in events])
@@ -261,3 +261,68 @@ def board_columns(papers, show_all=False):
         if items or show_all:
             cols.append({"status": st, "label": m.Paper.Status(st).label, "papers": items})
     return cols
+
+
+# ---------------------------------------------------------------- vertical timeline
+EVENT_STYLE = {  # kind -> (icon, colour)
+    "start": ("bi-lightbulb-fill", "#64748b"),
+    "submitted": ("bi-send-fill", "#2563eb"), "with_editor": ("bi-person-workspace", "#2563eb"),
+    "under_review": ("bi-hourglass-split", "#7c3aed"), "major": ("bi-arrow-repeat", "#ea580c"),
+    "minor": ("bi-wrench-adjustable", "#d97706"), "revision_submitted": ("bi-send-check-fill", "#4f46e5"),
+    "accepted": ("bi-patch-check-fill", "#16a34a"), "rejected": ("bi-x-octagon-fill", "#dc2626"),
+    "desk_rejected": ("bi-x-octagon-fill", "#dc2626"), "transfer": ("bi-arrow-left-right", "#be123c"),
+    "withdrawn": ("bi-box-arrow-left", "#475569"), "published": ("bi-award-fill", "#059669"),
+    "deadline": ("bi-alarm-fill", "#db2777"), "overdue": ("bi-exclamation-triangle-fill", "#dc2626"),
+}
+
+
+def vertical_timeline(papers, months_back=18):
+    """Chronological feed of milestones (newest first) grouped by month, for the vertical timeline."""
+    now = timezone.now()
+    since = now - timedelta(days=months_back * 31)
+    items = []
+
+    def add(when, kind, title, paper, sub="", url=None, future=False):
+        if when is None or when < since:
+            return
+        icon, color = EVENT_STYLE.get(kind, ("bi-circle-fill", "#64748b"))
+        items.append({"when": when, "kind": kind, "icon": icon, "color": color, "title": title,
+                      "paper": paper, "sub": sub, "url": url or paper.get_absolute_url(), "future": future})
+
+    for p in papers:
+        if not p.submissions.all():
+            add(p.created_at, "start", str(_l("Work started")), p)
+        for s in p.submissions.all():
+            evs = list(s.events.all())
+            if evs:
+                for e in evs:
+                    add(e.happened_at, e.decision, e.get_decision_display(), p, s.journal.name, s.get_absolute_url())
+            else:
+                if s.submitted_at:
+                    add(s.submitted_at, "submitted", str(_l("Submitted")), p, s.journal.name, s.get_absolute_url())
+                if s.first_decision_at and s.decision not in ("draft", "submitted"):
+                    add(s.first_decision_at, s.decision, s.get_decision_display(), p, s.journal.name,
+                        s.get_absolute_url())
+                if s.accepted_at and s.decision != "accepted":
+                    add(s.accepted_at, "accepted", str(_l("Accepted")), p, s.journal.name, s.get_absolute_url())
+        if p.publication_date:
+            add(timezone.make_aware(datetime.combine(p.publication_date, datetime.min.time())), "published",
+                str(_l("Published")), p)
+        for d in p.deadlines.all():
+            if d.completed_at is None:
+                add(d.due_at, "overdue" if d.due_at < now else "deadline", d.title, p, d.get_kind_display(),
+                    p.get_absolute_url() + "#deadlines", future=d.due_at >= now)
+    items.sort(key=lambda x: x["when"], reverse=True)
+    months = OrderedDict()
+    for it in items:
+        key = timezone.localtime(it["when"]).date().replace(day=1)
+        months.setdefault(key, []).append(it)
+    out = []
+    for month, evs in months.items():
+        out.append({"month": month, "items": evs})
+    # index of the first past item so the template can draw a "Today" marker
+    for it in items:
+        if not it["future"]:
+            it["first_past"] = True
+            break
+    return {"months": out, "count": len(items)}

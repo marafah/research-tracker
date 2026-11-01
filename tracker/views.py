@@ -71,9 +71,43 @@ def dashboard(request):
         "profile_missing": user.missing_profile_fields(),
         "week_count": open_dl.filter(due_at__gte=now, due_at__lte=now + timedelta(days=7)).count(),
         "greeting": _greeting(),
-        "recent_papers": papers.order_by("-updated_at")[:5],
+        "recent_papers": papers.select_related("group").prefetch_related(
+            "submissions__journal", "deadlines", "authors__user").order_by("-updated_at")[:6],
     }
+    ctx.update(_dashboard_charts(papers, open_dl, now))
     return render(request, "tracker/dashboard.html", ctx)
+
+
+def _dashboard_charts(papers, open_dl, now):
+    """Status donut, type bars and a 7-day strip for the dashboard."""
+    from . import workspace as ws
+    from .templatetags.tracker_tags import STATUS_HEX
+    counts = status_counts(papers)
+    stops, acc = [], 0
+    for c in counts:
+        share = 100 * c["count"] / (sum(x["count"] for x in counts) or 1)
+        c["color"] = STATUS_HEX.get(c["code"], "#64748b")
+        stops.append(f"{c['color']} {acc:.2f}% {acc + share:.2f}%")
+        acc += share
+    types = {}
+    for t in papers.values_list("type", flat=True):
+        types[t] = types.get(t, 0) + 1
+    tmax = max(types.values() or [1])
+    type_rows = [{"key": k, "label": lab, "count": types[k], "pct": round(100 * types[k] / tmax),
+                  "color": ws.TYPE_COLORS[k], "icon": ws.TYPE_ICONS[k]}
+                 for k, lab in m.Paper.Type.choices if types.get(k)]
+    today = timezone.localdate()
+    per_day = {}
+    for d in open_dl.filter(due_at__date__gte=today, due_at__date__lt=today + timedelta(days=7)):
+        day = timezone.localtime(d.due_at).date()
+        per_day[day] = per_day.get(day, 0) + 1
+    week = [{"date": today + timedelta(days=i), "count": per_day.get(today + timedelta(days=i), 0),
+             "today": i == 0} for i in range(7)]
+    total = sum(c["count"] for c in counts)
+    done = sum(c["count"] for c in counts if c["code"] in ("accepted", "proofs", "published"))
+    return {"donut": ", ".join(stops) or "var(--rt-surface-2) 0 100%", "status_rows": counts,
+            "type_rows": type_rows, "week_strip": week,
+            "success_rate": round(100 * done / total) if total else 0}
 
 
 # ---------------------------------------------------------------------------
@@ -133,8 +167,8 @@ def papers_workspace(request, force_view=None):
     request.session["papers_group_by"] = group_by
     ctx = {
         "form": form, "papers": papers, "view": view, "group_by": group_by,
-        "views": [{"key": k, "label": l, "icon": i, "url": "?" + _qs(request, view=k), "active": k == view}
-                  for k, l, i in ws.VIEWS],
+        "views": [{"key": k, "label": l, "icon": i, "color": c, "url": "?" + _qs(request, view=k, tl=None),
+                   "active": k == view} for k, l, i, c in ws.VIEWS],
         "chips": [c | {"url": "?" + _qs(request, type=c["key"])}
                   for c in ws.type_chips(without_type, data.get("type"))],
         "group_choices": ws.GROUP_BY, "kpi": ws.kpis(papers),
@@ -144,7 +178,12 @@ def papers_workspace(request, force_view=None):
     if view == "cards":
         ctx["groups"] = ws.grouped(papers, group_by)
     elif view == "timeline":
-        ctx["tl"] = ws.timeline(papers)
+        tl_mode = request.GET.get("tl") or request.session.get("papers_tl", "vertical")
+        tl_mode = tl_mode if tl_mode in ("vertical", "gantt") else "vertical"
+        request.session["papers_tl"] = tl_mode
+        ctx["tl_mode"] = tl_mode
+        ctx["tl_urls"] = {k: "?" + _qs(request, tl=k) for k in ("vertical", "gantt")}
+        ctx["tl"] = ws.timeline(papers) if tl_mode == "gantt" else ws.vertical_timeline(papers)
     elif view == "calendar":
         ctx["cal"] = ws.month_calendar(papers, request.GET.get("month"),
                                        first_weekday=5 if request.LANGUAGE_CODE == "ar" else 6)

@@ -4,7 +4,7 @@
 <div class="crumbs"><a href="{% url 'journal_list' %}">{% trans "Journals" %}</a></div>
 <div class="page-head">
   <div class="d-flex gap-3 align-items-center">
-    <span class="rec-ico" style="--t:#2f5bea;width:56px;height:56px;font-size:1.5rem;border-radius:15px"><i class="bi bi-journal-text"></i></span>
+    <span class="rec-ico" style="--t:#2563eb;width:56px;height:56px;font-size:1.5rem;border-radius:15px"><i class="bi bi-journal-text"></i></span>
     <div><h1>{{ journal.name }}</h1>
       <div class="d-flex gap-2 flex-wrap mt-2">
         <span class="chip">{{ journal.get_kind_display }}</span>{% if journal.publisher %}<span class="chip"><i class="bi bi-building"></i> {{ journal.publisher }}</span>{% endif %}
@@ -34,7 +34,7 @@
     {% if journal.notes %}<p class="comment-text small text-muted-rt mt-3 mb-0">{{ journal.notes }}</p>{% endif %}
   </div></div></div>
   <div class="col-lg-8"><div class="card"><div class="card-header"><h2 class="card-title-rt"><span class="ic tone-primary"><i class="bi bi-list-check"></i></span>{% trans "Our submissions to this venue" %}</h2></div>
-    {% for s in subs %}<a class="list-row" href="{{ s.get_absolute_url }}"><div class="grow"><div class="t text-truncate">{{ s.paper.label }}</div><div class="s">{{ s.submitted_at|date:"j M Y"|default:"—" }}{% if s.manuscript_id %} · {{ s.manuscript_id }}{% endif %}</div></div>{% status_badge s "decision" %}</a>
+    {% for s in subs %}<a class="list-row" href="{{ s.get_absolute_url }}"><div class="grow"><div class="t text-truncate">{{ s.paper.label }}</div><div class="s">{{ s.submitted_at|date:"d/m/Y"|default:"—" }}{% if s.manuscript_id %} · {{ s.manuscript_id }}{% endif %}</div></div>{% status_badge s "decision" %}</a>
     {% empty %}<div class="empty py-4"><div class="ic"><i class="bi bi-inbox"></i></div><div class="small">{% trans "None yet." %}</div></div>{% endfor %}
   </div></div>
 </div>

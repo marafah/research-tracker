@@ -1,6 +1,6 @@
 {% load i18n tracker_tags %}
 <div class="dl {{ d.urgency }}">
-  <div class="dl-date"><div class="m">{{ d.due_at|date:"M" }}</div><div class="d">{{ d.due_at|date:"j" }}</div></div>
+  <div class="dl-date"><div class="m">{{ d.due_at|date:"m/Y" }}</div><div class="d">{{ d.due_at|date:"d" }}</div></div>
   <div class="grow">
     <div class="t text-truncate">{{ d.title }}</div>
     <div class="s text-truncate"><a href="{{ d.paper.get_absolute_url }}#deadlines">{{ d.paper.label }}</a> · {{ d.get_kind_display }} · {{ d.due_at|date:"H:i" }}</div>

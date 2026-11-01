@@ -113,6 +113,7 @@ LANGUAGES = [("en", _("English")), ("ar", _("Arabic"))]
 LOCALE_PATHS = [BASE_DIR / "locale"]
 TIME_ZONE = os.environ.get("TIME_ZONE", "Asia/Amman")
 USE_I18N = True
+FORMAT_MODULE_PATH = ["config.formats"]
 USE_TZ = True
 
 # --- Static & media -------------------------------------------------------

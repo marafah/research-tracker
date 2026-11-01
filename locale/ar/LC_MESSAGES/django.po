@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Research Tracker VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-01 05:08+0300\n"
+"POT-Creation-Date: 2026-11-01 05:43+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ar\n"
@@ -65,6 +65,10 @@ msgstr "%(n)s منشور"
 #, python-format
 msgid "%(n)s updated their author details"
 msgstr "حدّث %(n)s بياناته كمؤلف"
+
+#, python-format
+msgid "%(n)s%% accepted or published"
+msgstr "%(n)s%% مقبول أو منشور"
 
 #, python-format
 msgid "%(s)s assigned you a reviewer comment to address:"
@@ -208,6 +212,9 @@ msgstr "كتاب / سلسلة كتب"
 
 msgid "Book chapter"
 msgstr "فصل في كتاب"
+
+msgid "By type"
+msgstr "حسب النوع"
 
 msgid "By venue"
 msgstr "حسب المجلة"
@@ -473,6 +480,9 @@ msgstr "التمويل"
 msgid "Funding agency"
 msgstr "جهة تمويل"
 
+msgid "Gantt chart"
+msgstr "مخطط جانت"
+
 msgid "Good afternoon"
 msgstr "مساء الخير"
 
@@ -722,6 +732,9 @@ msgstr "لم تُرفع ملفات."
 msgid "No grouping"
 msgstr "بدون تجميع"
 
+msgid "No milestones in the last 18 months."
+msgstr "لا توجد أحداث خلال آخر 18 شهراً."
+
 msgid "No open comments assigned to you."
 msgstr "لا توجد ملاحظات مفتوحة مسندة إليك."
 
@@ -954,6 +967,9 @@ msgstr "تم الرد بالتفنيد"
 
 msgid "Recent activity"
 msgstr "آخر النشاطات"
+
+msgid "Recently updated"
+msgstr "آخر التحديثات"
 
 msgid "Records"
 msgstr "سجل"
@@ -1242,6 +1258,9 @@ msgstr "يظهر في البطاقات والتذكيرات"
 msgid "Venue"
 msgstr "المجلة"
 
+msgid "Vertical timeline"
+msgstr "خط زمني عمودي"
+
 msgid "Waiting for editors"
 msgstr "بانتظار المحررين"
 
@@ -1269,6 +1288,9 @@ msgstr "لدى المحرر"
 
 msgid "Withdrawn"
 msgstr "مسحوب"
+
+msgid "Work started"
+msgstr "بدء العمل"
 
 msgid "Workspace"
 msgstr "مساحة العمل"
@@ -1485,6 +1507,9 @@ msgstr "استورد %(n)s ملاحظة من %(r)s"
 msgid "in 7 days"
 msgstr "خلال 7 أيام"
 
+msgid "in the next 30 days"
+msgstr "خلال 30 يوماً القادمة"
+
 msgid "incomplete profile"
 msgstr "ملف غير مكتمل"
 
@@ -1675,6 +1700,9 @@ msgstr "العنوان"
 
 msgid "type"
 msgstr "النوع"
+
+msgid "under review"
+msgstr "قيد التحكيم"
 
 #, python-format
 msgid "updated author %(n)s"

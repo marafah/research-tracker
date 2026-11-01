@@ -2,11 +2,12 @@
 {% block title %}{% trans "Papers" %}{% endblock %}
 {% block content %}
 <div class="page-head">
-  <div><div class="eyebrow">{% trans "Workspace" %}</div><h1>{% trans "Papers & proposals" %}</h1>
-    <div class="sub">{% trans "Every work your groups are writing, submitting and publishing" %}</div></div>
+  <div class="ph-title"><span class="ico lg solid" style="--c:#7c3aed"><i class="bi bi-file-earmark-text-fill"></i></span>
+    <div><div class="eyebrow">{% trans "Workspace" %}</div><h1>{% trans "Papers & proposals" %}</h1>
+    <div class="sub">{% trans "Every work your groups are writing, submitting and publishing" %}</div></div></div>
   <div class="d-flex gap-2 flex-wrap">
     <div class="dropdown">
-      <button class="btn btn-ghost dropdown-toggle" data-bs-toggle="dropdown"><i class="bi bi-box-arrow-up"></i> {% trans "Export" %}</button>
+      <button class="btn btn-ghost dropdown-toggle" data-bs-toggle="dropdown"><i class="bi bi-box-arrow-up text-success"></i> {% trans "Export" %}</button>
       <ul class="dropdown-menu dropdown-menu-end">
         <li><a class="dropdown-item" href="{% url 'export_csv' %}"><i class="bi bi-file-earmark-spreadsheet"></i> {% trans "Excel / CSV" %}</a></li>
         <li><a class="dropdown-item" href="{% url 'reports' %}"><i class="bi bi-printer"></i> {% trans "Publications report (PDF)" %}</a></li>
@@ -19,17 +20,17 @@
 
 <!-- KPI strip -->
 <div class="ws-kpis mb-3">
-  <div><b>{{ kpi.total }}</b><span>{% trans "Records" %}</span></div>
-  <div><b>{{ kpi.active }}</b><span>{% trans "Active" %}</span></div>
-  <div><b>{{ kpi.review }}</b><span>{% trans "Under review" %}</span></div>
-  <div class="{% if kpi.overdue %}bad{% endif %}"><b>{{ kpi.overdue }}</b><span>{% trans "Overdue deadlines" %}</span></div>
-  <div class="good"><b>{{ kpi.published }}</b><span>{% trans "Accepted / published" %}</span></div>
+  <div class="ws-kpi" style="--c:#2563eb"><span class="ico solid"><i class="bi bi-collection-fill"></i></span><div><b>{{ kpi.total }}</b><span>{% trans "Records" %}</span></div></div>
+  <div class="ws-kpi" style="--c:#0d9488"><span class="ico solid"><i class="bi bi-activity"></i></span><div><b>{{ kpi.active }}</b><span>{% trans "Active" %}</span></div></div>
+  <div class="ws-kpi" style="--c:#7c3aed"><span class="ico solid"><i class="bi bi-hourglass-split"></i></span><div><b>{{ kpi.review }}</b><span>{% trans "Under review" %}</span></div></div>
+  <div class="ws-kpi" style="--c:{% if kpi.overdue %}#dc2626{% else %}#ea580c{% endif %}"><span class="ico solid"><i class="bi bi-alarm-fill"></i></span><div><b>{{ kpi.overdue }}</b><span>{% trans "Overdue deadlines" %}</span></div></div>
+  <div class="ws-kpi" style="--c:#16a34a"><span class="ico solid"><i class="bi bi-patch-check-fill"></i></span><div><b>{{ kpi.published }}</b><span>{% trans "Accepted / published" %}</span></div></div>
 </div>
 
 <!-- View switcher + search -->
 <div class="ws-bar">
   <nav class="ws-views" role="tablist">
-    {% for v in views %}<a href="{{ v.url }}" class="{% if v.active %}on{% endif %}" role="tab"><i class="bi {{ v.icon }}"></i> <span>{{ v.label }}</span></a>{% endfor %}
+    {% for v in views %}<a href="{{ v.url }}" class="{% if v.active %}on{% endif %}" style="--c:{{ v.color }}" role="tab"><span class="vi"><i class="bi {{ v.icon }}"></i></span> <span>{{ v.label }}</span></a>{% endfor %}
   </nav>
   <form method="get" class="ws-search" role="search">
     {% for k, val in request.GET.items %}{% if k != "q" %}<input type="hidden" name="{{ k }}" value="{{ val }}">{% endif %}{% endfor %}

@@ -1,7 +1,7 @@
 {% load i18n %}{% blocktrans with name=user.display_name %}Dear {{ name }},{% endblocktrans %}
 
 {% trans "Deadlines" %}:
-{% for d in deadlines %}- {{ d.due_at|date:"D j M" }}: {{ d.title }} ({{ d.paper.label }})
+{% for d in deadlines %}- {{ d.due_at|date:"D d/m" }}: {{ d.title }} ({{ d.paper.label }})
 {% endfor %}
 {% if comments %}{% trans "Reviewer comments assigned to you" %}:
 {% for c in comments %}- {{ c.submission.paper.label }} — {{ c.reviewer }} #{{ c.number }}

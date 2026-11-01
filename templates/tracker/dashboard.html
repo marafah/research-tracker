@@ -1,93 +1,157 @@
 {% extends "base.html" %}{% load i18n tracker_tags %}
 {% block title %}{% trans "Dashboard" %}{% endblock %}
 {% block content %}
-<section class="hero">
-  <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
-    <div>
-      <div class="small text-white-50 mb-1"><i class="bi bi-calendar3"></i> {% now "l, j F Y" %}</div>
-      <h1>{{ greeting }}, {{ user.display_name }}</h1>
-      <div class="sub">
-        {% if overdue %}<i class="bi bi-exclamation-triangle"></i> {% blocktrans count n=overdue|length %}{{ n }} deadline is overdue{% plural %}{{ n }} deadlines are overdue{% endblocktrans %} ·{% endif %}
-        {% blocktrans count n=week_count %}{{ n }} deadline this week{% plural %}{{ n }} deadlines this week{% endblocktrans %}
-      </div>
-    </div>
-    <div class="d-flex gap-2">
-      <a href="{% url 'paper_board' %}" class="btn btn-glass"><i class="bi bi-kanban"></i> {% trans "Board" %}</a>
-      <a href="{% url 'paper_create' %}" class="btn btn-light fw-semibold"><i class="bi bi-plus-lg"></i> {% trans "New paper" %}</a>
+<!-- Greeting + quick actions -->
+<div class="dash-head">
+  <div>
+    <div class="dash-date"><span class="ico sm solid" style="--c:#2563eb"><i class="bi bi-calendar-event-fill"></i></span><span class="num">{% now "d/m/Y" %}</span> · {% now "l" %}</div>
+    <h1>{{ greeting }}, {{ user.display_name }}</h1>
+    <div class="dash-sum">
+      {% if overdue %}<span class="chip c" style="--c:#dc2626"><i class="bi bi-exclamation-triangle-fill"></i> {% blocktrans count n=overdue|length %}{{ n }} deadline is overdue{% plural %}{{ n }} deadlines are overdue{% endblocktrans %}</span>{% endif %}
+      <span class="chip c" style="--c:#db2777"><i class="bi bi-alarm-fill"></i> {% blocktrans count n=week_count %}{{ n }} deadline this week{% plural %}{{ n }} deadlines this week{% endblocktrans %}</span>
+      <span class="chip c" style="--c:#7c3aed"><i class="bi bi-hourglass-split"></i> {{ under_review }} {% trans "under review" %}</span>
+      <span class="chip c" style="--c:#16a34a"><i class="bi bi-graph-up-arrow"></i> {% blocktrans with n=success_rate %}{{ n }}% accepted or published{% endblocktrans %}</span>
     </div>
   </div>
-</section>
+  <div class="qa-row">
+    <a class="qa" style="--c:#2563eb" href="{% url 'paper_create' %}"><i class="bi bi-plus-lg"></i>{% trans "New paper" %}</a>
+    <a class="qa" style="--c:#16a34a" href="{% url 'paper_board' %}"><i class="bi bi-kanban-fill"></i>{% trans "Board" %}</a>
+    <a class="qa" style="--c:#ea580c" href="{% url 'paper_list' %}?view=calendar"><i class="bi bi-calendar3-week-fill"></i>{% trans "Calendar" %}</a>
+    <a class="qa" style="--c:#7c3aed" href="{% url 'paper_list' %}?view=timeline"><i class="bi bi-distribute-vertical"></i>{% trans "Timeline" %}</a>
+  </div>
+</div>
 
 {% if profile_missing %}
 <div class="alert alert-soft-warning d-flex align-items-center gap-3 small">
-  <i class="bi bi-person-exclamation fs-4 text-warning"></i>
+  <span class="ico solid" style="--c:#d97706"><i class="bi bi-person-exclamation"></i></span>
   <div class="flex-grow-1">{% trans "Your profile is missing:" %} <strong>{{ profile_missing|join:", " }}</strong>. {% trans "Co-authors need these for submissions." %}</div>
-  <a href="{% url 'profile' %}" class="btn btn-sm btn-ghost">{% trans "Complete profile" %}</a>
+  <a href="{% url 'profile' %}" class="btn btn-sm btn-color" style="--c:#d97706">{% trans "Complete profile" %}</a>
 </div>
 {% endif %}
 
+<!-- Solid stat tiles -->
 <div class="row g-3 mb-4">
-  <div class="col-6 col-xl-3"><div class="card kpi"><span class="ic tone-primary"><i class="bi bi-folder2-open"></i></span><div><div class="label">{% trans "Active works" %}</div><div class="value">{{ active }}</div><div class="hint">{% blocktrans with n=total %}of {{ n }} in total{% endblocktrans %}</div></div></div></div>
-  <div class="col-6 col-xl-3"><div class="card kpi"><span class="ic tone-info"><i class="bi bi-hourglass-split"></i></span><div><div class="label">{% trans "Under review" %}</div><div class="value">{{ under_review }}</div><div class="hint">{% trans "Waiting for editors" %}</div></div></div></div>
-  <div class="col-6 col-xl-3"><div class="card kpi"><span class="ic {% if overdue %}tone-danger{% else %}tone-warning{% endif %}"><i class="bi bi-alarm"></i></span><div><div class="label">{% trans "Overdue" %}</div><div class="value {% if overdue %}text-danger{% endif %}">{{ overdue|length }}</div><div class="hint">{% blocktrans with n=week_count %}{{ n }} due this week{% endblocktrans %}</div></div></div></div>
-  <div class="col-6 col-xl-3"><div class="card kpi"><span class="ic tone-success"><i class="bi bi-patch-check"></i></span><div><div class="label">{% trans "Accepted this year" %}</div><div class="value">{{ accepted_year }}</div><div class="hint">{% blocktrans with n=published_year %}{{ n }} published{% endblocktrans %}</div></div></div></div>
+  <div class="col-6 col-xl-3"><a class="stat" style="--c:#2563eb" href="{% url 'paper_list' %}?view=cards&status=active">
+    <div class="s-top"><span class="s-ic"><i class="bi bi-folder2-open"></i></span><span class="s-pill">{% blocktrans with n=total %}of {{ n }} in total{% endblocktrans %}</span></div>
+    <div class="s-value">{{ active }}</div><div class="s-label">{% trans "Active works" %}</div>
+    <div class="s-bar"><span style="width:{% widthratio active total|default:1 100 %}%"></span></div></a></div>
+  <div class="col-6 col-xl-3"><a class="stat" style="--c:#7c3aed" href="{% url 'paper_list' %}?view=table&status=under_review">
+    <div class="s-top"><span class="s-ic"><i class="bi bi-hourglass-split"></i></span><span class="s-pill">{% trans "Waiting for editors" %}</span></div>
+    <div class="s-value">{{ under_review }}</div><div class="s-label">{% trans "Under review" %}</div>
+    <div class="s-bar"><span style="width:{% widthratio under_review total|default:1 100 %}%"></span></div></a></div>
+  <div class="col-6 col-xl-3"><a class="stat" style="--c:{% if overdue %}#dc2626{% else %}#ea580c{% endif %}" href="{% url 'deadline_list' %}">
+    <div class="s-top"><span class="s-ic"><i class="bi bi-alarm-fill"></i></span><span class="s-pill">{% blocktrans with n=week_count %}{{ n }} due this week{% endblocktrans %}</span></div>
+    <div class="s-value">{{ overdue|length }}</div><div class="s-label">{% trans "Overdue" %}</div>
+    <div class="s-hint"><i class="bi bi-calendar-week"></i> {{ upcoming|length }} {% trans "in the next 30 days" %}</div></a></div>
+  <div class="col-6 col-xl-3"><a class="stat" style="--c:#16a34a" href="{% url 'reports' %}">
+    <div class="s-top"><span class="s-ic"><i class="bi bi-patch-check-fill"></i></span><span class="s-pill">{% blocktrans with n=published_year %}{{ n }} published{% endblocktrans %}</span></div>
+    <div class="s-value">{{ accepted_year }}</div><div class="s-label">{% trans "Accepted this year" %}</div>
+    <div class="s-bar"><span style="width:{{ success_rate }}%"></span></div></a></div>
 </div>
 
 <div class="row g-4">
+  <!-- Left column -->
   <div class="col-xl-8">
     <div class="card mb-4">
       <div class="card-header">
-        <h2 class="card-title-rt"><span class="ic tone-warning"><i class="bi bi-calendar-event"></i></span>{% trans "Upcoming deadlines" %}</h2>
-        <a class="btn btn-sm btn-ghost" href="{% url 'deadline_list' %}">{% trans "All deadlines" %} <i class="bi bi-arrow-right-short"></i></a>
+        <h2 class="card-title-rt"><span class="ic tone-pink"><i class="bi bi-calendar2-week-fill"></i></span>{% trans "Upcoming deadlines" %}</h2>
+        <a class="btn btn-sm btn-ghost" href="{% url 'deadline_list' %}">{% trans "All deadlines" %} <i class="bi bi-arrow-{% if LANGUAGE_BIDI %}left{% else %}right{% endif %}-short"></i></a>
+      </div>
+      <div class="week">
+        {% for d in week_strip %}
+        <div class="wk {% if d.today %}today{% endif %} {% if d.count %}busy{% endif %}">
+          <div class="wd">{{ d.date|date:"D" }}</div><div class="dn">{{ d.date|date:"d" }}</div>
+          <div class="dots">{% for _ in ""|ljust:d.count|make_list|slice:":4" %}<i></i>{% endfor %}</div>
+        </div>
+        {% endfor %}
       </div>
       {% for d in overdue %}{% include "tracker/_deadline_row.html" %}{% endfor %}
-      {% for d in upcoming %}{% include "tracker/_deadline_row.html" %}{% endfor %}
-      {% if not overdue and not upcoming %}<div class="empty"><div class="ic tone-success"><i class="bi bi-calendar-check"></i></div><h6>{% trans "You're all clear" %}</h6><div class="small">{% trans "No deadlines in the next 30 days." %}</div></div>{% endif %}
+      {% for d in upcoming|slice:":6" %}{% include "tracker/_deadline_row.html" %}{% endfor %}
+      {% if not overdue and not upcoming %}<div class="empty"><div class="ic" style="--c:#16a34a"><i class="bi bi-calendar-check"></i></div><h6>{% trans "You're all clear" %}</h6><div class="small">{% trans "No deadlines in the next 30 days." %}</div></div>{% endif %}
+    </div>
+
+    <div class="card mb-4">
+      <div class="card-header">
+        <h2 class="card-title-rt"><span class="ic tone-violet"><i class="bi bi-clock-history"></i></span>{% trans "Recently updated" %}</h2>
+        <a class="btn btn-sm btn-ghost" href="{% url 'paper_list' %}?view=cards">{% trans "Open in workspace" %}</a>
+      </div>
+      <div class="mini-grid">
+        {% for p in recent_papers %}{% with s=p.current_submission %}
+        <a class="mini-paper" style="--c:{{ p.status|status_hex }}" href="{{ p.get_absolute_url }}">
+          <div class="d-flex justify-content-between align-items-center gap-2">{% status_badge p %}<span class="mp-sub num">{{ p.updated_at|date:"d/m/Y" }}</span></div>
+          <div class="mp-title">{{ p.label }}</div>
+          <div class="mp-sub text-truncate"><i class="bi bi-journal-bookmark-fill" style="color:#4f46e5"></i> {% if s %}{{ s.journal.name }}{% else %}{{ p.get_type_display }}{% endif %}</div>
+          <div class="avatar-stack">{% for a in p.authors.all|slice:":4" %}<span class="avatar avatar-sm {{ a.user|default:a.name|avatar_class }}" title="{{ a.name }}">{{ a.name|initials }}</span>{% endfor %}</div>
+        </a>
+        {% endwith %}{% empty %}<div class="empty"><div class="ic"><i class="bi bi-file-earmark-plus"></i></div><h6>{% trans "No papers yet." %}</h6></div>{% endfor %}
+      </div>
     </div>
 
     <div class="row g-4">
       <div class="col-md-6">
         <div class="card h-100">
-          <div class="card-header"><h2 class="card-title-rt"><span class="ic tone-danger"><i class="bi bi-lightning-charge"></i></span>{% trans "Needs action" %}</h2></div>
+          <div class="card-header"><h2 class="card-title-rt"><span class="ic tone-danger"><i class="bi bi-lightning-charge-fill"></i></span>{% trans "Needs action" %}</h2><span class="count-pill">{{ action_papers|length }}</span></div>
           {% for p in action_papers %}
-            <a class="list-row" href="{{ p.get_absolute_url }}"><div class="grow"><div class="t text-truncate">{{ p.label }}</div><div class="s">{{ p.current_submission.journal.name|default:p.get_type_display }}</div></div>{% status_badge p %}</a>
-          {% empty %}<div class="empty py-4"><div class="ic tone-success"><i class="bi bi-check2-all"></i></div><div class="small">{% trans "Nothing needs action right now." %}</div></div>{% endfor %}
+            <a class="list-row" href="{{ p.get_absolute_url }}"><span class="ico sm solid" style="--c:{{ p.status|status_hex }}"><i class="bi {{ p.status|status_icon }}"></i></span><div class="grow"><div class="t text-truncate">{{ p.label }}</div><div class="s text-truncate">{{ p.current_submission.journal.name|default:p.get_type_display }}</div></div>{% status_badge p %}</a>
+          {% empty %}<div class="empty py-4"><div class="ic" style="--c:#16a34a"><i class="bi bi-check2-all"></i></div><div class="small">{% trans "Nothing needs action right now." %}</div></div>{% endfor %}
         </div>
       </div>
       <div class="col-md-6">
         <div class="card h-100">
-          <div class="card-header"><h2 class="card-title-rt"><span class="ic tone-violet"><i class="bi bi-chat-square-text"></i></span>{% trans "My reviewer-comment tasks" %}</h2></div>
+          <div class="card-header"><h2 class="card-title-rt"><span class="ic tone-cyan"><i class="bi bi-chat-square-text-fill"></i></span>{% trans "My reviewer-comment tasks" %}</h2></div>
           {% for c in my_comments %}
-            <a class="list-row" href="{{ c.submission.paper.get_absolute_url }}#submission-{{ c.submission_id }}"><div class="grow"><div class="t text-truncate">{{ c.comment }}</div><div class="s text-truncate">{{ c.reviewer }} #{{ c.number }} · {{ c.submission.paper.label }}</div></div>{% status_badge c "state" %}</a>
-          {% empty %}<div class="empty py-4"><div class="ic"><i class="bi bi-inbox"></i></div><div class="small">{% trans "No open comments assigned to you." %}</div></div>{% endfor %}
+            <a class="list-row" href="{{ c.submission.paper.get_absolute_url }}#submission-{{ c.submission_id }}"><span class="ico sm solid" style="--c:{{ c.state|status_hex }}"><i class="bi bi-chat-left-text"></i></span><div class="grow"><div class="t text-truncate">{{ c.comment }}</div><div class="s text-truncate">{{ c.reviewer }} #{{ c.number }} · {{ c.submission.paper.label }}</div></div>{% status_badge c "state" %}</a>
+          {% empty %}<div class="empty py-4"><div class="ic" style="--c:#0891b2"><i class="bi bi-inbox-fill"></i></div><div class="small">{% trans "No open comments assigned to you." %}</div></div>{% endfor %}
         </div>
       </div>
     </div>
   </div>
 
+  <!-- Right column -->
   <div class="col-xl-4">
     <div class="card mb-4">
-      <div class="card-header"><h2 class="card-title-rt"><span class="ic tone-primary"><i class="bi bi-diagram-3"></i></span>{% trans "Pipeline" %}</h2><a href="{% url 'reports' %}" class="small">{% trans "Reports" %}</a></div>
-      <div class="card-body">{% include "tracker/_pipeline.html" %}</div>
+      <div class="card-header"><h2 class="card-title-rt"><span class="ic tone-primary"><i class="bi bi-pie-chart-fill"></i></span>{% trans "Pipeline" %}</h2><a href="{% url 'reports' %}" class="small fw-semibold">{% trans "Reports" %}</a></div>
+      <div class="card-body">
+        {% if status_rows %}
+        <div class="d-flex align-items-center gap-3 flex-wrap flex-sm-nowrap">
+          <div class="donut2" style="background:conic-gradient({{ donut }})"><div><b>{{ total }}</b><span>{% trans "papers" %}</span></div></div>
+          <div class="legend-list">{% for c in status_rows %}<a href="{% url 'paper_list' %}?status={{ c.code }}"><i style="background:{{ c.color }}"></i><span class="text-truncate">{{ c.label }}</span><b>{{ c.count }}</b></a>{% endfor %}</div>
+        </div>
+        {% else %}<div class="empty py-3"><div class="ic"><i class="bi bi-diagram-3"></i></div><h6>{% trans "No papers yet." %}</h6></div>{% endif %}
+      </div>
     </div>
 
-    {% if missing_data %}
+    {% if type_rows %}
     <div class="card mb-4">
-      <div class="card-header"><h2 class="card-title-rt"><span class="ic tone-warning"><i class="bi bi-person-lines-fill"></i></span>{% trans "Missing co-author data" %}</h2></div>
+      <div class="card-header"><h2 class="card-title-rt"><span class="ic tone-orange"><i class="bi bi-collection-fill"></i></span>{% trans "By type" %}</h2></div>
+      <div class="card-body py-2">
+        {% for t in type_rows %}
+        <a class="type-row text-decoration-none" style="--c:{{ t.color }};color:inherit" href="{% url 'paper_list' %}?type={{ t.key }}">
+          <span class="ico sm solid"><i class="bi {{ t.icon }}"></i></span>
+          <div class="tr-main"><div class="tr-top"><span>{{ t.label }}</span><span>{{ t.count }}</span></div><div class="tr-bar"><span style="width:{{ t.pct }}%"></span></div></div>
+        </a>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    {% if missing_data %}
+    <div class="card mb-4 card-accent" style="--c:#d97706">
+      <div class="card-header"><h2 class="card-title-rt"><span class="ic tone-warning"><i class="bi bi-person-lines-fill"></i></span>{% trans "Missing co-author data" %}</h2><span class="count-pill">{{ missing_data|length }}</span></div>
       {% for p in missing_data|slice:":5" %}
         <a class="list-row" href="{{ p.get_absolute_url }}#authors"><div class="grow"><div class="t text-truncate">{{ p.label }}</div>
-          <div class="s text-truncate">{% for a in p.authors_missing_data %}{{ a.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</div></div><i class="bi bi-chevron-right text-muted-rt"></i></a>
+          <div class="s text-truncate">{% for a in p.authors_missing_data %}{{ a.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</div></div><i class="bi bi-chevron-{% if LANGUAGE_BIDI %}left{% else %}right{% endif %} text-muted-rt"></i></a>
       {% endfor %}
     </div>
     {% endif %}
 
     <div class="card">
-      <div class="card-header"><h2 class="card-title-rt"><span class="ic tone-slate"><i class="bi bi-clock-history"></i></span>{% trans "Recent activity" %}</h2></div>
+      <div class="card-header"><h2 class="card-title-rt"><span class="ic tone-slate"><i class="bi bi-activity"></i></span>{% trans "Recent activity" %}</h2></div>
       <div class="card-body">
-        <ul class="timeline small">
-        {% for a in activity|slice:":8" %}
-          <li><span class="tdot"></span><strong>{{ a.user|default:"—" }}</strong> {{ a.verb }}{% if a.paper %} · <a href="{{ a.paper.get_absolute_url }}">{{ a.paper.label|truncatechars:38 }}</a>{% endif %}
-            <div class="text-muted-rt fs-7">{{ a.created_at|timesince }}</div></li>
+        <ul class="timeline small multi">
+        {% for a in activity|slice:":7" %}
+          <li><span class="tdot"><i class="bi bi-lightning-fill"></i></span><strong>{{ a.user|default:"—" }}</strong> {{ a.verb }}{% if a.paper %} · <a href="{{ a.paper.get_absolute_url }}">{{ a.paper.label|truncatechars:38 }}</a>{% endif %}
+            <div class="text-muted-rt fs-7"><span class="num">{{ a.created_at|date:"d/m/Y · H:i" }}</span></div></li>
         {% empty %}<li class="text-muted-rt">{% trans "No activity yet." %}</li>{% endfor %}
         </ul>
       </div>

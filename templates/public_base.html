@@ -1,6 +1,6 @@
 {% extends "base.html" %}{% load i18n %}
 {% block shell %}{% get_current_language as LANG %}
-<div class="min-vh-100 d-flex flex-column" style="background: radial-gradient(900px 400px at 100% 0%, rgba(47,91,234,.10), transparent 60%), var(--rt-bg)">
+<div class="min-vh-100 d-flex flex-column" style="background: var(--rt-bg)">
   <header class="d-flex align-items-center justify-content-between px-3 px-md-4 py-3">
     <a href="/" class="d-flex align-items-center gap-2 fw-bold text-decoration-none" style="color: var(--rt-text)">
       <span class="sb-logo" style="width:34px;height:34px;font-size:1rem"><i class="bi bi-journal-bookmark-fill"></i></span> {{ SITE_NAME }}</a>

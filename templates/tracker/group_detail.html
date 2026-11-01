@@ -2,13 +2,13 @@
 {% block title %}{{ group.name }}{% endblock %}
 {% block content %}
 <div class="card mb-4 overflow-hidden">
-  <div style="height:96px;background:linear-gradient(120deg,#1a2f6b,#2f5bea 60%,#10b3a3)"></div>
+  <div class="banner {{ group|avatar_class }}"></div>
   <div class="card-body pt-0 d-flex flex-wrap justify-content-between align-items-end gap-3">
     <div class="d-flex align-items-end gap-3">
       <span class="avatar avatar-xl {{ group|avatar_class }}" style="margin-top:-34px;border:4px solid var(--rt-surface)">{{ group.name|initials }}</span>
       <div><div class="crumbs mb-0"><a href="{% url 'group_list' %}">{% trans "Research groups" %}</a></div><h1 class="h3 fw-bold m-0">{{ group.name }}</h1><div class="small text-muted-rt">{{ group.institution }}</div></div>
     </div>
-    <div class="d-flex gap-2"><span class="chip"><i class="bi bi-people"></i> {{ memberships|length }} {% trans "members" %}</span><span class="chip"><i class="bi bi-file-earmark-text"></i> {{ papers|length }} {% trans "papers" %}</span>
+    <div class="d-flex gap-2"><span class="chip c" style="--c:#d97706"><i class="bi bi-people-fill"></i> {{ memberships|length }} {% trans "members" %}</span><span class="chip c" style="--c:#7c3aed"><i class="bi bi-file-earmark-text-fill"></i> {{ papers|length }} {% trans "papers" %}</span>
       {% if manage %}<a href="{% url 'group_edit' group.pk %}" class="btn btn-ghost btn-sm"><i class="bi bi-pencil"></i> {% trans "Edit" %}</a>{% endif %}</div>
   </div>
   {% if group.description %}<div class="px-4 pb-4 text-muted-rt">{{ group.description }}</div>{% endif %}
@@ -45,7 +45,7 @@
       <p class="small text-muted-rt mt-3 mb-0"><i class="bi bi-shield-lock"></i> {% trans "External collaborators only see the papers they are authors on." %}</p>
     </div></div>
     {% if invitations %}<div class="card"><div class="card-header"><h2 class="card-title-rt"><span class="ic tone-warning"><i class="bi bi-hourglass"></i></span>{% trans "Pending invitations" %}</h2></div>
-      {% for inv in invitations %}<div class="list-row align-items-start"><div class="grow"><div class="t text-truncate">{{ inv.email }}</div><div class="s">{{ inv.get_role_display }} · {% if inv.is_valid %}{% trans "expires" %} {{ inv.expires_at|date:"j M" }}{% else %}<span class="text-danger">{% trans "expired" %}</span>{% endif %}</div>
+      {% for inv in invitations %}<div class="list-row align-items-start"><div class="grow"><div class="t text-truncate">{{ inv.email }}</div><div class="s">{{ inv.get_role_display }} · {% if inv.is_valid %}{% trans "expires" %} {{ inv.expires_at|date:"d/m" }}{% else %}<span class="text-danger">{% trans "expired" %}</span>{% endif %}</div>
         <div class="copy-field mt-2"><input class="form-control form-control-sm" readonly value="{{ inv.get_accept_url }}" onclick="this.select()"><button class="btn btn-ghost btn-icon btn-sm" type="button" data-copy><i class="bi bi-clipboard"></i></button></div></div>
         <form method="post" action="{% url 'invitation_revoke' group.pk inv.pk %}">{% csrf_token %}<button class="btn btn-ghost btn-sm text-danger">{% trans "Revoke" %}</button></form></div>{% endfor %}
     </div>{% endif %}

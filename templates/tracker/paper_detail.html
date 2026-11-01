@@ -4,23 +4,25 @@
 <div class="crumbs"><a href="{% url 'paper_list' %}">{% trans "Papers" %}</a> <i class="bi bi-chevron-{% if LANGUAGE_BIDI %}left{% else %}right{% endif %} small"></i> <a href="{{ paper.group.get_absolute_url }}">{{ paper.group.name }}</a></div>
 
 <!-- Header -->
-<div class="card mb-4">
+<div class="card mb-4 card-accent" style="--c:{{ paper.status|status_hex }}">
   <div class="card-body p-4">
     <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
-      <div style="max-width: 860px" class="flex-grow-1">
+      <div style="max-width: 900px" class="flex-grow-1 d-flex gap-3 align-items-start">
+      <span class="ico lg solid d-none d-sm-grid" style="--c:{{ paper.type|type_hex }};width:58px;height:58px;font-size:1.5rem"><i class="bi {{ paper.type|type_icon }}"></i></span>
+      <div class="flex-grow-1 min-w-0">
         <div class="d-flex flex-wrap gap-2 mb-2">
           {% status_badge paper %}
-          <span class="chip"><i class="bi bi-file-earmark-text"></i> {{ paper.get_type_display }}</span>
-          {% if paper.priority >= 3 %}<span class="chip text-danger"><i class="bi bi-flag-fill"></i> {{ paper.get_priority_display }}</span>{% endif %}
-          {% if paper.research_area %}<span class="chip"><i class="bi bi-tag"></i> {{ paper.research_area }}</span>{% endif %}
+          <span class="chip c" style="--c:{{ paper.type|type_hex }}"><i class="bi {{ paper.type|type_icon }}"></i> {{ paper.get_type_display }}</span>
+          {% if paper.priority >= 3 %}<span class="chip c" style="--c:#dc2626"><i class="bi bi-flag-fill"></i> {{ paper.get_priority_display }}</span>{% endif %}
+          {% if paper.research_area %}<span class="chip c" style="--c:#0d9488"><i class="bi bi-tag-fill"></i> {{ paper.research_area }}</span>{% endif %}
         </div>
         <h1 class="h3 fw-bold mb-2 bidi">{{ paper.title }}</h1>
-        <div class="d-flex flex-wrap gap-3 small text-muted-rt">
+        <div class="d-flex flex-wrap gap-2 align-items-center small text-muted-rt">
           {% if paper.lead %}<span class="d-flex align-items-center gap-2"><span class="avatar avatar-sm {{ paper.lead|avatar_class }}">{{ paper.lead|initials }}</span>{{ paper.lead }}</span>{% endif %}
-          {% if paper.target_submission_date %}<span><i class="bi bi-flag"></i> {% trans "Target" %}: {{ paper.target_submission_date|date:"j M Y" }}</span>{% endif %}
-          <span><i class="bi bi-clock-history"></i> {% trans "Updated" %} {{ paper.updated_at|timesince }}</span>
+          {% if paper.target_submission_date %}<span class="chip c" style="--c:#ea580c"><i class="bi bi-flag-fill"></i> {% trans "Target" %}: <span class="num">{{ paper.target_submission_date|date:"d/m/Y" }}</span></span>{% endif %}
+          <span class="chip c" style="--c:#64748b"><i class="bi bi-clock-history"></i> {% trans "Updated" %} {{ paper.updated_at|timesince }}</span>
         </div>
-      </div>
+      </div></div>
       {% if can_edit %}
       <div class="d-flex gap-2 align-items-center no-print">
         <form method="post" action="{% url 'paper_status' paper.pk %}" class="m-0">{% csrf_token %}
@@ -28,7 +30,7 @@
             {% for code, label in statuses %}<option value="{{ code }}" {% if code == paper.status %}selected{% endif %}>{{ label }}</option>{% endfor %}
           </select>
         </form>
-        <a class="btn btn-ghost" href="{% url 'paper_edit' paper.pk %}"><i class="bi bi-pencil"></i> {% trans "Edit" %}</a>
+        <a class="btn btn-ghost" href="{% url 'paper_edit' paper.pk %}"><i class="bi bi-pencil-fill" style="color:#2563eb"></i> {% trans "Edit" %}</a>
         <div class="dropdown">
           <button class="btn btn-ghost btn-icon" data-bs-toggle="dropdown" aria-label="{% trans 'More' %}"><i class="bi bi-three-dots"></i></button>
           <ul class="dropdown-menu dropdown-menu-end">
@@ -49,20 +51,20 @@
 <div class="row g-4">
 <div class="col-xl-8">
   <ul class="nav nav-tabs-rt mb-3" role="tablist">
-    <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#submissions" type="button"><i class="bi bi-send"></i> {% trans "Submissions" %} <span class="count">{{ submissions|length }}</span></button></li>
-    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#deadlines" type="button"><i class="bi bi-alarm"></i> {% trans "Deadlines" %} <span class="count">{{ deadlines|length }}</span></button></li>
-    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#files" type="button"><i class="bi bi-paperclip"></i> {% trans "Files" %} <span class="count">{{ attachments|length }}</span></button></li>
-    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#activity" type="button"><i class="bi bi-clock-history"></i> {% trans "History" %}</button></li>
+    <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#submissions" type="button" style="--c:#2563eb"><i class="bi bi-send-fill"></i> {% trans "Submissions" %} <span class="count">{{ submissions|length }}</span></button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#deadlines" type="button" style="--c:#db2777"><i class="bi bi-alarm-fill"></i> {% trans "Deadlines" %} <span class="count">{{ deadlines|length }}</span></button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#files" type="button" style="--c:#0d9488"><i class="bi bi-paperclip"></i> {% trans "Files" %} <span class="count">{{ attachments|length }}</span></button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#activity" type="button" style="--c:#7c3aed"><i class="bi bi-clock-history"></i> {% trans "History" %}</button></li>
   </ul>
   <div class="tab-content">
     <!-- Submissions -->
     <div class="tab-pane fade show active" id="submissions">
       {% if can_edit %}<div class="d-flex justify-content-end mb-3"><a class="btn btn-primary btn-sm" href="{% url 'submission_add' paper.pk %}"><i class="bi bi-plus-lg"></i> {% trans "New submission" %}</a></div>{% endif %}
       {% for s in submissions %}
-      <div class="card mb-3" id="submission-{{ s.pk }}">
+      <div class="card mb-3 card-accent" id="submission-{{ s.pk }}" style="--c:{{ s.decision|status_hex }}">
         <div class="card-header flex-wrap">
           <div class="d-flex align-items-center gap-3 min-w-0">
-            <span class="rec-ico" style="--t:#2f5bea"><i class="bi bi-journal-text"></i></span>
+            <span class="rec-ico" style="--t:#2563eb"><i class="bi bi-journal-text"></i></span>
             <div class="min-w-0">
               <a href="{{ s.journal.get_absolute_url }}" class="fw-bold d-block text-truncate" style="color:var(--rt-text)">{{ s.journal.name }}</a>
               <div class="small text-muted-rt fw-normal d-flex gap-2 align-items-center flex-wrap">{{ s.journal.publisher }}
@@ -76,10 +78,10 @@
         <div class="card-body">
           <div class="kv mb-3">
             <div><div class="k">{% trans "Manuscript ID" %}</div><div class="v">{{ s.manuscript_id|default:"—" }}</div></div>
-            <div><div class="k">{% trans "Submitted" %}</div><div class="v">{{ s.submitted_at|date:"j M Y, H:i"|default:"—" }}</div>{% if s.submitted_by %}<div class="small text-muted-rt">{% trans "by" %} {{ s.submitted_by }}</div>{% endif %}</div>
+            <div><div class="k">{% trans "Submitted" %}</div><div class="v">{{ s.submitted_at|date:"d/m/Y · H:i"|default:"—" }}</div>{% if s.submitted_by %}<div class="small text-muted-rt">{% trans "by" %} {{ s.submitted_by }}</div>{% endif %}</div>
             <div><div class="k">{% trans "Days since submission" %}</div><div class="v">{{ s.days_in_review|default_if_none:"—" }}</div></div>
-            {% if s.revision_due_at %}<div><div class="k">{% trans "Revision due" %}</div><div class="v text-danger">{{ s.revision_due_at|date:"j M Y, H:i" }}</div></div>{% endif %}
-            {% if s.accepted_at %}<div><div class="k">{% trans "Accepted" %}</div><div class="v text-success">{{ s.accepted_at|date:"j M Y" }}</div></div>{% endif %}
+            {% if s.revision_due_at %}<div><div class="k">{% trans "Revision due" %}</div><div class="v"><span class="chip c num" style="--c:#dc2626">{{ s.revision_due_at|date:"d/m/Y · H:i" }}</span></div></div>{% endif %}
+            {% if s.accepted_at %}<div><div class="k">{% trans "Accepted" %}</div><div class="v"><span class="chip c num" style="--c:#16a34a">{{ s.accepted_at|date:"d/m/Y" }}</span></div></div>{% endif %}
             {% if s.editor %}<div><div class="k">{% trans "Editor" %}</div><div class="v">{{ s.editor }}</div></div>{% endif %}
             {% if s.special_issue %}<div><div class="k">{% trans "Special issue" %}</div><div class="v">{{ s.special_issue }}</div></div>{% endif %}
           </div>
@@ -104,7 +106,7 @@
           <div class="border rounded-3 overflow-hidden mb-3" style="border-color:var(--rt-border)!important">
             {% for c in comments %}
             <div class="list-row align-items-start">
-              <span class="chip flex-shrink-0">{{ c.reviewer }}{% if c.number %} #{{ c.number }}{% endif %}</span>
+              <span class="chip c flex-shrink-0" style="--c:#4f46e5"><i class="bi bi-person-badge-fill"></i> {{ c.reviewer }}{% if c.number %} #{{ c.number }}{% endif %}</span>
               <div class="grow">
                 <div class="small comment-text">{{ c.comment|truncatechars:240 }}</div>
                 {% if c.response %}<div class="small text-success mt-1 comment-text"><i class="bi bi-reply"></i> {{ c.response|truncatechars:160 }}</div>{% endif %}
@@ -122,8 +124,8 @@
           {% with events=s.events.all %}{% if events %}
           <h3 class="h6 fw-bold mb-3">{% trans "Timeline" %}</h3>
           <ul class="timeline small">{% for e in events %}
-            <li class="{% if e.decision == 'major' or e.decision == 'minor' %}tw{% elif e.decision == 'accepted' %}ts{% elif e.decision == 'rejected' or e.decision == 'desk_rejected' %}td{% endif %}"><span class="tdot"></span>
-              <strong>{{ e.get_decision_display }}</strong> <span class="text-muted-rt">· {{ e.happened_at|date:"j M Y, H:i" }}{% if e.recorded_by %} · {{ e.recorded_by }}{% endif %}</span>
+            <li class="{% if e.decision == 'major' or e.decision == 'minor' %}tw{% elif e.decision == 'accepted' %}ts{% elif e.decision == 'rejected' or e.decision == 'desk_rejected' %}td{% endif %}"><span class="tdot" style="--c:{{ e.decision|status_hex }}"><i class="bi bi-flag-fill"></i></span>
+              <strong>{{ e.get_decision_display }}</strong> <span class="text-muted-rt">· {{ e.happened_at|date:"d/m/Y · H:i" }}{% if e.recorded_by %} · {{ e.recorded_by }}{% endif %}</span>
               {% if e.note %}<div class="comment-text text-muted-rt">{{ e.note }}</div>{% endif %}</li>
           {% endfor %}</ul>
           {% endif %}{% endwith %}
@@ -138,15 +140,15 @@
     <!-- Deadlines -->
     <div class="tab-pane fade" id="deadlines">
       <div class="card">
-        <div class="card-header"><h2 class="card-title-rt"><span class="ic tone-warning"><i class="bi bi-alarm"></i></span>{% trans "Deadlines & reminders" %}</h2>
+        <div class="card-header"><h2 class="card-title-rt"><span class="ic tone-pink"><i class="bi bi-alarm-fill"></i></span>{% trans "Deadlines & reminders" %}</h2>
           {% if can_edit %}<a class="btn btn-sm btn-primary" href="{% url 'deadline_add' paper.pk %}"><i class="bi bi-plus-lg"></i> {% trans "Add" %}</a>{% endif %}</div>
         {% for d in deadlines %}
         <div class="dl {{ d.urgency }}">
-          <div class="dl-date"><div class="m">{{ d.due_at|date:"M" }}</div><div class="d">{{ d.due_at|date:"j" }}</div></div>
+          <div class="dl-date"><div class="m">{{ d.due_at|date:"m/Y" }}</div><div class="d">{{ d.due_at|date:"d" }}</div></div>
           <div class="grow">
             <div class="t">{{ d.title }}</div>
             <div class="s">{{ d.get_kind_display }} · {{ d.due_at|date:"D, H:i" }}{% if d.submission %} · {{ d.submission.journal.name }}{% endif %}</div>
-            <div class="s"><i class="bi bi-bell"></i> {{ d.reminder_offsets|join:", " }} {% trans "days before" %}</div>
+            <div class="s"><i class="bi bi-bell-fill" style="color:#d97706"></i> {{ d.reminder_offsets|join:", " }} {% trans "days before" %}</div>
           </div>
           {% with people=d.assignees.all %}{% if people %}<div class="avatar-stack d-none d-sm-inline-flex">{% for u in people %}<span class="avatar avatar-sm {{ u|avatar_class }}" title="{{ u.display_name }}">{{ u|initials }}</span>{% endfor %}</div>{% endif %}{% endwith %}
           {% due_badge d %}
@@ -170,7 +172,7 @@
         <div class="list-row">
           <span class="rec-ico" style="--t:#0d9488"><i class="bi bi-file-earmark{% if '.pdf' in a.filename %}-pdf{% elif '.doc' in a.filename %}-word{% elif '.zip' in a.filename %}-zip{% endif %}"></i></span>
           <div class="grow"><a class="t d-block text-truncate" href="{% url 'attachment_download' paper.pk a.pk %}">{{ a.filename }}</a>
-            <div class="s">{{ a.get_kind_display }}{% if a.submission %} · {{ a.submission.journal.name }}{% endif %} · {{ a.uploaded_by }} · {{ a.uploaded_at|date:"j M Y" }}</div></div>
+            <div class="s">{{ a.get_kind_display }}{% if a.submission %} · {{ a.submission.journal.name }}{% endif %} · {{ a.uploaded_by }} · {{ a.uploaded_at|date:"d/m/Y" }}</div></div>
           <a class="btn btn-ghost btn-icon btn-sm" href="{% url 'attachment_download' paper.pk a.pk %}" title="{% trans 'Download' %}"><i class="bi bi-download"></i></a>
           {% if can_edit %}<form method="post" action="{% url 'attachment_delete' paper.pk a.pk %}" onsubmit="return confirm('{% trans "Delete this file?" %}')">{% csrf_token %}<button class="btn btn-ghost btn-icon btn-sm text-danger"><i class="bi bi-trash3"></i></button></form>{% endif %}
         </div>
@@ -181,8 +183,8 @@
     <!-- Activity -->
     <div class="tab-pane fade" id="activity">
       <div class="card"><div class="card-body">
-        <ul class="timeline small">
-          {% for a in activity %}<li><span class="tdot"></span><strong>{{ a.user|default:"—" }}</strong> {{ a.verb }}<div class="text-muted-rt fs-7">{{ a.created_at|date:"j M Y, H:i" }}</div></li>
+        <ul class="timeline small multi">
+          {% for a in activity %}<li><span class="tdot"><i class="bi bi-lightning-fill"></i></span><strong>{{ a.user|default:"—" }}</strong> {{ a.verb }}<div class="text-muted-rt fs-7">{{ a.created_at|date:"d/m/Y · H:i" }}</div></li>
           {% empty %}<li class="text-muted-rt">—</li>{% endfor %}
         </ul>
       </div></div>
@@ -193,7 +195,7 @@
 <div class="col-xl-4">
   <!-- Authors -->
   <div class="card mb-4" id="authors">
-    <div class="card-header"><h2 class="card-title-rt"><span class="ic tone-primary"><i class="bi bi-people"></i></span>{% trans "Authors" %} <span class="count-pill">{{ authors|length }}</span></h2>
+    <div class="card-header"><h2 class="card-title-rt"><span class="ic tone-orange"><i class="bi bi-people-fill"></i></span>{% trans "Authors" %} <span class="count-pill">{{ authors|length }}</span></h2>
       {% if can_edit %}<a class="btn btn-sm btn-soft" href="{% url 'author_add' paper.pk %}"><i class="bi bi-person-plus"></i> {% trans "Add" %}</a>{% endif %}</div>
     {% for a in authors %}{% with miss=a.missing_fields %}
     <div class="list-row align-items-start">
@@ -204,9 +206,9 @@
           {% if a.user.is_external %}<span class="badge bg-secondary-subtle text-secondary-emphasis">{% trans "external" %}</span>{% endif %}</div>
         <div class="s">{{ a.affiliation|default:"" }}{% if a.country %}, {{ a.country }}{% endif %}</div>
         {% if a.orcid %}<a class="small" href="https://orcid.org/{{ a.orcid }}" target="_blank" rel="noopener"><i class="bi bi-person-badge"></i> {{ a.orcid }}</a>{% endif %}
-        {% if miss %}<div class="small text-danger mt-1"><i class="bi bi-exclamation-circle"></i> {% trans "Missing" %}: {{ miss|join:", " }}</div>
+        {% if miss %}<div class="mt-1"><span class="chip c" style="--c:#dc2626;white-space:normal"><i class="bi bi-exclamation-circle-fill"></i> {% trans "Missing" %}: {{ miss|join:", " }}</span></div>
           {% if can_edit %}<div class="copy-field mt-2"><input class="form-control form-control-sm" readonly value="{{ a.get_update_url }}" onclick="this.select()"><button class="btn btn-ghost btn-icon btn-sm" type="button" data-copy title="{% trans 'Copy link (send via WhatsApp)' %}"><i class="bi bi-clipboard"></i></button></div>{% endif %}
-        {% else %}<div class="small text-success mt-1"><i class="bi bi-check-circle-fill"></i> {% trans "Complete" %}</div>{% endif %}
+        {% else %}<div class="mt-1"><span class="chip c" style="--c:#16a34a"><i class="bi bi-check-circle-fill"></i> {% trans "Complete" %}</span></div>{% endif %}
       </div>
       {% if can_edit %}<div class="dropdown"><button class="btn btn-ghost btn-icon btn-sm" data-bs-toggle="dropdown"><i class="bi bi-three-dots-vertical"></i></button>
         <ul class="dropdown-menu dropdown-menu-end">
@@ -220,15 +222,15 @@
 
   <!-- Details -->
   <div class="card">
-    <div class="card-header"><h2 class="card-title-rt"><span class="ic tone-slate"><i class="bi bi-info-circle"></i></span>{% trans "Details" %}</h2></div>
+    <div class="card-header"><h2 class="card-title-rt"><span class="ic tone-cyan"><i class="bi bi-info-circle-fill"></i></span>{% trans "Details" %}</h2></div>
     <div class="card-body small">
       <div class="kv" style="grid-template-columns:1fr 1fr">
         <div><div class="k">{% trans "Group" %}</div><div class="v">{{ paper.group.name }}</div></div>
         <div><div class="k">{% trans "Type" %}</div><div class="v">{{ paper.get_type_display }}</div></div>
         {% if paper.funding %}<div><div class="k">{% trans "Funding" %}</div><div class="v">{{ paper.funding }}</div></div>{% endif %}
-        {% if paper.publication_date %}<div><div class="k">{% trans "Published" %}</div><div class="v">{{ paper.publication_date|date:"j M Y" }}</div></div>{% endif %}
+        {% if paper.publication_date %}<div><div class="k">{% trans "Published" %}</div><div class="v">{{ paper.publication_date|date:"d/m/Y" }}</div></div>{% endif %}
       </div>
-      {% if paper.keywords %}<div class="mt-3 d-flex flex-wrap gap-1">{% for k in paper.keywords_list %}<span class="chip">{{ k }}</span>{% endfor %}</div>{% endif %}
+      {% if paper.keywords %}<div class="mt-3 d-flex flex-wrap gap-1">{% for k in paper.keywords_list %}<span class="chip c" style="--c:{% cycle '#2563eb' '#7c3aed' '#0d9488' '#ea580c' '#db2777' %}"><i class="bi bi-hash"></i>{{ k }}</span>{% endfor %}</div>{% endif %}
       <div class="d-flex flex-wrap gap-2 mt-3">
         {% if paper.overleaf_url %}<a class="btn btn-sm btn-ghost" href="{{ paper.overleaf_url }}" target="_blank" rel="noopener"><i class="bi bi-pencil-square"></i> {% trans "Manuscript" %}</a>{% endif %}
         {% if paper.repository_url %}<a class="btn btn-sm btn-ghost" href="{{ paper.repository_url }}" target="_blank" rel="noopener"><i class="bi bi-github"></i> {% trans "Code / data" %}</a>{% endif %}
