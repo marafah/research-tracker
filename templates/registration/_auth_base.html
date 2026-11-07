@@ -1,50 +1,37 @@
 {% extends "base.html" %}{% load i18n %}
 {% block shell %}{% get_current_language as LANG %}
-<div class="auth-shell">
+<div class="auth-shell uop">
   <section class="auth-art">
-    <a href="/" class="brand d-flex align-items-center gap-2 fw-bold text-decoration-none fs-5">
-      <span class="sb-logo"><i class="bi bi-journal-bookmark-fill"></i></span> {{ SITE_NAME }}</a>
-    <div>
-      <span class="auth-badge mb-3"><i class="bi bi-mortarboard-fill"></i> {% trans "For researchers & research groups" %}</span>
-      <h2 class="mt-3 mb-3">{% trans "Every paper, every deadline, every co-author — in one place." %}</h2>
-      <p class="lead mb-0">{% trans "Track submissions from idea to publication, never miss a revision deadline, and collect co-author data without the email chase." %}</p>
-      <div class="auth-stage" aria-hidden="true">
-        <div class="float-card f1">
-          <div class="fc-h"><span>{% trans "Papers" %}</span><span class="num">3</span></div>
-          <div class="fc-row"><i class="bi bi-journal-text" style="background:#2563eb"></i><span class="text-truncate">Computers &amp; Security</span><span class="fc-pill" style="--c:#ea580c">{% trans "Major revision" %}</span></div>
-          <div class="fc-row"><i class="bi bi-easel" style="background:#7c3aed"></i><span class="text-truncate">Expert Systems w/ Applications</span><span class="fc-pill" style="--c:#7c3aed">{% trans "Under review" %}</span></div>
-          <div class="fc-row"><i class="bi bi-book" style="background:#0d9488"></i><span class="text-truncate">J. Network &amp; Comp. Apps</span><span class="fc-pill" style="--c:#16a34a">{% trans "Accepted" %}</span></div>
-        </div>
-        <div class="float-card f2">
-          <div class="fc-h"><span>{% trans "Accepted or published" %}</span></div>
-          <div class="fc-big num">68%</div>
-          <div class="fc-bars"><span style="height:35%"></span><span style="height:55%"></span><span style="height:45%"></span><span style="height:70%"></span><span style="height:95%"></span><span style="height:60%"></span></div>
-        </div>
-        <div class="float-card f3">
-          <div class="fc-row"><i class="bi bi-alarm-fill" style="background:#db2777"></i><span class="flex-grow-1">{% trans "Revision deadline" %}</span><span class="fc-pill" style="--c:#db2777">{% trans "in 7 days" %}</span></div>
-          <div class="fc-prog"><span></span></div>
-        </div>
-      </div>
-      <div class="auth-points">
-        <span><i class="bi bi-check-circle-fill"></i> {% trans "Smart reminders" %}</span>
-        <span><i class="bi bi-check-circle-fill"></i> {% trans "Team-ready" %}</span>
-        <span><i class="bi bi-check-circle-fill"></i> {% trans "Arabic & English" %}</span>
-      </div>
+    <div class="ua-pattern" aria-hidden="true"></div>
+    <a href="/" class="ua-brand">
+      <span class="ua-mark"><i class="bi bi-journal-bookmark-fill"></i></span>
+      <span><b>{{ INSTITUTION }}</b><small>{{ INSTITUTION_UNIT }}</small></span>
+    </a>
+    <div class="ua-body">
+      <div class="ua-eyebrow"><span></span>{{ SITE_NAME }}</div>
+      <h2>{% trans "Every paper, every deadline, every co-author — in one place." %}</h2>
+      <p class="ua-lead">{% trans "Track submissions from idea to publication, never miss a revision deadline, and collect co-author data without the email chase." %}</p>
+      <ul class="ua-list">
+        <li><i class="bi bi-alarm"></i><div><b>{% trans "Smart reminders" %}</b><span>{% trans "Email alerts before every deadline" %}</span></div></li>
+        <li><i class="bi bi-people"></i><div><b>{% trans "Team-ready" %}</b><span>{% trans "Internal & external collaborators" %}</span></div></li>
+        <li><i class="bi bi-bar-chart-line"></i><div><b>{% trans "Reports" %}</b><span>{% trans "Arabic & English" %}</span></div></li>
+      </ul>
     </div>
-    <div class="auth-foot"><i class="bi bi-shield-lock"></i> {% trans "Open-source · Self-hostable · Your data stays private" %}</div>
+    <div class="ua-foot"><i class="bi bi-shield-lock"></i> {% trans "Open-source · Self-hostable · Your data stays private" %}</div>
   </section>
   <section class="auth-form">
+    <div class="ua-top">
+      <a href="/" class="ua-mini d-lg-none"><span class="ua-mark sm"><i class="bi bi-journal-bookmark-fill"></i></span><span><b>{{ INSTITUTION }}</b><small>{{ SITE_NAME }}</small></span></a>
+      <form action="{% url 'set_language' %}" method="post" class="ms-auto">{% csrf_token %}
+        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+        <input type="hidden" name="language" value="{% if LANG == 'ar' %}en{% else %}ar{% endif %}">
+        <button class="btn btn-ghost btn-sm"><i class="bi bi-translate"></i> {% if LANG == 'ar' %}English{% else %}العربية{% endif %}</button>
+      </form>
+    </div>
     <div class="auth-card">
-      <div class="d-flex justify-content-between align-items-center mb-5">
-        <a href="/" class="d-flex d-lg-none align-items-center gap-2 fw-bold text-decoration-none" style="color:var(--rt-text)"><span class="sb-logo" style="width:32px;height:32px;font-size:.95rem"><i class="bi bi-journal-bookmark-fill"></i></span>{{ SITE_NAME }}</a>
-        <form action="{% url 'set_language' %}" method="post" class="ms-auto">{% csrf_token %}
-          <input type="hidden" name="next" value="{{ request.get_full_path }}">
-          <input type="hidden" name="language" value="{% if LANG == 'ar' %}en{% else %}ar{% endif %}">
-          <button class="btn btn-ghost btn-sm"><i class="bi bi-translate"></i> {% if LANG == 'ar' %}English{% else %}العربية{% endif %}</button>
-        </form>
-      </div>
       {% block auth %}{% endblock %}
     </div>
+    <div class="ua-copy">© {% now "Y" %} {{ INSTITUTION }} · {{ SITE_NAME }}</div>
   </section>
 </div>
 {% endblock %}

@@ -34,6 +34,11 @@ ALLOWED_HOSTS = env_list("ALLOWED_HOSTS", "localhost,127.0.0.1")
 CSRF_TRUSTED_ORIGINS = env_list("CSRF_TRUSTED_ORIGINS", "")
 SITE_URL = os.environ.get("SITE_URL", "http://localhost:8000").rstrip("/")
 SITE_NAME = os.environ.get("SITE_NAME", "Research Tracker")
+# Institution shown on the login page and sidebar (set empty to hide).
+INSTITUTION_NAME = os.environ.get("INSTITUTION_NAME", "University of Petra")
+INSTITUTION_NAME_AR = os.environ.get("INSTITUTION_NAME_AR", "جامعة البترا")
+INSTITUTION_UNIT = os.environ.get("INSTITUTION_UNIT", "Faculty Research Workspace")
+INSTITUTION_UNIT_AR = os.environ.get("INSTITUTION_UNIT_AR", "منصة متابعة البحث العلمي")
 
 # Open self-registration. When False, new users can only join through an invitation.
 ALLOW_SIGNUP = env_bool("ALLOW_SIGNUP", True)

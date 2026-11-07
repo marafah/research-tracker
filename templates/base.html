@@ -31,7 +31,7 @@
     <div class="d-flex align-items-center justify-content-between">
       <a class="sb-brand" href="{% url 'dashboard' %}">
         <span class="sb-logo"><i class="bi bi-journal-bookmark-fill"></i></span>
-        <span>{{ SITE_NAME }}<small>{% trans "Publication tracker" %}</small></span>
+        <span>{{ SITE_NAME }}<small>{% if INSTITUTION %}{{ INSTITUTION }}{% else %}{% trans "Publication tracker" %}{% endif %}</small></span>
       </a>
       <button type="button" class="btn-close btn-close-white d-lg-none me-3 ms-3" data-bs-dismiss="offcanvas" data-bs-target="#sidebar" aria-label="{% trans 'Close' %}"></button>
     </div>

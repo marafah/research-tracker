@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Research Tracker VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-07 14:23+0300\n"
+"POT-Creation-Date: 2026-11-07 14:34+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ar\n"
@@ -116,9 +116,6 @@ msgstr "الأعمال المقبولة والمنشورة"
 
 msgid "Accepted / published"
 msgstr "مقبول / منشور"
-
-msgid "Accepted or published"
-msgstr "مقبول أو منشور"
 
 msgid "Accepted this year"
 msgstr "مقبول هذا العام"
@@ -419,6 +416,9 @@ msgstr "البريد الإلكتروني"
 msgid "Email a link to complete their data"
 msgstr "إرسال رابط بالبريد لإكمال بياناته"
 
+msgid "Email alerts before every deadline"
+msgstr "تنبيهات بالبريد قبل كل موعد"
+
 msgid "Email or password is incorrect."
 msgstr "البريد الإلكتروني أو كلمة المرور غير صحيحة."
 
@@ -464,9 +464,6 @@ msgstr "الملف كبير جداً (الحد الأقصى %(mb)s ميغابا�
 
 msgid "Files"
 msgstr "الملفات"
-
-msgid "For researchers & research groups"
-msgstr "للباحثين والمجموعات البحثية"
 
 msgid "Forgot password?"
 msgstr "نسيت كلمة المرور؟"
@@ -551,6 +548,9 @@ msgstr "الفهرسة"
 
 msgid "Insights"
 msgstr "التحليلات"
+
+msgid "Internal & external collaborators"
+msgstr "باحثون من داخل الجامعة وخارجها"
 
 msgid "Internal milestone"
 msgstr "مرحلة داخلية"
@@ -1053,9 +1053,6 @@ msgstr "المخطوطة المعدّلة"
 msgid "Revision"
 msgstr "التعديلات"
 
-msgid "Revision deadline"
-msgstr "موعد تسليم التعديلات"
-
 msgid "Revision due"
 msgstr "موعد تسليم التعديلات"
 
@@ -1527,9 +1524,6 @@ msgstr "معامل التأثير"
 #, python-format
 msgid "imported %(n)s comments from %(r)s"
 msgstr "استورد %(n)s ملاحظة من %(r)s"
-
-msgid "in 7 days"
-msgstr "خلال 7 أيام"
 
 msgid "in the next 30 days"
 msgstr "خلال 30 يوماً القادمة"

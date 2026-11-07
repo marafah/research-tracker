@@ -4,7 +4,11 @@ from django.utils import timezone
 
 
 def site(request):
-    ctx = {"SITE_NAME": settings.SITE_NAME, "ALLOW_SIGNUP": settings.ALLOW_SIGNUP}
+    from django.utils.translation import get_language
+    ar = (get_language() or "").startswith("ar")
+    ctx = {"SITE_NAME": settings.SITE_NAME, "ALLOW_SIGNUP": settings.ALLOW_SIGNUP,
+           "INSTITUTION": (settings.INSTITUTION_NAME_AR if ar else settings.INSTITUTION_NAME) or settings.INSTITUTION_NAME,
+           "INSTITUTION_UNIT": (settings.INSTITUTION_UNIT_AR if ar else settings.INSTITUTION_UNIT) or settings.INSTITUTION_UNIT}
     user = getattr(request, "user", None)
     if user is not None and user.is_authenticated:
         from .models import Deadline
