@@ -98,9 +98,9 @@
     <div class="card wk-side">
       <div class="ov-ch"><div class="min-w-0"><h3><i class="bi bi-activity text-primary me-1"></i>{% trans "Recent activity" %}</h3></div></div>
       <ul class="wk-feed">
-        {% for a in activity|slice:":3" %}
+        {% for a in activity|slice:":4" %}
         <li style="--c:var(--cat-{{ forloop.counter }})"><span class="ic"><i class="bi bi-lightning-charge-fill"></i></span>
-          <div class="min-w-0"><div class="s"><strong>{{ a.user|default:"—" }}</strong> {{ a.verb|activity_verb }}</div>{% if a.paper %}<a href="{{ a.paper.get_absolute_url }}"><bdi>{{ a.paper.label }}</bdi></a>{% endif %}<div class="tm num">{{ a.created_at|date:"d/m/Y · H:i" }}</div></div></li>
+          <div class="min-w-0"><div class="s"><strong>{{ a.user|default:"—" }}</strong> {{ a.verb|activity_verb }}</div>{% if a.paper %}<a class="t" href="{{ a.paper.get_absolute_url }}" title="{{ a.paper.title }}"><bdi dir="{{ a.paper.title|text_dir }}">{{ a.paper.title }}</bdi></a>{% endif %}<div class="tm num">{{ a.created_at|date:"d/m/Y · H:i" }}</div></div></li>
         {% empty %}<li class="ov-none">{% trans "No activity yet." %}</li>{% endfor %}
       </ul>
     </div>
