@@ -1268,3 +1268,48 @@ a.vs-row:hover { background: color-mix(in srgb, var(--c) 8%, transparent); }
 .vm-tbl tfoot th, .vm-tbl tfoot td { border-bottom: 0; background: var(--rt-surface-2); font-weight: 700; }
 .vm-tbl tfoot th { text-align: start; }
 .vm-foot { color: var(--c); text-decoration: none; font-weight: 700; }
+
+/* ===== v7.11.1 — Compact list as a professional table: header row, aligned columns next to the title, zebra rows ===== */
+.vl-card { padding: 0 !important; overflow: hidden; }
+.vl-head, .vl-row { display: grid; grid-template-columns: minmax(0, 1fr) 150px 150px 110px; align-items: center; column-gap: 1.25rem; }
+.vl-head { padding: .75rem 1.1rem; background: color-mix(in srgb, var(--blue) 9%, var(--rt-surface)); border-bottom: 2px solid color-mix(in srgb, var(--blue) 45%, transparent);
+  font-size: .78rem; font-weight: 700; color: var(--rt-text); }
+.vl-head span { display: inline-flex; align-items: center; gap: .4rem; white-space: nowrap; }
+.vl-head i { color: var(--h); }
+.vl-row { padding: .6rem 1.1rem !important; gap: 0 1.25rem; border-bottom: 1px solid color-mix(in srgb, var(--rt-border) 80%, transparent); }
+.vl-row:nth-child(odd) { background: color-mix(in srgb, var(--blue) 2.5%, var(--rt-surface)); }
+.vl-row:hover { background: color-mix(in srgb, var(--c) 7%, var(--rt-surface)) !important; }
+.vl-cell { min-width: 0; display: flex; align-items: center; }
+.vl-titlecell { gap: .75rem; }
+.vl-ic { width: 34px; height: 34px; }
+.vl-t { font-size: .84rem; }
+.vl-meta { gap: .1rem .35rem; }
+.vl-sep { opacity: .6; }
+.vl-date { font-size: .74rem; color: var(--rt-muted); }
+.vl-none { font-size: .85rem; color: color-mix(in srgb, var(--rt-muted) 55%, var(--rt-surface)); font-weight: 600; }
+@media (max-width: 900px) {
+  .vl-head { display: none; }
+  .vl-row { grid-template-columns: minmax(0, 1fr) auto; row-gap: .4rem; }
+  .vl-row .vl-titlecell { grid-column: 1 / -1; }
+  .vl-row .vl-date { display: none; }
+}
+
+/* ===== v7.11.2 — No grey in the record tables; days since submission on the same line as the date =====
+   Secondary text takes a colour that means something (group = indigo, publisher = orange, manuscript ID = teal),
+   empty cells show a soft blue dash, and the day count is its own pill next to the date so nothing hangs under it. */
+.pt-tbl .pt-sub, .vl-meta, .vl-date { color: #3f5f9e; }
+.pt-tbl .pt-grp { color: #5b4bc4; font-weight: 500; }
+.pt-tbl .pt-pub { color: #c2570c; font-weight: 600; }
+.pt-tbl .pt-ms { color: #0b7f8f; font-weight: 600; }
+.pt-tbl .pt-dot, .vl-sep { color: #8fb0e8; opacity: 1; }
+.pt-none, .vl-none { color: #9cbcf0 !important; }
+.pt-inline { display: flex; align-items: center; flex-wrap: nowrap; gap: .4rem; }
+.pt-days { display: inline-flex; align-items: center; gap: .25rem; padding: .2rem .55rem; border-radius: 99px; font-size: .72rem; font-weight: 700;
+  color: #6f42c1; background: color-mix(in srgb, #6f42c1 11%, var(--rt-surface)); white-space: nowrap; }
+.pt-days i { font-size: .7rem; }
+.pt-tbl .c-sub { min-width: 230px; }
+.pt-stack .pt-sub { color: #a1325f; font-weight: 500; }
+[data-bs-theme="dark"] .pt-tbl .pt-sub, [data-bs-theme="dark"] .vl-meta, [data-bs-theme="dark"] .vl-date { color: #9db8ea; }
+[data-bs-theme="dark"] .pt-tbl .pt-grp { color: #b3a8ff; }
+[data-bs-theme="dark"] .pt-tbl .pt-pub { color: #ffb070; }
+[data-bs-theme="dark"] .pt-tbl .pt-ms { color: #5fd3e0; }
