@@ -2015,3 +2015,15 @@ msgstr "قائمة عمودية"
 
 msgid "Open in table"
 msgstr "فتح في الجدول"
+
+msgid "Tasks"
+msgstr "المهام"
+
+msgid "Mark as done"
+msgstr "تعليم كمنجز"
+
+msgid "Nothing here"
+msgstr "لا شيء هنا"
+
+msgid "Upcoming"
+msgstr "قادم"
