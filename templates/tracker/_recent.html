@@ -17,7 +17,7 @@
     <a class="rc-row" href="{{ p.get_absolute_url }}" style="--c:var(--cat-{{ slot|default:1 }});--s:{{ p.status|status_hex }}">
       <span class="rc-ic"><i class="bi {{ type_icons|get_item:p.type }}"></i></span>
       <div class="rc-main min-w-0">
-        <bdi class="t">{{ p.label }}</bdi>
+        <bdi class="t" dir="{{ p.title|text_dir }}" title="{{ p.title }}">{{ p.title }}</bdi>
         <div class="meta">
           <span class="rc-type">{{ p.get_type_display }}</span>
           {% if s %}<span><i class="bi bi-journal-bookmark"></i> <bdi>{{ s.journal.name }}</bdi></span>{% if s.journal.publisher %}<span class="d-none d-lg-inline"><i class="bi bi-building"></i> <bdi>{{ s.journal.publisher }}</bdi></span>{% endif %}
@@ -36,7 +36,7 @@
     {% for p in recent_papers %}{% with s=p.current_submission %}{% with slot=p.rc_slot %}
     <a class="rc-card" href="{{ p.get_absolute_url }}" style="--c:var(--cat-{{ slot|default:1 }})">
       <div class="top"><span class="rc-ic sm"><i class="bi {{ type_icons|get_item:p.type }}"></i></span>{% status_badge p %}</div>
-      <bdi class="t">{{ p.label }}</bdi>
+      <bdi class="t" dir="{{ p.title|text_dir }}" title="{{ p.title }}">{{ p.title }}</bdi>
       <div class="v">{% if s %}<i class="bi bi-journal-bookmark"></i> <bdi>{{ s.journal.name }}</bdi>{% else %}{{ p.get_type_display }}{% endif %}</div>
       <div class="foot"><span>{{ p.get_type_display }}</span><span class="num">{{ p.updated_at|date:"d/m/Y" }}</span></div>
     </a>
