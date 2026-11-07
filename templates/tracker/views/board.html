@@ -1,11 +1,13 @@
 {% load i18n tracker_tags %}
-<div class="d-flex justify-content-end mb-2">
-  <a href="{{ toggle_all_url }}" class="btn btn-sm btn-ghost">{% if show_all %}<i class="bi bi-eye-slash"></i> {% trans "Hide empty stages" %}{% else %}<i class="bi bi-eye"></i> {% trans "Show all stages" %}{% endif %}</a>
+<div class="board-top">
+  <div class="board-legend">{% if show_all %}{% trans "One column per stage" %}{% else %}{% trans "Five phases · every stage with its count" %}{% endif %}</div>
+  <a href="{{ toggle_all_url }}" class="btn btn-sm btn-ghost">{% if show_all %}<i class="bi bi-columns-gap"></i> {% trans "Show phases" %}{% else %}<i class="bi bi-layout-three-columns"></i> {% trans "Show all stages" %}{% endif %}</a>
 </div>
-<div class="board">
+<div class="board {% if show_all %}board-stages{% else %}board-phases{% endif %}">
 {% for col in columns %}
-  <div class="board-col" style="--col: {{ col.status|status_hex }}">
-    <div class="board-col-head"><span class="bc-ic"><i class="bi {{ col.status|status_icon }}"></i></span><span>{{ col.label }}</span><span class="count-pill">{{ col.papers|length }}</span></div>
+  <div class="board-col {% if not col.papers %}is-empty{% endif %}" style="--col: {% if col.color %}{{ col.color }}{% else %}{{ col.status|status_hex }}{% endif %}">
+    <div class="board-col-head"><span class="bc-ic"><i class="bi {% if col.icon %}{{ col.icon }}{% else %}{{ col.status|status_icon }}{% endif %}"></i></span><span class="bc-t">{{ col.label }}</span><span class="count-pill">{{ col.papers|length }}</span></div>
+    {% if col.stages %}<div class="bc-stages">{% for st in col.stages %}<span class="bc-st {% if st.count %}on{% endif %}" style="--s:{{ st.status|status_hex }}">{{ st.label }} <b class="num">{{ st.count }}</b></span>{% endfor %}</div>{% endif %}
     <div class="board-col-body">
     {% for p in col.papers %}{% with s=p.current_submission nd=p.next_deadline %}
       <div class="board-card">
@@ -13,8 +15,9 @@
           <span class="rec-type" style="--t: {{ type_colors|get_item:p.type }}"><i class="bi {{ type_icons|get_item:p.type }}"></i> {{ p.get_type_display }}</span>
           {% if p.priority >= 3 %}<i class="bi bi-flag-fill text-danger" title="{{ p.get_priority_display }}"></i>{% endif %}
         </div>
-        <a class="title" href="{{ p.get_absolute_url }}">{{ p.label }}</a>
-        {% if s %}<div class="meta mt-1 text-truncate"><i class="bi bi-journal-bookmark-fill" style="color:#6610f2"></i> {{ s.journal.name }}</div>{% endif %}
+        {% if col.stages %}<div class="mb-1">{% status_badge p %}</div>{% endif %}
+        <a class="title" href="{{ p.get_absolute_url }}" title="{{ p.title }}"><bdi dir="{{ p.title|text_dir }}">{{ p.title }}</bdi></a>
+        {% if s %}<div class="meta mt-1"><i class="bi bi-journal-bookmark-fill" style="color:#6610f2"></i> <bdi dir="{{ s.journal.name|text_dir }}">{{ s.journal.name }}</bdi></div>{% endif %}
         <div class="d-flex justify-content-between align-items-center mt-2">
           <div class="avatar-stack">{% for a in p.authors.all|slice:":3" %}<span class="avatar avatar-sm {{ a.user|default:a.name|avatar_class }}" title="{{ a.name }}">{{ a.name|initials }}</span>{% endfor %}</div>
           {% if nd %}{% due_badge nd %}{% endif %}
@@ -26,7 +29,7 @@
           </select>
         </form>
       </div>
-    {% endwith %}{% empty %}<div class="board-empty">{% trans "Empty" %}</div>{% endfor %}
+    {% endwith %}{% empty %}<div class="board-empty"><i class="bi bi-inbox"></i> {% trans "No papers in this phase" %}</div>{% endfor %}
     </div>
   </div>
 {% empty %}<div class="w-100">{% include "tracker/views/_empty.html" %}</div>

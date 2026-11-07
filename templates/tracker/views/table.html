@@ -1,20 +1,32 @@
 {% load i18n tracker_tags %}
 {% if papers %}
-<div class="card table-card"><div class="table-responsive">
-<table class="table table-hover align-middle">
-  <thead><tr><th>{% trans "Title" %}</th><th>{% trans "Status" %}</th><th>{% trans "Current venue" %}</th><th>{% trans "Submitted" %}</th><th>{% trans "Next deadline" %}</th><th>{% trans "Team" %}</th></tr></thead>
+<div class="card table-card pt-card"><div class="table-responsive">
+<table class="table pt-tbl align-middle">
+  <thead><tr>
+    <th class="c-title"><i class="bi bi-file-earmark-text-fill" style="--h:#0d6efd"></i>{% trans "Title" %}</th>
+    <th class="c-status"><i class="bi bi-flag-fill" style="--h:#6f42c1"></i>{% trans "Status" %}</th>
+    <th class="c-venue"><i class="bi bi-journal-bookmark-fill" style="--h:#6610f2"></i>{% trans "Current venue" %}</th>
+    <th class="c-sub"><i class="bi bi-send-fill" style="--h:#0aa2c0"></i>{% trans "Submitted" %}</th>
+    <th class="c-due"><i class="bi bi-alarm-fill" style="--h:#d63384"></i>{% trans "Next deadline" %}</th>
+    <th class="c-team"><i class="bi bi-people-fill" style="--h:#e0a800"></i>{% trans "Team" %}</th>
+  </tr></thead>
   <tbody>
   {% for p in papers %}{% with s=p.current_submission nd=p.next_deadline %}
-    <tr>
-      <td class="t-stripe" style="--c:{{ p.status|status_hex }};min-width:280px;max-width:420px"><div class="d-flex gap-3 align-items-center">
-        <span class="rec-ico" style="--t: {{ type_colors|get_item:p.type }}"><i class="bi {{ type_icons|get_item:p.type }}"></i></span>
-        <div class="min-w-0"><a href="{{ p.get_absolute_url }}" class="row-title d-block text-truncate">{{ p.label }}</a>
-          <div class="small text-muted-rt text-truncate">{{ p.get_type_display }} · {{ p.group.name }}{% if p.priority >= 3 %} · <span class="text-danger"><i class="bi bi-flag-fill"></i></span>{% endif %}</div></div></div></td>
-      <td>{% status_badge p %}</td>
-      <td class="small" style="max-width:230px">{% if s %}<div class="fw-semibold text-truncate"><i class="bi bi-journal-bookmark-fill" style="color:#6610f2"></i> {{ s.journal.name }}{% if s.journal.quartile %} <span class="badge quartile-{{ s.journal.quartile|lower }}">{{ s.journal.quartile }}</span>{% endif %}</div><div class="text-muted-rt text-truncate">{{ s.journal.publisher }}{% if s.manuscript_id %} · {{ s.manuscript_id }}{% endif %}</div>{% else %}<span class="text-muted-rt">—</span>{% endif %}</td>
-      <td class="small text-nowrap">{% if s.submitted_at %}<span class="chip c num" style="--c:#0d6efd"><i class="bi bi-send-fill"></i>{{ s.submitted_at|date:"d/m/Y" }}</span><div class="text-muted-rt">{% blocktrans with n=s.days_in_review %}{{ n }} days{% endblocktrans %}</div>{% else %}<span class="text-muted-rt">—</span>{% endif %}</td>
-      <td class="small">{% if nd %}{% due_badge nd %}<div class="text-muted-rt text-truncate mt-1" style="max-width:190px">{{ nd.title }}</div>{% else %}<span class="text-muted-rt">—</span>{% endif %}</td>
-      <td><div class="avatar-stack">{% for a in p.authors.all|slice:":4" %}<span class="avatar avatar-sm {{ a.user|default:a.name|avatar_class }}" title="{{ a.name }}">{{ a.name|initials }}</span>{% endfor %}</div></td>
+    <tr style="--c:{{ p.status|status_hex }};--t:{{ type_colors|get_item:p.type }}">
+      <td class="c-title"><div class="pt-ttl">
+        <span class="rec-ico"><i class="bi {{ type_icons|get_item:p.type }}"></i></span>
+        <div class="min-w-0">
+          <a href="{{ p.get_absolute_url }}" class="pt-name" title="{{ p.title }}"><bdi dir="{{ p.title|text_dir }}">{{ p.title }}</bdi></a>
+          <div class="pt-sub"><span class="pt-type">{{ p.get_type_display }}</span><span class="pt-dot">·</span><bdi>{{ p.group.name }}</bdi>{% if p.priority >= 3 %} <i class="bi bi-flag-fill text-danger" title="{{ p.get_priority_display }}"></i>{% endif %}</div>
+        </div></div></td>
+      <td class="c-status">{% status_badge p %}</td>
+      <td class="c-venue">{% if s %}
+        <div class="pt-ven"><i class="bi bi-journal-bookmark-fill"></i> <bdi dir="{{ s.journal.name|text_dir }}">{{ s.journal.name }}</bdi>{% if s.journal.quartile %} <span class="badge quartile-{{ s.journal.quartile|lower }}">{{ s.journal.quartile }}</span>{% endif %}</div>
+        <div class="pt-sub">{% if s.journal.publisher %}<bdi>{{ s.journal.publisher }}</bdi>{% endif %}{% if s.manuscript_id %}{% if s.journal.publisher %}<span class="pt-dot">·</span>{% endif %}<bdi class="num" dir="ltr">{{ s.manuscript_id }}</bdi>{% endif %}</div>
+      {% else %}<span class="pt-none">—</span>{% endif %}</td>
+      <td class="c-sub">{% if s.submitted_at %}<div class="pt-stack"><span class="chip c num" style="--c:#0aa2c0"><i class="bi bi-send-fill"></i><bdi dir="ltr">{{ s.submitted_at|date:"d/m/Y" }}</bdi></span><span class="pt-sub">{% blocktrans with n=s.days_in_review %}{{ n }} days{% endblocktrans %}</span></div>{% else %}<span class="pt-none">—</span>{% endif %}</td>
+      <td class="c-due">{% if nd %}<div class="pt-stack">{% due_badge nd %}<span class="pt-sub" title="{{ nd.title }}">{{ nd.title }}</span></div>{% else %}<span class="pt-none">—</span>{% endif %}</td>
+      <td class="c-team"><div class="avatar-stack">{% for a in p.authors.all|slice:":4" %}<span class="avatar avatar-sm {{ a.user|default:a.name|avatar_class }}" title="{{ a.name }}">{{ a.name|initials }}</span>{% endfor %}</div></td>
     </tr>
   {% endwith %}{% endfor %}
   </tbody>
