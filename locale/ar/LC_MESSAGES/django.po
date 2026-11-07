@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Research Tracker VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-07 18:00+0300\n"
+"POT-Creation-Date: 2026-11-07 18:06+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ar\n"
@@ -679,6 +679,9 @@ msgstr "ناقص"
 msgid "Missing co-author data"
 msgstr "بيانات مؤلفين ناقصة"
 
+msgid "Month"
+msgstr "الشهر"
+
 msgid "More"
 msgstr "المزيد"
 
@@ -829,9 +832,6 @@ msgstr "لا شيء متأخر"
 msgid "Nothing scheduled this month."
 msgstr "لا شيء مجدول هذا الشهر."
 
-msgid "Numbers"
-msgstr "أرقام"
-
 msgid "ORCID iD"
 msgstr "معرّف ORCID"
 
@@ -932,6 +932,9 @@ msgstr "الشهر الأعلى"
 
 msgid "Pending invitations"
 msgstr "دعوات معلّقة"
+
+msgid "Phase"
+msgstr "المرحلة"
 
 msgid "Pick a platform member, or leave empty and type the details"
 msgstr "اختر عضواً من المنصة، أو اتركه فارغاً واكتب البيانات"
@@ -1230,6 +1233,9 @@ msgstr "مزامنة مع تقويمي"
 
 msgid "Table"
 msgstr "جدول"
+
+msgid "Tables"
+msgstr "جداول"
 
 msgid "Target"
 msgstr "المستهدف"

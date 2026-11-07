@@ -45,7 +45,7 @@
   <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#t-overview" type="button" role="tab"><i class="bi bi-pie-chart-fill"></i>{% trans "Research overview" %}</button></li>
   <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#t-work" type="button" role="tab"><i class="bi bi-alarm-fill"></i>{% trans "Deadlines & tasks" %}{% if week_count %}<span class="badge rounded-pill text-bg-danger ms-1">{{ week_count }}</span>{% endif %}</button></li>
   <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#t-recent" type="button" role="tab"><i class="bi bi-clock-history"></i>{% trans "Recently updated" %}</button></li>
-  <li class="ms-auto d-flex align-items-center gap-3"><div class="vsw vsw-all" data-views-all role="group" aria-label="{% trans 'View' %}"><button type="button" data-view="chart" class="on"><i class="bi bi-pie-chart-fill"></i><span>{% trans "Charts" %}</span></button><button type="button" data-view="numbers"><i class="bi bi-123"></i><span>{% trans "Numbers" %}</span></button></div></li>
+  <li class="ms-auto d-flex align-items-center gap-3"><div class="vsw vsw-all" data-views-all role="group" aria-label="{% trans 'View' %}"><button type="button" data-view="chart" class="on"><i class="bi bi-pie-chart-fill"></i><span>{% trans "Charts" %}</span></button><button type="button" data-view="numbers"><i class="bi bi-table"></i><span>{% trans "Tables" %}</span></button></div></li>
   <li class="db-tabs-sum d-none d-xxl-flex"><b class="num">{{ ov.total }}</b>{% trans "works" %}{% for t in ov.types %}<span>·</span><b class="num">{{ t.count }}</b>{{ t.label }}{% endfor %}</li>
 </ul>
 <div class="tab-content">

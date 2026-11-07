@@ -88,11 +88,14 @@ def dashboard(request):
     from . import workspace as _ws
     ctx["type_icons"] = _ws.TYPE_ICONS
     ctx["type_slot"] = {t["key"]: t["slot"] for t in ctx["ov"]["types"]}
+    # colour slot per venue, attached to each paper (a paper may have no submission yet)
+    ctx["recent_papers"] = list(ctx["recent_papers"])
     jids = []
     for p_ in ctx["recent_papers"]:
         sub = p_.current_submission
         if sub and sub.journal_id not in jids:
             jids.append(sub.journal_id)
+        p_.rc_slot = (jids.index(sub.journal_id) % 8 + 1) if sub else 1
     ctx["venue_slot"] = {j: i % 8 + 1 for i, j in enumerate(jids)}
     for i, g in enumerate(ctx["deadline_groups"]):
         g["slot"] = i % 8 + 1
@@ -197,7 +200,7 @@ def _research_overview(papers, open_dl, now):
         pcount[pub] = pcount.get(pub, 0) + 1
     vtop = sorted(vcount.items(), key=lambda kv: -kv[1])[:7]
     vmax = vtop[0][1] if vtop else 1
-    venues = [{"pk": k[0], "name": k[1], "count": n, "bar": _pct(n, vmax)} for k, n in vtop]
+    venues = [{"pk": k[0], "name": k[1], "count": n, "bar": _pct(n, vmax), "pct": _pct(n, len(venue))} for k, n in vtop]
     ptop = sorted(pcount.items(), key=lambda kv: -kv[1])[:6]
     pmax = ptop[0][1] if ptop else 1
     publishers = [{"name": k, "count": n, "bar": _pct(n, pmax), "pct": _pct(n, len(venue))} for k, n in ptop]
@@ -221,7 +224,8 @@ def _research_overview(papers, open_dl, now):
     # type x phase heat-map
     cmax = max((matrix[k].get(key, 0) for k in matrix for key, _l2, _s in PHASES), default=0) or 1
     heat = [{"label": t["label"], "icon": t["icon"], "key": t["key"],
-             "cells": [{"count": matrix[t["key"]].get(key, 0), "phase": label,
+             "cells": [{"count": matrix[t["key"]].get(key, 0), "phase": label, "pkey": key,
+                        "pct": _pct(matrix[t["key"]].get(key, 0), total),
                         "a": round(12 + 78 * matrix[t["key"]].get(key, 0) / cmax) if matrix[t["key"]].get(key, 0) else 0}
                        for key, label, _s in PHASES]} for t in types]
     # submissions line/area chart in a 300x110 box
