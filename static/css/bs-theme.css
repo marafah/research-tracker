@@ -966,3 +966,9 @@ hr { border-color: var(--rt-border); opacity: 1; }
   .ov-grid:has([data-pane="numbers"]:not([hidden])) > [data-views="ov5"] { order: 7; }
   .ov-grid:has([data-pane="numbers"]:not([hidden])) > [data-views="ov7"] { order: 8; }
 }
+/* v7.9b — lollipop value sits at the END of its line in both directions.
+   The <b> carries .num (direction:ltr), so inset-inline-end resolved to the right even in RTL: use physical sides. */
+html[dir="ltr"] .ov-lolly .stick b { right: -10px; left: auto; }
+html[dir="rtl"] .ov-lolly .stick b { left: -10px; right: auto; }
+html[dir="rtl"] .ov-lolly .stick { margin-left: 12px; }
+html[dir="ltr"] .ov-lolly .stick { margin-right: 12px; }
