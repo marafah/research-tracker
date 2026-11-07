@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Research Tracker VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-07 14:46+0300\n"
+"POT-Creation-Date: 2026-11-07 14:57+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ar\n"
@@ -458,6 +458,9 @@ msgstr "باحث خارجي"
 msgid "External collaborators only see the papers they are authors on."
 msgstr "الباحثون الخارجيون يرون فقط الأبحاث التي يشاركون في تأليفها."
 
+msgid "Features"
+msgstr "المزايا"
+
 #, python-format
 msgid "File too large (max %(mb)s MB)."
 msgstr "الملف كبير جداً (الحد الأقصى %(mb)s ميغابايت)."
@@ -515,6 +518,9 @@ msgstr "مرحباً،"
 
 msgid "Here is your research summary for the coming two weeks."
 msgstr "إليك ملخص أعمالك البحثية للأسبوعين القادمين."
+
+msgid "Hide"
+msgstr "إخفاء"
 
 msgid "Hide empty stages"
 msgstr "إخفاء المراحل الفارغة"
@@ -596,6 +602,9 @@ msgstr "المجلات والمؤتمرات"
 
 msgid "Keep it secret. If it leaks, regenerate it."
 msgstr "احتفظ به سرياً، وإذا تسرّب فأنشئ رابطاً جديداً."
+
+msgid "Languages"
+msgstr "اللغات"
 
 msgid "Later"
 msgstr "لاحقاً"
@@ -995,6 +1004,9 @@ msgstr "إنشاء رابط جديد"
 msgid "Rejected"
 msgstr "مرفوض"
 
+msgid "Reminders"
+msgstr "التذكيرات"
+
 msgid "Remove"
 msgstr "إزالة"
 
@@ -1113,11 +1125,14 @@ msgstr "افصل الملاحظات بسطر فارغ أو رقّمها (1. 2. 3
 msgid "Shared catalogue with your own statistics per venue"
 msgstr "دليل مشترك مع إحصاءاتك الخاصة لكل مجلة"
 
+msgid "Show"
+msgstr "إظهار"
+
 msgid "Show all stages"
 msgstr "إظهار كل المراحل"
 
-msgid "Show password"
-msgstr "إظهار كلمة المرور"
+msgid "Sign in"
+msgstr "تسجيل الدخول"
 
 msgid "Sign in to your research workspace"
 msgstr "سجّل الدخول إلى مساحتك البحثية"
@@ -1281,6 +1296,9 @@ msgstr "المجلة"
 
 msgid "Vertical timeline"
 msgstr "خط زمني عمودي"
+
+msgid "Views"
+msgstr "طرق العرض"
 
 msgid "Web of Science"
 msgstr "Web of Science"

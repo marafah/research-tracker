@@ -8,10 +8,10 @@
   <title>{% block title %}{{ SITE_NAME }}{% endblock %} · {{ SITE_NAME }}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300..800&family=Space+Grotesk:wght@400..700&family=Rubik:wght@300..800&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300..700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap">
   <script>
     try { if (localStorage.getItem("rt-sb") === "mini") document.documentElement.classList.add("sb-mini"); } catch (e) {}
-    try { const t = localStorage.getItem("rt-theme") || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    try { const t = localStorage.getItem("rt-theme") || "dark";
           document.documentElement.setAttribute("data-bs-theme", t); } catch (e) {}
   </script>
   {% if RTL %}<link rel="stylesheet" href="{% static 'vendor/bootstrap/bootstrap.rtl.min.css' %}">
@@ -19,7 +19,7 @@
   <link rel="stylesheet" href="{% static 'vendor/bootstrap-icons/bootstrap-icons.min.css' %}">
   <link rel="stylesheet" href="{% static 'css/app.css' %}">
   <link rel="stylesheet" href="{% static 'css/theme.css' %}">
-  <link rel="stylesheet" href="{% static 'css/aurora.css' %}">
+  <link rel="stylesheet" href="{% static 'css/financial.css' %}">
   {% block head %}{% endblock %}
 </head>
 <body>

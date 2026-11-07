@@ -3,7 +3,7 @@
 (function () {
   "use strict";
   const html = document.documentElement;
-  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const reduce = true; /* v5 Financial: static figures, no decorative motion */
 
   /* ---- Sidebar collapse (remembered) ---- */
   document.getElementById("sb-toggle")?.addEventListener("click", () => {
@@ -131,5 +131,7 @@ document.addEventListener("click", e => {
   const b = e.target.closest("[data-toggle-pw]"); if (!b) return;
   const inp = document.querySelector(b.dataset.togglePw); if (!inp) return;
   const show = inp.type === "password"; inp.type = show ? "text" : "password";
-  b.querySelector("i").className = show ? "bi bi-eye-slash" : "bi bi-eye";
+  const i = b.querySelector("i");
+  if (i) i.className = show ? "bi bi-eye-slash" : "bi bi-eye";
+  else b.textContent = show ? (b.dataset.labelHide || "Hide") : (b.dataset.labelShow || "Show");
 });

@@ -1,52 +1,44 @@
 {% extends "base.html" %}{% load i18n %}
 {% block shell %}{% get_current_language as LANG %}
-<div class="aur">
-  <div class="aur-bg" aria-hidden="true">
-    <span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span><span class="blob b4"></span>
-    <span class="aur-grid"></span><span class="aur-grain"></span>
-  </div>
-
-  <header class="aur-nav">
-    <a href="/" class="aur-brand"><span class="aur-logo"><i class="bi bi-journal-bookmark-fill"></i></span>{{ SITE_NAME }}</a>
-    <nav class="aur-links d-none d-md-flex">
-      <span>{{ INSTITUTION }}</span>
-    </nav>
-    <div class="aur-actions">
+<div class="fin">
+  <header class="fin-nav">
+    <a href="/" class="fin-brand"><span class="fin-mark" aria-hidden="true"><i></i><i></i><i></i></span>{{ SITE_NAME }}</a>
+    <span class="fin-org d-none d-md-inline">{{ INSTITUTION }}</span>
+    <div class="fin-actions">
       <form action="{% url 'set_language' %}" method="post" class="m-0">{% csrf_token %}
         <input type="hidden" name="next" value="{{ request.get_full_path }}">
         <input type="hidden" name="language" value="{% if LANG == 'ar' %}en{% else %}ar{% endif %}">
-        <button class="aur-ghost" type="submit"><i class="bi bi-translate"></i> {% if LANG == 'ar' %}English{% else %}العربية{% endif %}</button>
+        <button class="fin-btn ghost sm" type="submit" lang="{% if LANG == 'ar' %}en{% else %}ar{% endif %}">{% if LANG == 'ar' %}English{% else %}العربية{% endif %}</button>
       </form>
-      {% block nav_cta %}{% if ALLOW_SIGNUP %}<a href="{% url 'signup' %}" class="aur-pill">{% trans "Create account" %}</a>{% endif %}{% endblock %}
+      {% block nav_cta %}{% if ALLOW_SIGNUP %}<a href="{% url 'signup' %}" class="fin-btn ghost sm">{% trans "Create account" %}</a>{% endif %}{% endblock %}
     </div>
   </header>
 
-  <main class="aur-main">
-    <section class="aur-pitch">
-      <div class="aur-badge"><span class="dot"></span>{{ INSTITUTION }} · {{ INSTITUTION_UNIT }}</div>
-      <h1 class="aur-h">{% trans "Every paper, every deadline," %} <span class="grad">{% trans "in one place." %}</span></h1>
-      <p class="aur-lead">{% trans "Track submissions from idea to publication, never miss a revision deadline, and collect co-author data without the email chase." %}</p>
-      <ul class="aur-feats">
-        <li><span class="fi" style="--c:#2dd4bf"><i class="bi bi-lightning-charge-fill"></i></span>{% trans "Email alerts before every deadline" %}</li>
-        <li><span class="fi" style="--c:#a78bfa"><i class="bi bi-kanban-fill"></i></span>{% trans "Board, timeline and calendar views of every submission" %}</li>
-        <li><span class="fi" style="--c:#f472b6"><i class="bi bi-people-fill"></i></span>{% trans "Internal & external collaborators" %}</li>
-      </ul>
-      <div class="aur-trust">
-        <span class="stack"><i style="background:#14b8a6"></i><i style="background:#8b5cf6"></i><i style="background:#3b82f6"></i><b>AR·EN</b></span>
-        <span>{% trans "Open-source · Self-hostable · Your data stays private" %}</span>
-      </div>
+  <main class="fin-hero">
+    <section class="fin-pitch">
+      <p class="fin-meta">{{ INSTITUTION }} — {{ INSTITUTION_UNIT }}</p>
+      <h1 class="fin-title">{% trans "Every paper, every deadline," %} <span class="val">{% trans "in one place." %}</span></h1>
+      <p class="fin-lead">{% trans "Track submissions from idea to publication, never miss a revision deadline, and collect co-author data without the email chase." %}</p>
     </section>
 
-    <section class="aur-cardwrap">
-      <div class="aur-card">
+    <section class="fin-object">
+      <div class="fin-frame" aria-hidden="true"><span></span><span></span></div>
+      <div class="fin-panel">
         {% block auth %}{% endblock %}
       </div>
     </section>
   </main>
 
-  <footer class="aur-foot">
+  <section class="fin-facts" aria-label="{% trans 'Features' %}">
+    <div><span class="k">{% trans "Reminders" %}</span><span class="v">{% trans "Email alerts before every deadline" %}</span></div>
+    <div><span class="k">{% trans "Views" %}</span><span class="v">{% trans "Board, timeline and calendar views of every submission" %}</span></div>
+    <div><span class="k">{% trans "Team" %}</span><span class="v">{% trans "Internal & external collaborators" %}</span></div>
+    <div><span class="k">{% trans "Languages" %}</span><span class="v" lang="">العربية · English</span></div>
+  </section>
+
+  <footer class="fin-foot">
     <span>© {% now "Y" %} {{ INSTITUTION }}</span>
-    <span>{{ SITE_NAME }} · {% trans "Open-source research publication tracker" %}</span>
+    <span>{% trans "Open-source · Self-hostable · Your data stays private" %}</span>
   </footer>
 </div>
 {% endblock %}
