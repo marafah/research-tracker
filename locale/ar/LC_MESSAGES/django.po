@@ -215,7 +215,7 @@ msgid "Busiest month"
 msgstr "الشهر الأكثر ضغطاً"
 
 msgid "By venue"
-msgstr "حسب المجلة"
+msgstr "حسب جهة النشر"
 
 msgid "Calendar"
 msgstr "التقويم"
@@ -1964,3 +1964,30 @@ msgstr "عرض المراحل الرئيسية"
 
 msgid "No papers in this phase"
 msgstr "لا أعمال في هذه المرحلة"
+
+msgid "Compact list"
+msgstr "قائمة مختصرة"
+
+msgid "Statistics"
+msgstr "إحصاءات"
+
+msgid "Matrix"
+msgstr "مصفوفة"
+
+msgid "By phase"
+msgstr "حسب المرحلة"
+
+msgid "By type"
+msgstr "حسب النوع"
+
+msgid "By venue type"
+msgstr "حسب نوع جهة النشر"
+
+msgid "By publisher"
+msgstr "حسب الناشر"
+
+msgid "Total"
+msgstr "المجموع"
+
+msgid "Phases"
+msgstr "المراحل"
