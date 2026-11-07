@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Research Tracker VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-07 17:18+0300\n"
+"POT-Creation-Date: 2026-11-07 17:50+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ar\n"
@@ -1488,6 +1488,10 @@ msgstr "مستودع الكود / البيانات"
 msgid "comment"
 msgstr "الملاحظة"
 
+#, python-format
+msgid "completed %(x)s"
+msgstr "أنجز %(x)s"
+
 msgid "completed at"
 msgstr "تاريخ الإنجاز"
 
@@ -1604,6 +1608,12 @@ msgstr "معامل التأثير"
 msgid "imported %(n)s comments from %(r)s"
 msgstr "استورد %(n)s ملاحظة من %(r)s"
 
+msgid "imported the chapter proposal"
+msgstr "استورد مقترح الفصل"
+
+msgid "imported the journal submission"
+msgstr "استورد إرسال المجلة"
+
 msgid "in the next 30 days"
 msgstr "خلال 30 يوماً القادمة"
 
@@ -1717,6 +1727,10 @@ msgstr "التذكير (أيام قبل الموعد)"
 #, python-format
 msgid "removed author %(n)s"
 msgstr "أزال المؤلف %(n)s"
+
+#, python-format
+msgid "reopened %(x)s"
+msgstr "أعاد فتح %(x)s"
 
 #, python-format
 msgid "reopened “%(t)s”"

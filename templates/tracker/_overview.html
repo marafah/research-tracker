@@ -75,7 +75,7 @@
       </div>
       <div class="ov-xax" dir="ltr">{% for b in ov.submissions %}<span class="num">{% if forloop.counter0|divisibleby:2 %}{{ b.date|date:"m/y" }}{% endif %}</span>{% endfor %}</div>
     </div>
-  <div data-pane="numbers" class="ov-body ov-nums" hidden>{% for x in ov.submissions %}<div class="nt" style="--c:var(--cat-1)"><span class="l"><span class="num">{{ x.date|date:"m/Y" }}</span></span><b class="num">{{ x.count }}</b></div>{% endfor %}</div>
+  <div data-pane="numbers" class="ov-body ov-nums dense" hidden>{% for x in ov.submissions %}<div class="nt" style="--c:var(--cat-1)"><span class="l"><span class="num">{{ x.date|date:"m/Y" }}</span></span><b class="num">{{ x.count }}</b></div>{% endfor %}</div>
   </div>
 
   <!-- 6. Deadline load: coloured columns -->

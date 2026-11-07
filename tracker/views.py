@@ -85,6 +85,15 @@ def dashboard(request):
         "month": open_dl.filter(due_at__gte=now, due_at__lte=now + timedelta(days=30)).count(),
         "later": open_dl.filter(due_at__gt=now + timedelta(days=30)).count(),
     }
+    from . import workspace as _ws
+    ctx["type_icons"] = _ws.TYPE_ICONS
+    ctx["type_slot"] = {t["key"]: t["slot"] for t in ctx["ov"]["types"]}
+    jids = []
+    for p_ in ctx["recent_papers"]:
+        sub = p_.current_submission
+        if sub and sub.journal_id not in jids:
+            jids.append(sub.journal_id)
+    ctx["venue_slot"] = {j: i % 8 + 1 for i, j in enumerate(jids)}
     for i, g in enumerate(ctx["deadline_groups"]):
         g["slot"] = i % 8 + 1
     return render(request, "tracker/dashboard.html", ctx)

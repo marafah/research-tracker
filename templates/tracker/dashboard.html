@@ -51,35 +51,7 @@
 <div class="tab-content">
   <div class="tab-pane fade show active" id="t-overview" role="tabpanel">{% include "tracker/_overview.html" %}</div>
   <div class="tab-pane fade" id="t-work" role="tabpanel">{% include "tracker/_work.html" %}</div>
-  <div class="tab-pane fade" id="t-recent" role="tabpanel">
-<div class="row g-3">
-  <!-- Recently updated -->
-  <div class="col-12">
-    <div class="card">
-      <div class="card-header db-ch">
-        <div><h2 class="db-ct"><i class="bi bi-clock-history text-primary me-2"></i>{% trans "Recently updated" %}</h2><div class="db-cs">{% trans "Latest changes across your groups" %}</div></div>
-        <a class="btn btn-sm btn-light border" href="{% url 'paper_list' %}?view=table">{% trans "View all" %}</a>
-      </div>
-      <div class="table-responsive">
-        <table class="table table-hover align-middle db-table db-fixed mb-0">
-          <thead><tr><th>{% trans "Title" %}</th><th class="c-st">{% trans "Status" %}</th><th class="c-ve d-none d-md-table-cell">{% trans "Venue" %}</th><th class="c-up text-end">{% trans "Updated" %}</th></tr></thead>
-          <tbody>
-          {% for p in recent_papers %}{% with s=p.current_submission %}
-            <tr class="db-row" data-href="{{ p.get_absolute_url }}">
-              <td class="min-w-0"><div class="db-tbox"><a href="{{ p.get_absolute_url }}" class="db-ptitle db-auto" dir="auto">{{ p.label }}</a><div class="small text-body-secondary">{{ p.get_type_display }}</div></div></td>
-              <td>{% status_badge p %}</td>
-              <td class="d-none d-md-table-cell small"><div class="text-truncate db-venue db-auto" dir="auto">{% if s %}{{ s.journal.name }}{% else %}—{% endif %}</div></td>
-              <td class="text-end small text-body-secondary num text-nowrap">{{ p.updated_at|date:"d/m/Y" }}</td>
-            </tr>
-          {% endwith %}{% empty %}<tr><td colspan="4"><div class="empty py-4"><div class="ic"><i class="bi bi-file-earmark-plus"></i></div><h6>{% trans "No papers yet." %}</h6></div></td></tr>{% endfor %}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
-</div>
-  </div>
+  <div class="tab-pane fade" id="t-recent" role="tabpanel">{% include "tracker/_recent.html" %}</div>
 </div>
 {% endblock %}
 

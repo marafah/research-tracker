@@ -148,3 +148,35 @@ def type_hex(value):
 def type_icon(value):
     from tracker.workspace import TYPE_ICONS
     return TYPE_ICONS.get(value, "bi-file-earmark")
+
+
+_VERB_FIXED = {
+    "imported the chapter proposal": gettext_lazy("imported the chapter proposal"),
+    "imported the journal submission": gettext_lazy("imported the journal submission"),
+    "edited the paper details": gettext_lazy("edited the paper details"),
+    "created the paper": gettext_lazy("created the paper"),
+}
+
+
+@register.filter
+def activity_verb(verb):
+    """Activity verbs are stored as text in the language that was active at the time;
+    re-translate the known English patterns so the feed reads in the current language."""
+    import re
+    from ..models import Paper
+    v = (verb or "").strip()
+    if v in _VERB_FIXED:
+        return str(_VERB_FIXED[v])
+    m = re.match(r"^changed status to (.+)$", v)
+    if m:
+        from django.utils import translation
+        label = m.group(1)
+        with translation.override("en"):
+            by_en = {str(lab): code for code, lab in Paper.Status.choices}
+        if label in by_en:
+            label = str(dict(Paper.Status.choices)[by_en[label]])
+        return _("changed status to %(s)s") % {"s": label}
+    m = re.match(r"^(completed|reopened) (.+)$", v)
+    if m:
+        return (_("completed %(x)s") if m.group(1) == "completed" else _("reopened %(x)s")) % {"x": m.group(2)}
+    return v

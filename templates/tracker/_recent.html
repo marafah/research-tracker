@@ -1,0 +1,45 @@
+{% load i18n tracker_tags %}
+{% get_current_language_bidi as RTL %}
+<div class="ov rc-tab card" data-views="rc">
+  <div class="ov-ch">
+    <div class="min-w-0"><h3><i class="bi bi-clock-history text-primary me-1"></i>{% trans "Recently updated" %}</h3><div class="ov-ins">{% trans "Latest changes across your groups" %}</div></div>
+    <div class="d-flex align-items-center gap-2">
+      <div class="vsw" role="group" aria-label="{% trans 'View' %}">
+        <button type="button" data-view="list" class="on"><i class="bi bi-list-ul"></i><span>{% trans "List" %}</span></button>
+        <button type="button" data-view="cards"><i class="bi bi-grid-3x2-gap"></i><span>{% trans "Cards" %}</span></button>
+      </div>
+      <a class="ov-link" href="{% url 'paper_list' %}?view=table">{% trans "View all" %}</a>
+    </div>
+  </div>
+
+  <div data-pane="list" class="rc-list">
+    {% for p in recent_papers %}{% with s=p.current_submission %}{% with slot=venue_slot|get_item:s.journal_id %}
+    <a class="rc-row" href="{{ p.get_absolute_url }}" style="--c:var(--cat-{{ slot|default:1 }});--s:{{ p.status|status_hex }}">
+      <span class="rc-ic"><i class="bi {{ type_icons|get_item:p.type }}"></i></span>
+      <div class="rc-main min-w-0">
+        <bdi class="t">{{ p.label }}</bdi>
+        <div class="meta">
+          <span class="rc-type">{{ p.get_type_display }}</span>
+          {% if s %}<span><i class="bi bi-journal-bookmark"></i> <bdi>{{ s.journal.name }}</bdi></span>{% if s.journal.publisher %}<span class="d-none d-lg-inline"><i class="bi bi-building"></i> <bdi>{{ s.journal.publisher }}</bdi></span>{% endif %}
+          {% if s.manuscript_id %}<span class="d-none d-xl-inline num" dir="ltr"># {{ s.manuscript_id }}</span>{% endif %}{% endif %}
+        </div>
+      </div>
+      <div class="rc-side">
+        {% status_badge p %}
+        <span class="rc-when"><i class="bi bi-clock"></i> <span class="num">{{ p.updated_at|date:"d/m/Y" }}</span></span>
+      </div>
+    </a>
+    {% endwith %}{% endwith %}{% empty %}<p class="ov-none p-3">{% trans "No papers yet." %}</p>{% endfor %}
+  </div>
+
+  <div data-pane="cards" class="rc-cards" hidden>
+    {% for p in recent_papers %}{% with s=p.current_submission %}{% with slot=venue_slot|get_item:s.journal_id %}
+    <a class="rc-card" href="{{ p.get_absolute_url }}" style="--c:var(--cat-{{ slot|default:1 }})">
+      <div class="top"><span class="rc-ic sm"><i class="bi {{ type_icons|get_item:p.type }}"></i></span>{% status_badge p %}</div>
+      <bdi class="t">{{ p.label }}</bdi>
+      <div class="v">{% if s %}<i class="bi bi-journal-bookmark"></i> <bdi>{{ s.journal.name }}</bdi>{% else %}{{ p.get_type_display }}{% endif %}</div>
+      <div class="foot"><span>{{ p.get_type_display }}</span><span class="num">{{ p.updated_at|date:"d/m/Y" }}</span></div>
+    </a>
+    {% endwith %}{% endwith %}{% endfor %}
+  </div>
+</div>

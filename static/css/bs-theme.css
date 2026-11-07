@@ -752,3 +752,58 @@ html[dir="rtl"] .wk-row:hover { transform: translateX(-3px); }
 .wk-feed .s { font-size: .78rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .wk-feed a { display: block; font-size: .78rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-decoration: none; }
 .wk-feed .tm { font-size: .68rem; color: var(--rt-muted); }
+/* panes hidden by the view switch must stay hidden, whatever their display type */
+[data-pane][hidden], .ov-nums[hidden] { display: none !important; }
+.ov-nums.dense { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .35rem; }
+.ov-nums.dense .nt { flex-direction: row; align-items: center; justify-content: space-between; padding: .3rem .5rem .3rem .65rem; }
+.ov-nums.dense b { font-size: 1rem; }
+
+/* ===== v7.6 fixes ===== */
+/* global Charts/Numbers switch only matters on the overview tab */
+.db-tabs:has(button[data-bs-target="#t-overview"]:not(.active)) .vsw-all { display: none; }
+
+/* work tab: natural heights, nothing clipped */
+.wk-grid { align-items: start; }
+.wk-main { height: auto; min-height: 0; overflow: visible; }
+.wk-side { height: auto; overflow: visible; }
+.wk-body { overflow: visible; padding-bottom: .6rem; }
+.wk-day { min-height: 62px; justify-content: center; }
+.wk-row .more { font-weight: 700; color: var(--c); }
+
+.wk-tasks { overflow: visible; gap: .5rem; padding-bottom: .9rem; }
+.wk-tk { display: flex; align-items: center; gap: .65rem; padding: .55rem .65rem; border-radius: .7rem; background: color-mix(in srgb, var(--c) 9%, var(--rt-surface)); border-inline-start: 4px solid var(--c); }
+.wk-tk > i { width: 34px; height: 34px; flex: 0 0 auto; border-radius: .55rem; display: grid; place-items: center; background: var(--c); color: #fff; font-size: .95rem; }
+.wk-tk b { display: block; font-size: .84rem; }
+.wk-tk .sub { font-size: .74rem; color: var(--rt-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.wk-tk .sub a { text-decoration: none; }
+.wk-tk .ok i { color: #198754; }
+.wk-tk .cnt { flex: 0 0 auto; min-width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: var(--c); color: #fff; font-weight: 800; font-size: .85rem; }
+.wk-feed { overflow: visible; padding-bottom: .9rem; }
+
+/* recently updated */
+.rc-tab { overflow: hidden; }
+.rc-list { display: flex; flex-direction: column; gap: .5rem; padding: .2rem 1rem 1rem; }
+.rc-row { display: flex; align-items: center; gap: .9rem; padding: .7rem .9rem; border-radius: .8rem; text-decoration: none !important; color: var(--rt-text) !important;
+  background: var(--rt-surface); border: 1px solid var(--rt-border); border-inline-start: 4px solid var(--c); transition: transform .15s, box-shadow .15s, background .15s; }
+.rc-row:hover { transform: translateY(-2px); box-shadow: var(--rt-shadow-lg); background: color-mix(in srgb, var(--c) 5%, var(--rt-surface)); }
+.rc-ic { width: 44px; height: 44px; flex: 0 0 auto; border-radius: .7rem; display: grid; place-items: center; font-size: 1.2rem; color: #fff;
+  background: linear-gradient(135deg, var(--c), color-mix(in srgb, var(--c) 70%, #000)); box-shadow: 0 5px 12px -6px var(--c); }
+.rc-ic.sm { width: 34px; height: 34px; font-size: .95rem; }
+.rc-main { flex: 1 1 auto; }
+.rc-main .t { display: block; font-weight: 700; font-size: .93rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rc-main .meta { display: flex; flex-wrap: wrap; gap: .25rem .9rem; font-size: .76rem; color: var(--rt-muted); margin-top: .15rem; }
+.rc-main .meta i { color: var(--c); }
+.rc-type { font-weight: 700; color: var(--c); }
+.rc-side { display: flex; flex-direction: column; align-items: flex-end; gap: .3rem; flex: 0 0 auto; }
+.rc-when { font-size: .72rem; color: var(--rt-muted); }
+.rc-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .8rem; padding: .2rem 1rem 1rem; }
+@media (max-width: 991.98px) { .rc-cards { grid-template-columns: 1fr; } }
+.rc-card { display: flex; flex-direction: column; gap: .45rem; padding: .85rem; border-radius: .9rem; text-decoration: none !important; color: var(--rt-text) !important;
+  background: color-mix(in srgb, var(--c) 7%, var(--rt-surface)); border-top: 4px solid var(--c); transition: transform .15s, box-shadow .15s; }
+.rc-card:hover { transform: translateY(-3px); box-shadow: var(--rt-shadow-lg); }
+.rc-card .top { display: flex; justify-content: space-between; align-items: center; }
+.rc-card .t { font-weight: 700; font-size: .9rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 2.6em; }
+.rc-card .v { font-size: .78rem; color: var(--rt-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rc-card .v i { color: var(--c); }
+.rc-card .foot { display: flex; justify-content: space-between; font-size: .72rem; color: var(--rt-muted); border-top: 1px dashed var(--rt-border); padding-top: .4rem; }
+html[dir="rtl"] .rc-main .t, html[dir="rtl"] .rc-card .t, html[dir="rtl"] .rc-card .v { text-align: right; }
