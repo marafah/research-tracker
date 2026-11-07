@@ -2,7 +2,7 @@
 {% if papers %}
   {% for g in groups %}
   <section class="ws-group">
-    {% if g.label %}<h3 class="ws-ghead" style="--c: {% if g.status %}{{ g.status|status_hex }}{% elif g.type %}{{ type_colors|get_item:g.type }}{% else %}#4f46e5{% endif %}">
+    {% if g.label %}<h3 class="ws-ghead" style="--c: {% if g.status %}{{ g.status|status_hex }}{% elif g.type %}{{ type_colors|get_item:g.type }}{% else %}#3d4f7c{% endif %}">
       <span class="gh-ic"><i class="bi {% if g.status %}{{ g.status|status_icon }}{% elif g.type %}{{ type_icons|get_item:g.type }}{% elif group_by == 'venue' %}bi-journal-bookmark-fill{% elif group_by == 'lead' %}bi-person-fill{% else %}bi-people-fill{% endif %}"></i></span>
       {{ g.label }} <span class="count-pill">{{ g.papers|length }}</span></h3>{% endif %}
     <div class="rec-grid">{% for p in g.papers %}{% include "tracker/views/_card.html" %}{% endfor %}</div>

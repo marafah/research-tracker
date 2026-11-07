@@ -8,10 +8,10 @@
   <title>{% block title %}{{ SITE_NAME }}{% endblock %} · {{ SITE_NAME }}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300..700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Instrument+Sans:wdth,wght@75..100,400..700&family=JetBrains+Mono:wght@400..600&family=Noto+Naskh+Arabic:wght@400..700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap">
   <script>
     try { if (localStorage.getItem("rt-sb") === "mini") document.documentElement.classList.add("sb-mini"); } catch (e) {}
-    try { const t = localStorage.getItem("rt-theme") || "dark";
+    try { const t = localStorage.getItem("rt-theme") || "light";
           document.documentElement.setAttribute("data-bs-theme", t); } catch (e) {}
   </script>
   {% if RTL %}<link rel="stylesheet" href="{% static 'vendor/bootstrap/bootstrap.rtl.min.css' %}">
@@ -19,7 +19,7 @@
   <link rel="stylesheet" href="{% static 'vendor/bootstrap-icons/bootstrap-icons.min.css' %}">
   <link rel="stylesheet" href="{% static 'css/app.css' %}">
   <link rel="stylesheet" href="{% static 'css/theme.css' %}">
-  <link rel="stylesheet" href="{% static 'css/financial.css' %}">
+  <link rel="stylesheet" href="{% static 'css/manuscript.css' %}">
   {% block head %}{% endblock %}
 </head>
 <body>
@@ -39,18 +39,18 @@
     <div class="sb-cta"><a href="{% url 'paper_create' %}" class="btn btn-primary w-100"><i class="bi bi-plus-lg"></i> {% trans "New paper" %}</a></div>
     <nav class="sb-scroll">
       <div class="sb-section">{% trans "Workspace" %}</div>
-      <a class="sb-link {% if u == 'dashboard' %}active{% endif %}" href="{% url 'dashboard' %}" style="--c:#2563eb"><span class="sb-ic"><i class="bi bi-grid-1x2-fill"></i></span> <span class="sb-label">{% trans "Dashboard" %}</span></a>
-      <a class="sb-link {% if u == 'paper_list' and view != 'board' or u == 'paper_detail' or u == 'paper_edit' or u == 'paper_create' %}active{% endif %}" href="{% url 'paper_list' %}?view=cards" style="--c:#7c3aed"><span class="sb-ic"><i class="bi bi-file-earmark-text-fill"></i></span> <span class="sb-label">{% trans "Papers" %}</span></a>
-      <a class="sb-link {% if u == 'paper_list' and view == 'board' %}active{% endif %}" href="{% url 'paper_list' %}?view=board" style="--c:#059669"><span class="sb-ic"><i class="bi bi-kanban-fill"></i></span> <span class="sb-label">{% trans "Board" %}</span></a>
-      <a class="sb-link {% if u == 'deadline_list' %}active{% endif %}" href="{% url 'deadline_list' %}" style="--c:#db2777"><span class="sb-ic"><i class="bi bi-alarm-fill"></i></span> <span class="sb-label">{% trans "Deadlines" %}</span>
+      <a class="sb-link {% if u == 'dashboard' %}active{% endif %}" href="{% url 'dashboard' %}" style="--c:#2c4a6e"><span class="sb-ic"><i class="bi bi-grid-1x2-fill"></i></span> <span class="sb-label">{% trans "Dashboard" %}</span></a>
+      <a class="sb-link {% if u == 'paper_list' and view != 'board' or u == 'paper_detail' or u == 'paper_edit' or u == 'paper_create' %}active{% endif %}" href="{% url 'paper_list' %}?view=cards" style="--c:#6b4f8a"><span class="sb-ic"><i class="bi bi-file-earmark-text-fill"></i></span> <span class="sb-label">{% trans "Papers" %}</span></a>
+      <a class="sb-link {% if u == 'paper_list' and view == 'board' %}active{% endif %}" href="{% url 'paper_list' %}?view=board" style="--c:#2f6b46"><span class="sb-ic"><i class="bi bi-kanban-fill"></i></span> <span class="sb-label">{% trans "Board" %}</span></a>
+      <a class="sb-link {% if u == 'deadline_list' %}active{% endif %}" href="{% url 'deadline_list' %}" style="--c:#9a4a5c"><span class="sb-ic"><i class="bi bi-alarm-fill"></i></span> <span class="sb-label">{% trans "Deadlines" %}</span>
         {% if nav_overdue %}<span class="sb-count danger">{{ nav_overdue }}</span>{% elif nav_open_deadlines %}<span class="sb-count">{{ nav_open_deadlines }}</span>{% endif %}</a>
       <div class="sb-section">{% trans "Network" %}</div>
-      <a class="sb-link {% if 'group' in u or 'member' in u or 'invit' in u %}active{% endif %}" href="{% url 'group_list' %}" style="--c:#d97706"><span class="sb-ic"><i class="bi bi-people-fill"></i></span> <span class="sb-label">{% trans "Research groups" %}</span></a>
-      <a class="sb-link {% if 'journal' in u %}active{% endif %}" href="{% url 'journal_list' %}" style="--c:#0891b2"><span class="sb-ic"><i class="bi bi-journals"></i></span> <span class="sb-label">{% trans "Journals" %}</span></a>
+      <a class="sb-link {% if 'group' in u or 'member' in u or 'invit' in u %}active{% endif %}" href="{% url 'group_list' %}" style="--c:#a87c22"><span class="sb-ic"><i class="bi bi-people-fill"></i></span> <span class="sb-label">{% trans "Research groups" %}</span></a>
+      <a class="sb-link {% if 'journal' in u %}active{% endif %}" href="{% url 'journal_list' %}" style="--c:#2f6f78"><span class="sb-ic"><i class="bi bi-journals"></i></span> <span class="sb-label">{% trans "Journals" %}</span></a>
       <div class="sb-section">{% trans "Insights" %}</div>
-      <a class="sb-link {% if u == 'reports' %}active{% endif %}" href="{% url 'reports' %}" style="--c:#ea580c"><span class="sb-ic"><i class="bi bi-bar-chart-line-fill"></i></span> <span class="sb-label">{% trans "Reports" %}</span></a>
-      <a class="sb-link" href="{% url 'export_csv' %}" style="--c:#16a34a"><span class="sb-ic"><i class="bi bi-cloud-arrow-down-fill"></i></span> <span class="sb-label">{% trans "Export CSV" %}</span></a>
-      {% if user.is_staff %}<a class="sb-link" href="{% url 'admin:index' %}" style="--c:#dc2626"><span class="sb-ic"><i class="bi bi-shield-lock-fill"></i></span> <span class="sb-label">{% trans "Administration" %}</span></a>{% endif %}
+      <a class="sb-link {% if u == 'reports' %}active{% endif %}" href="{% url 'reports' %}" style="--c:#b4612a"><span class="sb-ic"><i class="bi bi-bar-chart-line-fill"></i></span> <span class="sb-label">{% trans "Reports" %}</span></a>
+      <a class="sb-link" href="{% url 'export_csv' %}" style="--c:#2f6b46"><span class="sb-ic"><i class="bi bi-cloud-arrow-down-fill"></i></span> <span class="sb-label">{% trans "Export CSV" %}</span></a>
+      {% if user.is_staff %}<a class="sb-link" href="{% url 'admin:index' %}" style="--c:#a63a2b"><span class="sb-ic"><i class="bi bi-shield-lock-fill"></i></span> <span class="sb-label">{% trans "Administration" %}</span></a>{% endif %}
     </nav>
     <a href="{% url 'profile' %}" class="sb-user text-decoration-none">
       <span class="avatar {{ user|avatar_class }}">{{ user|initials }}</span>
@@ -69,9 +69,9 @@
       </form>
       <div class="ms-auto d-flex align-items-center gap-2">
         <a href="{% url 'paper_list' %}" class="icon-btn d-md-none" aria-label="{% trans 'Search' %}"><i class="bi bi-search"></i></a>
-        <a href="{% url 'deadline_list' %}?show=mine" class="icon-btn" style="--c:#db2777" title="{% trans 'My deadlines' %}">
+        <a href="{% url 'deadline_list' %}?show=mine" class="icon-btn" style="--c:#9a4a5c" title="{% trans 'My deadlines' %}">
           <i class="bi bi-bell-fill"></i>{% if nav_overdue %}<span class="dot"></span>{% endif %}</a>
-        <button class="icon-btn" style="--c:#7c3aed" type="button" id="theme-toggle" title="{% trans 'Toggle dark mode' %}"><i class="bi bi-moon-stars"></i></button>
+        <button class="icon-btn" style="--c:#6b4f8a" type="button" id="theme-toggle" title="{% trans 'Toggle dark mode' %}"><i class="bi bi-moon-stars"></i></button>
         <form action="{% url 'set_language' %}" method="post" class="m-0">{% csrf_token %}
           <input type="hidden" name="next" value="{{ request.get_full_path }}">
           <input type="hidden" name="language" value="{% if LANG == 'ar' %}en{% else %}ar{% endif %}">
@@ -129,21 +129,21 @@
     <div class="palette-search"><i class="bi bi-search"></i><input type="text" id="palette-input" autocomplete="off" placeholder="{% trans 'Type to search papers or jump to a page…' %}"><kbd>Esc</kbd></div>
     <div class="palette-list" id="palette-list">
       <div class="palette-group">{% trans "Go to" %}</div>
-      <a href="{% url 'dashboard' %}" style="--c:#2563eb"><i class="bi bi-grid-1x2-fill"></i>{% trans "Dashboard" %}</a>
-      <a href="{% url 'paper_list' %}?view=cards" style="--c:#7c3aed"><i class="bi bi-file-earmark-text-fill"></i>{% trans "Papers" %}</a>
-      <a href="{% url 'paper_list' %}?view=board" style="--c:#059669"><i class="bi bi-kanban-fill"></i>{% trans "Board" %}</a>
-      <a href="{% url 'paper_list' %}?view=timeline" style="--c:#7c3aed"><i class="bi bi-distribute-vertical"></i>{% trans "Timeline" %}</a>
-      <a href="{% url 'paper_list' %}?view=calendar" style="--c:#ea580c"><i class="bi bi-calendar3-week-fill"></i>{% trans "Calendar" %}</a>
-      <a href="{% url 'deadline_list' %}" style="--c:#db2777"><i class="bi bi-alarm-fill"></i>{% trans "Deadlines" %}</a>
-      <a href="{% url 'journal_list' %}" style="--c:#0891b2"><i class="bi bi-journals"></i>{% trans "Journals" %}</a>
-      <a href="{% url 'group_list' %}" style="--c:#d97706"><i class="bi bi-people-fill"></i>{% trans "Research groups" %}</a>
-      <a href="{% url 'reports' %}" style="--c:#ea580c"><i class="bi bi-bar-chart-line-fill"></i>{% trans "Reports" %}</a>
+      <a href="{% url 'dashboard' %}" style="--c:#2c4a6e"><i class="bi bi-grid-1x2-fill"></i>{% trans "Dashboard" %}</a>
+      <a href="{% url 'paper_list' %}?view=cards" style="--c:#6b4f8a"><i class="bi bi-file-earmark-text-fill"></i>{% trans "Papers" %}</a>
+      <a href="{% url 'paper_list' %}?view=board" style="--c:#2f6b46"><i class="bi bi-kanban-fill"></i>{% trans "Board" %}</a>
+      <a href="{% url 'paper_list' %}?view=timeline" style="--c:#6b4f8a"><i class="bi bi-distribute-vertical"></i>{% trans "Timeline" %}</a>
+      <a href="{% url 'paper_list' %}?view=calendar" style="--c:#b4612a"><i class="bi bi-calendar3-week-fill"></i>{% trans "Calendar" %}</a>
+      <a href="{% url 'deadline_list' %}" style="--c:#9a4a5c"><i class="bi bi-alarm-fill"></i>{% trans "Deadlines" %}</a>
+      <a href="{% url 'journal_list' %}" style="--c:#2f6f78"><i class="bi bi-journals"></i>{% trans "Journals" %}</a>
+      <a href="{% url 'group_list' %}" style="--c:#a87c22"><i class="bi bi-people-fill"></i>{% trans "Research groups" %}</a>
+      <a href="{% url 'reports' %}" style="--c:#b4612a"><i class="bi bi-bar-chart-line-fill"></i>{% trans "Reports" %}</a>
       <div class="palette-group">{% trans "Create" %}</div>
-      <a href="{% url 'paper_create' %}" style="--c:#2563eb"><i class="bi bi-plus-lg"></i>{% trans "New paper" %}</a>
-      <a href="{% url 'journal_create' %}" style="--c:#0891b2"><i class="bi bi-journal-plus"></i>{% trans "Add venue" %}</a>
-      <a href="{% url 'group_create' %}" style="--c:#d97706"><i class="bi bi-person-plus-fill"></i>{% trans "New group" %}</a>
-      <a href="{% url 'profile' %}" style="--c:#64748b"><i class="bi bi-person-gear"></i>{% trans "My profile" %}</a>
-      <a href="#" class="palette-search-link" data-search-url="{% url 'paper_list' %}?view=table&q=" style="--c:#4f46e5"><i class="bi bi-search"></i><span>{% trans "Search papers for" %} “<b></b>”</span></a>
+      <a href="{% url 'paper_create' %}" style="--c:#2c4a6e"><i class="bi bi-plus-lg"></i>{% trans "New paper" %}</a>
+      <a href="{% url 'journal_create' %}" style="--c:#2f6f78"><i class="bi bi-journal-plus"></i>{% trans "Add venue" %}</a>
+      <a href="{% url 'group_create' %}" style="--c:#a87c22"><i class="bi bi-person-plus-fill"></i>{% trans "New group" %}</a>
+      <a href="{% url 'profile' %}" style="--c:#7a7266"><i class="bi bi-person-gear"></i>{% trans "My profile" %}</a>
+      <a href="#" class="palette-search-link" data-search-url="{% url 'paper_list' %}?view=table&q=" style="--c:#3d4f7c"><i class="bi bi-search"></i><span>{% trans "Search papers for" %} “<b></b>”</span></a>
     </div>
   </div></div>
 </div>

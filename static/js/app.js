@@ -3,7 +3,7 @@
 (function () {
   "use strict";
   const html = document.documentElement;
-  const reduce = true; /* v5 Financial: static figures, no decorative motion */
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   /* ---- Sidebar collapse (remembered) ---- */
   document.getElementById("sb-toggle")?.addEventListener("click", () => {
@@ -135,3 +135,19 @@ document.addEventListener("click", e => {
   if (i) i.className = show ? "bi bi-eye-slash" : "bi bi-eye";
   else b.textContent = show ? (b.dataset.labelHide || "Hide") : (b.dataset.labelShow || "Show");
 });
+
+/* Sliding highlight in the sidebar: rests on the active link, follows the pointer */
+(function () {
+  const nav = document.querySelector(".sb-scroll"); if (!nav) return;
+  const ind = document.createElement("span"); ind.className = "sb-ind"; nav.prepend(ind);
+  const place = el => {
+    if (!el) { ind.classList.remove("on"); return; }
+    ind.style.transform = `translateY(${el.offsetTop}px)`; ind.style.height = el.offsetHeight + "px"; ind.classList.add("on");
+  };
+  const active = () => nav.querySelector(".sb-link.active");
+  requestAnimationFrame(() => place(active()));
+  nav.querySelectorAll(".sb-link").forEach(a => a.addEventListener("mouseenter", () => place(a)));
+  nav.addEventListener("mouseleave", () => place(active()));
+  addEventListener("resize", () => place(active()));
+  document.getElementById("sb-toggle")?.addEventListener("click", () => setTimeout(() => place(active()), 260));
+})();

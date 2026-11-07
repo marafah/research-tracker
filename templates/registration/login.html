@@ -1,18 +1,17 @@
 {% extends "registration/_auth_base.html" %}{% load i18n %}
 {% block title %}{% trans "Log in" %}{% endblock %}
 {% block auth %}
-<p class="fin-meta">{% trans "Sign in" %}</p>
-<h2 class="fin-h2">{% trans "Welcome back" %}</h2>
-<p class="fin-sub">{% trans "Sign in to your research workspace" %}</p>
-{% if form.errors %}<div class="fin-error" role="alert">{% trans "Email or password is incorrect." %}</div>{% endif %}
-<form method="post" novalidate class="fin-form">{% csrf_token %}
+<h2 class="ms-card-title">{% trans "Welcome back" %}</h2>
+<p class="ms-card-sub">{% trans "Sign in to your research workspace" %}</p>
+{% if form.errors %}<div class="ms-alert" role="alert"><i class="bi bi-exclamation-octagon"></i> {% trans "Email or password is incorrect." %}</div>{% endif %}
+<form method="post" novalidate>{% csrf_token %}
   <input type="hidden" name="next" value="{{ next }}">
-  <label class="fin-label" for="id_username">{% trans "Email" %}</label>
-  <input class="fin-input" type="email" name="username" id="id_username" autofocus required autocomplete="email" value="{{ form.username.value|default:'' }}" placeholder="name@uop.edu.jo">
-  <div class="fin-row"><label class="fin-label" for="id_password">{% trans "Password" %}</label><a class="fin-link" href="{% url 'password_reset' %}">{% trans "Forgot password?" %}</a></div>
-  <div class="fin-pw"><input class="fin-input" type="password" name="password" id="id_password" required autocomplete="current-password">
-    <button type="button" class="fin-show" data-toggle-pw="#id_password" data-label-show="{% trans 'Show' %}" data-label-hide="{% trans 'Hide' %}">{% trans "Show" %}</button></div>
-  <button class="fin-btn primary fin-submit" type="submit">{% trans "Log in" %} <span class="arr" aria-hidden="true">→</span></button>
+  <label class="ms-label" for="id_username">{% trans "Email" %}</label>
+  <div class="ms-field"><i class="bi bi-envelope"></i><input type="email" name="username" id="id_username" autofocus required autocomplete="email" value="{{ form.username.value|default:'' }}" placeholder="name@uop.edu.jo"></div>
+  <div class="ms-row"><label class="ms-label" for="id_password">{% trans "Password" %}</label><a class="ms-link" href="{% url 'password_reset' %}">{% trans "Forgot password?" %}</a></div>
+  <div class="ms-field"><i class="bi bi-key"></i><input type="password" name="password" id="id_password" required autocomplete="current-password">
+    <button type="button" class="ms-eye" data-toggle-pw="#id_password" aria-label="{% trans 'Show password' %}"><i class="bi bi-eye"></i></button></div>
+  <button class="ms-btn ms-submit" type="submit"><span>{% trans "Log in" %}</span><i class="bi bi-arrow-right"></i></button>
 </form>
-{% if ALLOW_SIGNUP %}<p class="fin-alt">{% trans "New here?" %} <a href="{% url 'signup' %}" class="fin-link">{% trans "Create an account" %}</a></p>{% endif %}
+{% if ALLOW_SIGNUP %}<p class="ms-alt">{% trans "New here?" %} <a href="{% url 'signup' %}" class="ms-link">{% trans "Create an account" %}</a></p>{% endif %}
 {% endblock %}

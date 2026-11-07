@@ -1,44 +1,63 @@
 {% extends "base.html" %}{% load i18n %}
 {% block shell %}{% get_current_language as LANG %}
-<div class="fin">
-  <header class="fin-nav">
-    <a href="/" class="fin-brand"><span class="fin-mark" aria-hidden="true"><i></i><i></i><i></i></span>{{ SITE_NAME }}</a>
-    <span class="fin-org d-none d-md-inline">{{ INSTITUTION }}</span>
-    <div class="fin-actions">
+<div class="ms">
+  <header class="ms-top">
+    <a href="/" class="ms-brand">
+      <svg class="ms-logo" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="currentColor"/><path d="M7 22h18M9 17.5h14M11 13h10M13 8.5h6" stroke="#fffaf0" stroke-width="2.2" stroke-linecap="round"/></svg>
+      <span>{{ SITE_NAME }}</span>
+    </a>
+    <span class="ms-org d-none d-md-inline">{{ INSTITUTION }}</span>
+    <nav class="ms-top-actions">
       <form action="{% url 'set_language' %}" method="post" class="m-0">{% csrf_token %}
         <input type="hidden" name="next" value="{{ request.get_full_path }}">
         <input type="hidden" name="language" value="{% if LANG == 'ar' %}en{% else %}ar{% endif %}">
-        <button class="fin-btn ghost sm" type="submit" lang="{% if LANG == 'ar' %}en{% else %}ar{% endif %}">{% if LANG == 'ar' %}English{% else %}العربية{% endif %}</button>
+        <button class="ms-chip-btn" type="submit"><i class="bi bi-translate"></i> {% if LANG == 'ar' %}English{% else %}العربية{% endif %}</button>
       </form>
-      {% block nav_cta %}{% if ALLOW_SIGNUP %}<a href="{% url 'signup' %}" class="fin-btn ghost sm">{% trans "Create account" %}</a>{% endif %}{% endblock %}
-    </div>
+      {% block nav_cta %}{% if ALLOW_SIGNUP %}<a href="{% url 'signup' %}" class="ms-chip-btn">{% trans "Create account" %}</a>{% endif %}{% endblock %}
+    </nav>
   </header>
 
-  <main class="fin-hero">
-    <section class="fin-pitch">
-      <p class="fin-meta">{{ INSTITUTION }} — {{ INSTITUTION_UNIT }}</p>
-      <h1 class="fin-title">{% trans "Every paper, every deadline," %} <span class="val">{% trans "in one place." %}</span></h1>
-      <p class="fin-lead">{% trans "Track submissions from idea to publication, never miss a revision deadline, and collect co-author data without the email chase." %}</p>
+  <main class="ms-main">
+    <section class="ms-pitch">
+      <p class="ms-sect"><span>§ 01</span>{{ INSTITUTION_UNIT }}</p>
+      <h1 class="ms-display">{% trans "Every manuscript, from first draft to" %} <em>{% trans "final proof." %}</em></h1>
+      <p class="ms-lead">{% trans "Track submissions from idea to publication, never miss a revision deadline, and collect co-author data without the email chase." %}</p>
+
+      <figure class="ms-desk" aria-label="{% trans 'A paper moving through the submission pipeline' %}">
+        <ol class="ms-track">
+          <li><i class="bi bi-pencil"></i>{% trans "Draft" %}</li>
+          <li><i class="bi bi-send"></i>{% trans "Submitted" %}</li>
+          <li><i class="bi bi-eyeglasses"></i>{% trans "Under review" %}</li>
+          <li><i class="bi bi-patch-check"></i>{% trans "Accepted" %}</li>
+        </ol>
+        <div class="ms-rail"><span class="ms-rail-fill"></span></div>
+        <div class="ms-paper" aria-hidden="true">
+          <span class="ms-paper-id">MS-2026-0417</span>
+          <span class="ln w90"></span><span class="ln w70"></span><span class="ln w80"></span><span class="ln w40"></span>
+          <span class="ms-stamp">{% trans "Accepted" %}</span>
+        </div>
+      </figure>
     </section>
 
-    <section class="fin-object">
-      <div class="fin-frame" aria-hidden="true"><span></span><span></span></div>
-      <div class="fin-panel">
-        {% block auth %}{% endblock %}
+    <section class="ms-cardcol">
+      <div class="ms-card">
+        <div class="ms-card-tab"><span>{% block card_label %}{% trans "Sign in" %}{% endblock %}</span><span class="mono">№ {% now "Y" %}</span></div>
+        <div class="ms-card-body">
+          {% block auth %}{% endblock %}
+        </div>
       </div>
     </section>
   </main>
 
-  <section class="fin-facts" aria-label="{% trans 'Features' %}">
-    <div><span class="k">{% trans "Reminders" %}</span><span class="v">{% trans "Email alerts before every deadline" %}</span></div>
-    <div><span class="k">{% trans "Views" %}</span><span class="v">{% trans "Board, timeline and calendar views of every submission" %}</span></div>
-    <div><span class="k">{% trans "Team" %}</span><span class="v">{% trans "Internal & external collaborators" %}</span></div>
-    <div><span class="k">{% trans "Languages" %}</span><span class="v" lang="">العربية · English</span></div>
-  </section>
-
-  <footer class="fin-foot">
+  <div class="ms-strata" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+  <footer class="ms-foot">
     <span>© {% now "Y" %} {{ INSTITUTION }}</span>
-    <span>{% trans "Open-source · Self-hostable · Your data stays private" %}</span>
+    <span class="ms-foot-badges">
+      <span><i class="bi bi-bell"></i> {% trans "Smart reminders" %}</span>
+      <span><i class="bi bi-people"></i> {% trans "Team-ready" %}</span>
+      <span><i class="bi bi-translate"></i> العربية · English</span>
+      <span><i class="bi bi-shield-check"></i> {% trans "Open-source" %}</span>
+    </span>
   </footer>
 </div>
 {% endblock %}

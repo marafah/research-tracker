@@ -1,6 +1,7 @@
 {% extends "registration/_auth_base.html" %}{% load i18n %}
 {% block title %}{% trans "Create account" %}{% endblock %}
-{% block nav_cta %}<a href="{% url 'login' %}" class="fin-btn ghost sm">{% trans "Log in" %}</a>{% endblock %}
+{% block nav_cta %}<a href="{% url 'login' %}" class="ms-chip-btn">{% trans "Log in" %}</a>{% endblock %}
+{% block card_label %}{% trans "Create account" %}{% endblock %}
 {% block auth %}
 <h1 class="fw-bold mb-1">{% trans "Create your account" %}</h1>
 <p class="text-muted-rt mb-4">{% trans "Free and open-source. Your research data stays private to your groups." %}</p>

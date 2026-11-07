@@ -87,7 +87,7 @@ def _dashboard_charts(papers, open_dl, now):
     stops, acc = [], 0
     for c in counts:
         share = 100 * c["count"] / (sum(x["count"] for x in counts) or 1)
-        c["color"] = STATUS_HEX.get(c["code"], "#64748b")
+        c["color"] = STATUS_HEX.get(c["code"], "#7a7266")
         stops.append(f"{c['color']} {acc:.2f}% {acc + share:.2f}%")
         acc += share
     types = {}

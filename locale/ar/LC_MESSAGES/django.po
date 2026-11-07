@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Research Tracker VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-07 14:57+0300\n"
+"POT-Creation-Date: 2026-11-07 15:12+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ar\n"
@@ -86,6 +86,9 @@ msgstr "يجب أن يكون للمجموعة مالك واحد على الأق�
 
 msgid "A new deadline has been assigned to you:"
 msgstr "أُسند إليك موعد نهائي جديد:"
+
+msgid "A paper moving through the submission pipeline"
+msgstr "بحث يتنقّل عبر مراحل الإرسال"
 
 msgid "A reviewer comment was assigned to you"
 msgstr "أُسندت إليك ملاحظة محكّم"
@@ -206,9 +209,6 @@ msgstr "العودة لتسجيل الدخول"
 
 msgid "Board"
 msgstr "اللوحة"
-
-msgid "Board, timeline and calendar views of every submission"
-msgstr "عرض كل إرسال كلوحة وخط زمني وتقويم"
 
 msgid "Book / Book series"
 msgstr "كتاب / سلسلة كتب"
@@ -376,6 +376,9 @@ msgstr "منجز"
 msgid "Download"
 msgstr "تنزيل"
 
+msgid "Draft"
+msgstr "مسودة"
+
 msgid "Drafting"
 msgstr "قيد الكتابة"
 
@@ -416,9 +419,6 @@ msgstr "البريد الإلكتروني"
 msgid "Email a link to complete their data"
 msgstr "إرسال رابط بالبريد لإكمال بياناته"
 
-msgid "Email alerts before every deadline"
-msgstr "تنبيهات بالبريد قبل كل موعد"
-
 msgid "Email or password is incorrect."
 msgstr "البريد الإلكتروني أو كلمة المرور غير صحيحة."
 
@@ -437,8 +437,8 @@ msgstr "أدخل بريدك الإلكتروني وسنرسل لك رابط إع
 msgid "Every date that matters, across all your groups"
 msgstr "كل التواريخ المهمة في جميع مجموعاتك"
 
-msgid "Every paper, every deadline,"
-msgstr "كل بحث، وكل موعد،"
+msgid "Every manuscript, from first draft to"
+msgstr "كل مخطوطة، من المسودة الأولى حتى"
 
 msgid "Every work your groups are writing, submitting and publishing"
 msgstr "كل الأعمال التي تكتبها مجموعاتك وترسلها وتنشرها"
@@ -457,9 +457,6 @@ msgstr "باحث خارجي"
 
 msgid "External collaborators only see the papers they are authors on."
 msgstr "الباحثون الخارجيون يرون فقط الأبحاث التي يشاركون في تأليفها."
-
-msgid "Features"
-msgstr "المزايا"
 
 #, python-format
 msgid "File too large (max %(mb)s MB)."
@@ -519,9 +516,6 @@ msgstr "مرحباً،"
 msgid "Here is your research summary for the coming two weeks."
 msgstr "إليك ملخص أعمالك البحثية للأسبوعين القادمين."
 
-msgid "Hide"
-msgstr "إخفاء"
-
 msgid "Hide empty stages"
 msgstr "إخفاء المراحل الفارغة"
 
@@ -554,9 +548,6 @@ msgstr "الفهرسة"
 
 msgid "Insights"
 msgstr "التحليلات"
-
-msgid "Internal & external collaborators"
-msgstr "باحثون من داخل الجامعة وخارجها"
 
 msgid "Internal milestone"
 msgstr "مرحلة داخلية"
@@ -602,9 +593,6 @@ msgstr "المجلات والمؤتمرات"
 
 msgid "Keep it secret. If it leaks, regenerate it."
 msgstr "احتفظ به سرياً، وإذا تسرّب فأنشئ رابطاً جديداً."
-
-msgid "Languages"
-msgstr "اللغات"
 
 msgid "Later"
 msgstr "لاحقاً"
@@ -838,11 +826,11 @@ msgstr "فتح بوابة الإرسال"
 msgid "Open the paper"
 msgstr "فتح البحث"
 
+msgid "Open-source"
+msgstr "مفتوح المصدر"
+
 msgid "Open-source research publication tracker"
 msgstr "منصة مفتوحة المصدر لمتابعة النشر البحثي"
-
-msgid "Open-source · Self-hostable · Your data stays private"
-msgstr "مفتوح المصدر · قابل للاستضافة الذاتية · بياناتك خاصة"
 
 msgid "Other"
 msgstr "أخرى"
@@ -1004,9 +992,6 @@ msgstr "إنشاء رابط جديد"
 msgid "Rejected"
 msgstr "مرفوض"
 
-msgid "Reminders"
-msgstr "التذكيرات"
-
 msgid "Remove"
 msgstr "إزالة"
 
@@ -1125,17 +1110,20 @@ msgstr "افصل الملاحظات بسطر فارغ أو رقّمها (1. 2. 3
 msgid "Shared catalogue with your own statistics per venue"
 msgstr "دليل مشترك مع إحصاءاتك الخاصة لكل مجلة"
 
-msgid "Show"
-msgstr "إظهار"
-
 msgid "Show all stages"
 msgstr "إظهار كل المراحل"
+
+msgid "Show password"
+msgstr "إظهار كلمة المرور"
 
 msgid "Sign in"
 msgstr "تسجيل الدخول"
 
 msgid "Sign in to your research workspace"
 msgstr "سجّل الدخول إلى مساحتك البحثية"
+
+msgid "Smart reminders"
+msgstr "تذكيرات ذكية"
 
 msgid "Special issue"
 msgstr "عدد خاص"
@@ -1190,6 +1178,9 @@ msgstr "المهمة"
 
 msgid "Team"
 msgstr "الفريق"
+
+msgid "Team-ready"
+msgstr "للعمل الجماعي"
 
 msgid "Teams you collaborate with, inside and outside the university"
 msgstr "الفرق التي تتعاون معها داخل الجامعة وخارجها"
@@ -1296,9 +1287,6 @@ msgstr "المجلة"
 
 msgid "Vertical timeline"
 msgstr "خط زمني عمودي"
-
-msgid "Views"
-msgstr "طرق العرض"
 
 msgid "Web of Science"
 msgstr "Web of Science"
@@ -1512,6 +1500,9 @@ msgstr "باحث خارجي"
 msgid "file"
 msgstr "الملف"
 
+msgid "final proof."
+msgstr "البروفة النهائية."
+
 msgid "first decision date"
 msgstr "تاريخ القرار الأول"
 
@@ -1539,9 +1530,6 @@ msgstr "معامل التأثير"
 #, python-format
 msgid "imported %(n)s comments from %(r)s"
 msgstr "استورد %(n)s ملاحظة من %(r)s"
-
-msgid "in one place."
-msgstr "في مكان واحد."
 
 msgid "in the next 30 days"
 msgstr "خلال 30 يوماً القادمة"

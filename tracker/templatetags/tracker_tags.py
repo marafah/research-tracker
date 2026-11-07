@@ -19,13 +19,13 @@ STATUS_COLORS = {
 
 # A distinct, flat colour for every status so pipelines, badges and boards read at a glance.
 STATUS_HEX = {
-    "idea": "#64748b", "proposal": "#0891b2", "drafting": "#0d9488", "internal_review": "#0284c7",
-    "ready": "#4f46e5", "submitted": "#2563eb", "under_review": "#7c3aed", "major_revision": "#ea580c",
-    "minor_revision": "#d97706", "resubmitted": "#6366f1", "accepted": "#16a34a", "proofs": "#65a30d",
-    "published": "#059669", "rejected": "#dc2626", "withdrawn": "#475569", "on_hold": "#a16207",
-    "draft": "#64748b", "with_editor": "#2563eb", "major": "#ea580c", "minor": "#d97706",
-    "revision_submitted": "#6366f1", "desk_rejected": "#dc2626", "transfer": "#be123c",
-    "open": "#dc2626", "in_progress": "#d97706", "done": "#16a34a", "rebutted": "#0891b2",
+    "idea": "#7a7266", "proposal": "#2f6f78", "drafting": "#2f6f78", "internal_review": "#3d5f80",
+    "ready": "#3d4f7c", "submitted": "#2c4a6e", "under_review": "#6b4f8a", "major_revision": "#b4612a",
+    "minor_revision": "#a87c22", "resubmitted": "#6366f1", "accepted": "#2f6b46", "proofs": "#65a30d",
+    "published": "#2f6b46", "rejected": "#a63a2b", "withdrawn": "#475569", "on_hold": "#a16207",
+    "draft": "#7a7266", "with_editor": "#2c4a6e", "major": "#b4612a", "minor": "#a87c22",
+    "revision_submitted": "#6366f1", "desk_rejected": "#a63a2b", "transfer": "#be123c",
+    "open": "#a63a2b", "in_progress": "#a87c22", "done": "#2f6b46", "rebutted": "#2f6f78",
 }
 STATUS_ICONS = {
     "idea": "bi-lightbulb", "proposal": "bi-file-earmark-richtext", "drafting": "bi-pencil-square",
@@ -43,7 +43,7 @@ def status_color(value):
 
 @register.filter
 def status_hex(value):
-    return STATUS_HEX.get(value, "#64748b")
+    return STATUS_HEX.get(value, "#7a7266")
 
 
 @register.filter
@@ -59,7 +59,7 @@ def _soft(color):
 def status_badge(obj, field="status"):
     value = getattr(obj, field)
     label = getattr(obj, f"get_{field}_display")()
-    return format_html('<span class="sbadge" style="--s:{}">{}</span>', status_hex(value), label)
+    return format_html('<span class="sbadge" data-s="{}" style="--s:{}">{}</span>', value, status_hex(value), label)
 
 
 @register.simple_tag
@@ -136,7 +136,7 @@ def get_item(d, key):
 @register.filter
 def type_hex(value):
     from tracker.workspace import TYPE_COLORS
-    return TYPE_COLORS.get(value, "#64748b")
+    return TYPE_COLORS.get(value, "#7a7266")
 
 
 @register.filter

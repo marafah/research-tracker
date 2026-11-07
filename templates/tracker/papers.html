@@ -2,7 +2,7 @@
 {% block title %}{% trans "Papers" %}{% endblock %}
 {% block content %}
 <div class="page-head">
-  <div class="ph-title"><span class="ico lg solid" style="--c:#7c3aed"><i class="bi bi-file-earmark-text-fill"></i></span>
+  <div class="ph-title"><span class="ico lg solid" style="--c:#6b4f8a"><i class="bi bi-file-earmark-text-fill"></i></span>
     <div><div class="eyebrow">{% trans "Workspace" %}</div><h1>{% trans "Papers & proposals" %}</h1>
     <div class="sub">{% trans "Every work your groups are writing, submitting and publishing" %}</div></div></div>
   <div class="d-flex gap-2 flex-wrap">
@@ -20,11 +20,11 @@
 
 <!-- KPI strip -->
 <div class="ws-kpis mb-3">
-  <a class="ws-kpi {% if not request.GET.status %}on{% endif %}" href="{{ kpi_urls|get_item:'' }}" style="--c:#2563eb"><span class="ico solid"><i class="bi bi-collection-fill"></i></span><div><b>{{ kpi.total }}</b><span>{% trans "Records" %}</span></div></a>
-  <a class="ws-kpi {% if request.GET.status == 'active' %}on{% endif %}" href="{{ kpi_urls.active }}" style="--c:#0d9488"><span class="ico solid"><i class="bi bi-activity"></i></span><div><b>{{ kpi.active }}</b><span>{% trans "Active" %}</span></div></a>
-  <a class="ws-kpi {% if request.GET.status == 'in_review' %}on{% endif %}" href="{{ kpi_urls.in_review }}" style="--c:#7c3aed"><span class="ico solid"><i class="bi bi-hourglass-split"></i></span><div><b>{{ kpi.review }}</b><span>{% trans "Submitted / in review" %}</span></div></a>
-  <a class="ws-kpi" href="{% url 'deadline_list' %}" style="--c:{% if kpi.overdue %}#dc2626{% else %}#ea580c{% endif %}"><span class="ico solid"><i class="bi bi-alarm-fill"></i></span><div><b>{{ kpi.overdue }}</b><span>{% trans "Overdue deadlines" %}</span></div></a>
-  <a class="ws-kpi {% if request.GET.status == 'accepted_pub' %}on{% endif %}" href="{{ kpi_urls.accepted_pub }}" style="--c:#16a34a"><span class="ico solid"><i class="bi bi-patch-check-fill"></i></span><div><b>{{ kpi.published }}</b><span>{% trans "Accepted / published" %}</span></div></a>
+  <a class="ws-kpi {% if not request.GET.status %}on{% endif %}" href="{{ kpi_urls|get_item:'' }}" style="--c:#2c4a6e"><span class="ico solid"><i class="bi bi-collection-fill"></i></span><div><b>{{ kpi.total }}</b><span>{% trans "Records" %}</span></div></a>
+  <a class="ws-kpi {% if request.GET.status == 'active' %}on{% endif %}" href="{{ kpi_urls.active }}" style="--c:#2f6f78"><span class="ico solid"><i class="bi bi-activity"></i></span><div><b>{{ kpi.active }}</b><span>{% trans "Active" %}</span></div></a>
+  <a class="ws-kpi {% if request.GET.status == 'in_review' %}on{% endif %}" href="{{ kpi_urls.in_review }}" style="--c:#6b4f8a"><span class="ico solid"><i class="bi bi-hourglass-split"></i></span><div><b>{{ kpi.review }}</b><span>{% trans "Submitted / in review" %}</span></div></a>
+  <a class="ws-kpi" href="{% url 'deadline_list' %}" style="--c:{% if kpi.overdue %}#a63a2b{% else %}#b4612a{% endif %}"><span class="ico solid"><i class="bi bi-alarm-fill"></i></span><div><b>{{ kpi.overdue }}</b><span>{% trans "Overdue deadlines" %}</span></div></a>
+  <a class="ws-kpi {% if request.GET.status == 'accepted_pub' %}on{% endif %}" href="{{ kpi_urls.accepted_pub }}" style="--c:#2f6b46"><span class="ico solid"><i class="bi bi-patch-check-fill"></i></span><div><b>{{ kpi.published }}</b><span>{% trans "Accepted / published" %}</span></div></a>
 </div>
 
 <!-- View switcher + search -->

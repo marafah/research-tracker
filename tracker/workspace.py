@@ -14,11 +14,11 @@ from django.utils.translation import gettext_lazy as _l
 from . import models as m
 
 VIEWS = [  # key, label, icon, colour
-    ("cards", _l("All records"), "bi-grid-3x2-gap-fill", "#2563eb"),
-    ("table", _l("Table"), "bi-table", "#0891b2"),
-    ("timeline", _l("Timeline"), "bi-bar-chart-steps", "#7c3aed"),
-    ("calendar", _l("Calendar"), "bi-calendar3-week-fill", "#ea580c"),
-    ("board", _l("Board"), "bi-kanban-fill", "#16a34a"),
+    ("cards", _l("All records"), "bi-grid-3x2-gap-fill", "#2c4a6e"),
+    ("table", _l("Table"), "bi-table", "#2f6f78"),
+    ("timeline", _l("Timeline"), "bi-bar-chart-steps", "#6b4f8a"),
+    ("calendar", _l("Calendar"), "bi-calendar3-week-fill", "#b4612a"),
+    ("board", _l("Board"), "bi-kanban-fill", "#2f6b46"),
 ]
 VIEW_KEYS = [v[0] for v in VIEWS]
 
@@ -36,25 +36,25 @@ TYPE_ICONS = {
     "proposal": "bi-lightbulb", "thesis": "bi-mortarboard", "other": "bi-file-earmark",
 }
 TYPE_COLORS = {
-    "journal": "#2563eb", "conference": "#9333ea", "chapter": "#0891b2", "review": "#0d9488",
-    "proposal": "#d97706", "thesis": "#db2777", "other": "#64748b",
+    "journal": "#2c4a6e", "conference": "#6b4f8a", "chapter": "#2f6f78", "review": "#2f6f78",
+    "proposal": "#a87c22", "thesis": "#9a4a5c", "other": "#7a7266",
 }
 
 # Colour of the timeline segment that *starts* with each event.
 PHASE = {
     "prep": ("#94a3b8", _l("Preparation")),
-    m.Submission.Decision.SUBMITTED: ("#2563eb", _l("Submitted")),
-    m.Submission.Decision.WITH_EDITOR: ("#2563eb", _l("With editor")),
-    m.Submission.Decision.UNDER_REVIEW: ("#7c3aed", _l("Under review")),
-    m.Submission.Decision.MAJOR: ("#ea580c", _l("Major revision")),
-    m.Submission.Decision.MINOR: ("#d97706", _l("Minor revision")),
-    m.Submission.Decision.REVISION_SUBMITTED: ("#4f46e5", _l("Revision submitted")),
-    m.Submission.Decision.ACCEPTED: ("#16a34a", _l("Accepted")),
-    m.Submission.Decision.REJECTED: ("#dc2626", _l("Rejected")),
-    m.Submission.Decision.DESK_REJECTED: ("#dc2626", _l("Desk rejected")),
+    m.Submission.Decision.SUBMITTED: ("#2c4a6e", _l("Submitted")),
+    m.Submission.Decision.WITH_EDITOR: ("#2c4a6e", _l("With editor")),
+    m.Submission.Decision.UNDER_REVIEW: ("#6b4f8a", _l("Under review")),
+    m.Submission.Decision.MAJOR: ("#b4612a", _l("Major revision")),
+    m.Submission.Decision.MINOR: ("#a87c22", _l("Minor revision")),
+    m.Submission.Decision.REVISION_SUBMITTED: ("#3d4f7c", _l("Revision submitted")),
+    m.Submission.Decision.ACCEPTED: ("#2f6b46", _l("Accepted")),
+    m.Submission.Decision.REJECTED: ("#a63a2b", _l("Rejected")),
+    m.Submission.Decision.DESK_REJECTED: ("#a63a2b", _l("Desk rejected")),
     m.Submission.Decision.TRANSFER: ("#be123c", _l("Transfer offered")),
     m.Submission.Decision.WITHDRAWN: ("#475569", _l("Withdrawn")),
-    "published": ("#059669", _l("Published")),
+    "published": ("#2f6b46", _l("Published")),
 }
 
 
@@ -274,14 +274,14 @@ def board_columns(papers, show_all=False):
 
 # ---------------------------------------------------------------- vertical timeline
 EVENT_STYLE = {  # kind -> (icon, colour)
-    "start": ("bi-lightbulb-fill", "#64748b"),
-    "submitted": ("bi-send-fill", "#2563eb"), "with_editor": ("bi-person-workspace", "#2563eb"),
-    "under_review": ("bi-hourglass-split", "#7c3aed"), "major": ("bi-arrow-repeat", "#ea580c"),
-    "minor": ("bi-wrench-adjustable", "#d97706"), "revision_submitted": ("bi-send-check-fill", "#4f46e5"),
-    "accepted": ("bi-patch-check-fill", "#16a34a"), "rejected": ("bi-x-octagon-fill", "#dc2626"),
-    "desk_rejected": ("bi-x-octagon-fill", "#dc2626"), "transfer": ("bi-arrow-left-right", "#be123c"),
-    "withdrawn": ("bi-box-arrow-left", "#475569"), "published": ("bi-award-fill", "#059669"),
-    "deadline": ("bi-alarm-fill", "#db2777"), "overdue": ("bi-exclamation-triangle-fill", "#dc2626"),
+    "start": ("bi-lightbulb-fill", "#7a7266"),
+    "submitted": ("bi-send-fill", "#2c4a6e"), "with_editor": ("bi-person-workspace", "#2c4a6e"),
+    "under_review": ("bi-hourglass-split", "#6b4f8a"), "major": ("bi-arrow-repeat", "#b4612a"),
+    "minor": ("bi-wrench-adjustable", "#a87c22"), "revision_submitted": ("bi-send-check-fill", "#3d4f7c"),
+    "accepted": ("bi-patch-check-fill", "#2f6b46"), "rejected": ("bi-x-octagon-fill", "#a63a2b"),
+    "desk_rejected": ("bi-x-octagon-fill", "#a63a2b"), "transfer": ("bi-arrow-left-right", "#be123c"),
+    "withdrawn": ("bi-box-arrow-left", "#475569"), "published": ("bi-award-fill", "#2f6b46"),
+    "deadline": ("bi-alarm-fill", "#9a4a5c"), "overdue": ("bi-exclamation-triangle-fill", "#a63a2b"),
 }
 
 
@@ -294,7 +294,7 @@ def vertical_timeline(papers, months_back=18):
     def add(when, kind, title, paper, sub="", url=None, future=False):
         if when is None or when < since:
             return
-        icon, color = EVENT_STYLE.get(kind, ("bi-circle-fill", "#64748b"))
+        icon, color = EVENT_STYLE.get(kind, ("bi-circle-fill", "#7a7266"))
         items.append({"when": when, "kind": kind, "icon": icon, "color": color, "title": title,
                       "paper": paper, "sub": sub, "url": url or paper.get_absolute_url(), "future": future})
 

@@ -4,46 +4,46 @@
 <!-- Greeting + quick actions -->
 <div class="dash-head">
   <div>
-    <div class="dash-date"><span class="ico sm solid" style="--c:#2563eb"><i class="bi bi-calendar-event-fill"></i></span><span class="num">{% now "d/m/Y" %}</span> · {% now "l" %}</div>
+    <div class="dash-date"><span class="ico sm solid" style="--c:#2c4a6e"><i class="bi bi-calendar-event-fill"></i></span><span class="num">{% now "d/m/Y" %}</span> · {% now "l" %}</div>
     <h1>{{ greeting }}, {{ user.display_name }}</h1>
     <div class="dash-sum">
-      {% if overdue %}<span class="chip c" style="--c:#dc2626"><i class="bi bi-exclamation-triangle-fill"></i> {% blocktrans count n=overdue|length %}{{ n }} deadline is overdue{% plural %}{{ n }} deadlines are overdue{% endblocktrans %}</span>{% endif %}
-      <span class="chip c" style="--c:#db2777"><i class="bi bi-alarm-fill"></i> {% blocktrans count n=week_count %}{{ n }} deadline this week{% plural %}{{ n }} deadlines this week{% endblocktrans %}</span>
-      <span class="chip c" style="--c:#7c3aed"><i class="bi bi-hourglass-split"></i> {{ under_review }} {% trans "submitted / in review" %}</span>
-      <span class="chip c" style="--c:#16a34a"><i class="bi bi-graph-up-arrow"></i> {% blocktrans with n=success_rate %}{{ n }}% accepted or published{% endblocktrans %}</span>
+      {% if overdue %}<span class="chip c" style="--c:#a63a2b"><i class="bi bi-exclamation-triangle-fill"></i> {% blocktrans count n=overdue|length %}{{ n }} deadline is overdue{% plural %}{{ n }} deadlines are overdue{% endblocktrans %}</span>{% endif %}
+      <span class="chip c" style="--c:#9a4a5c"><i class="bi bi-alarm-fill"></i> {% blocktrans count n=week_count %}{{ n }} deadline this week{% plural %}{{ n }} deadlines this week{% endblocktrans %}</span>
+      <span class="chip c" style="--c:#6b4f8a"><i class="bi bi-hourglass-split"></i> {{ under_review }} {% trans "submitted / in review" %}</span>
+      <span class="chip c" style="--c:#2f6b46"><i class="bi bi-graph-up-arrow"></i> {% blocktrans with n=success_rate %}{{ n }}% accepted or published{% endblocktrans %}</span>
     </div>
   </div>
   <div class="qa-row">
-    <a class="qa" style="--c:#2563eb" href="{% url 'paper_create' %}"><i class="bi bi-plus-lg"></i>{% trans "New paper" %}</a>
-    <a class="qa" style="--c:#16a34a" href="{% url 'paper_board' %}"><i class="bi bi-kanban-fill"></i>{% trans "Board" %}</a>
-    <a class="qa" style="--c:#ea580c" href="{% url 'paper_list' %}?view=calendar"><i class="bi bi-calendar3-week-fill"></i>{% trans "Calendar" %}</a>
-    <a class="qa" style="--c:#7c3aed" href="{% url 'paper_list' %}?view=timeline"><i class="bi bi-distribute-vertical"></i>{% trans "Timeline" %}</a>
+    <a class="qa" style="--c:#2c4a6e" href="{% url 'paper_create' %}"><i class="bi bi-plus-lg"></i>{% trans "New paper" %}</a>
+    <a class="qa" style="--c:#2f6b46" href="{% url 'paper_board' %}"><i class="bi bi-kanban-fill"></i>{% trans "Board" %}</a>
+    <a class="qa" style="--c:#b4612a" href="{% url 'paper_list' %}?view=calendar"><i class="bi bi-calendar3-week-fill"></i>{% trans "Calendar" %}</a>
+    <a class="qa" style="--c:#6b4f8a" href="{% url 'paper_list' %}?view=timeline"><i class="bi bi-distribute-vertical"></i>{% trans "Timeline" %}</a>
   </div>
 </div>
 
 {% if profile_missing %}
 <div class="alert alert-soft-warning d-flex align-items-center gap-3 small">
-  <span class="ico solid" style="--c:#d97706"><i class="bi bi-person-exclamation"></i></span>
+  <span class="ico solid" style="--c:#a87c22"><i class="bi bi-person-exclamation"></i></span>
   <div class="flex-grow-1">{% trans "Your profile is missing:" %} <strong>{{ profile_missing|join:", " }}</strong>. {% trans "Co-authors need these for submissions." %}</div>
-  <a href="{% url 'profile' %}" class="btn btn-sm btn-color" style="--c:#d97706">{% trans "Complete profile" %}</a>
+  <a href="{% url 'profile' %}" class="btn btn-sm btn-color" style="--c:#a87c22">{% trans "Complete profile" %}</a>
 </div>
 {% endif %}
 
 <!-- Solid stat tiles -->
 <div class="row g-3 mb-4">
-  <div class="col-6 col-xl-3"><a class="stat" style="--c:#2563eb" href="{% url 'paper_list' %}?view=cards&status=active">
+  <div class="col-6 col-xl-3"><a class="stat" style="--c:#2c4a6e" href="{% url 'paper_list' %}?view=cards&status=active">
     <div class="s-top"><span class="s-ic"><i class="bi bi-folder2-open"></i></span><span class="s-pill">{% blocktrans with n=total %}of {{ n }} in total{% endblocktrans %}</span></div>
     <div class="s-value">{{ active }}</div><div class="s-label">{% trans "Active works" %}</div>
     <div class="s-bar"><span style="width:{% widthratio active total|default:1 100 %}%"></span></div></a></div>
-  <div class="col-6 col-xl-3"><a class="stat" style="--c:#7c3aed" href="{% url 'paper_list' %}?view=table&status=in_review">
+  <div class="col-6 col-xl-3"><a class="stat" style="--c:#6b4f8a" href="{% url 'paper_list' %}?view=table&status=in_review">
     <div class="s-top"><span class="s-ic"><i class="bi bi-hourglass-split"></i></span><span class="s-pill">{{ in_review_strict }} {% trans "with reviewers" %}</span></div>
     <div class="s-value">{{ under_review }}</div><div class="s-label">{% trans "Submitted / in review" %}</div>
     <div class="s-bar"><span style="width:{% widthratio under_review total|default:1 100 %}%"></span></div></a></div>
-  <div class="col-6 col-xl-3"><a class="stat" style="--c:{% if overdue %}#dc2626{% else %}#ea580c{% endif %}" href="{% url 'deadline_list' %}">
+  <div class="col-6 col-xl-3"><a class="stat" style="--c:{% if overdue %}#a63a2b{% else %}#b4612a{% endif %}" href="{% url 'deadline_list' %}">
     <div class="s-top"><span class="s-ic"><i class="bi bi-alarm-fill"></i></span><span class="s-pill">{% blocktrans with n=week_count %}{{ n }} due this week{% endblocktrans %}</span></div>
     <div class="s-value">{{ overdue|length }}</div><div class="s-label">{% trans "Overdue" %}</div>
     <div class="s-hint"><i class="bi bi-calendar-week"></i> {{ upcoming|length }} {% trans "in the next 30 days" %}</div></a></div>
-  <div class="col-6 col-xl-3"><a class="stat" style="--c:#16a34a" href="{% url 'paper_list' %}?view=cards&status=accepted_pub">
+  <div class="col-6 col-xl-3"><a class="stat" style="--c:#2f6b46" href="{% url 'paper_list' %}?view=cards&status=accepted_pub">
     <div class="s-top"><span class="s-ic"><i class="bi bi-patch-check-fill"></i></span><span class="s-pill">{% blocktrans with n=published_year %}{{ n }} published{% endblocktrans %}</span></div>
     <div class="s-value">{{ accepted_year }}</div><div class="s-label">{% trans "Accepted this year" %}</div>
     <div class="s-bar"><span style="width:{{ success_rate }}%"></span></div></a></div>
@@ -67,7 +67,7 @@
       </div>
       {% for d in overdue %}{% include "tracker/_deadline_row.html" %}{% endfor %}
       {% for d in upcoming|slice:":6" %}{% include "tracker/_deadline_row.html" %}{% endfor %}
-      {% if not overdue and not upcoming %}<div class="empty"><div class="ic" style="--c:#16a34a"><i class="bi bi-calendar-check"></i></div><h6>{% trans "You're all clear" %}</h6><div class="small">{% trans "No deadlines in the next 30 days." %}</div></div>{% endif %}
+      {% if not overdue and not upcoming %}<div class="empty"><div class="ic" style="--c:#2f6b46"><i class="bi bi-calendar-check"></i></div><h6>{% trans "You're all clear" %}</h6><div class="small">{% trans "No deadlines in the next 30 days." %}</div></div>{% endif %}
     </div>
 
     <div class="card mb-4">
@@ -80,7 +80,7 @@
         <a class="mini-paper" style="--c:{{ p.status|status_hex }}" href="{{ p.get_absolute_url }}">
           <div class="d-flex justify-content-between align-items-center gap-2">{% status_badge p %}<span class="mp-sub num">{{ p.updated_at|date:"d/m/Y" }}</span></div>
           <div class="mp-title">{{ p.label }}</div>
-          <div class="mp-sub text-truncate"><i class="bi bi-journal-bookmark-fill" style="color:#4f46e5"></i> {% if s %}{{ s.journal.name }}{% else %}{{ p.get_type_display }}{% endif %}</div>
+          <div class="mp-sub text-truncate"><i class="bi bi-journal-bookmark-fill" style="color:#3d4f7c"></i> {% if s %}{{ s.journal.name }}{% else %}{{ p.get_type_display }}{% endif %}</div>
           <div class="avatar-stack">{% for a in p.authors.all|slice:":4" %}<span class="avatar avatar-sm {{ a.user|default:a.name|avatar_class }}" title="{{ a.name }}">{{ a.name|initials }}</span>{% endfor %}</div>
         </a>
         {% endwith %}{% empty %}<div class="empty"><div class="ic"><i class="bi bi-file-earmark-plus"></i></div><h6>{% trans "No papers yet." %}</h6></div>{% endfor %}
@@ -93,7 +93,7 @@
           <div class="card-header"><h2 class="card-title-rt"><span class="ic tone-danger"><i class="bi bi-lightning-charge-fill"></i></span>{% trans "Needs action" %}</h2><span class="count-pill">{{ action_papers|length }}</span></div>
           {% for p in action_papers %}
             <a class="list-row" href="{{ p.get_absolute_url }}"><span class="ico sm solid" style="--c:{{ p.status|status_hex }}"><i class="bi {{ p.status|status_icon }}"></i></span><div class="grow"><div class="t text-truncate">{{ p.label }}</div><div class="s text-truncate">{{ p.current_submission.journal.name|default:p.get_type_display }}</div></div>{% status_badge p %}</a>
-          {% empty %}<div class="empty py-4"><div class="ic" style="--c:#16a34a"><i class="bi bi-check2-all"></i></div><div class="small">{% trans "Nothing needs action right now." %}</div></div>{% endfor %}
+          {% empty %}<div class="empty py-4"><div class="ic" style="--c:#2f6b46"><i class="bi bi-check2-all"></i></div><div class="small">{% trans "Nothing needs action right now." %}</div></div>{% endfor %}
         </div>
       </div>
       <div class="col-md-6">
@@ -101,7 +101,7 @@
           <div class="card-header"><h2 class="card-title-rt"><span class="ic tone-cyan"><i class="bi bi-chat-square-text-fill"></i></span>{% trans "My reviewer-comment tasks" %}</h2></div>
           {% for c in my_comments %}
             <a class="list-row" href="{{ c.submission.paper.get_absolute_url }}#submission-{{ c.submission_id }}"><span class="ico sm solid" style="--c:{{ c.state|status_hex }}"><i class="bi bi-chat-left-text"></i></span><div class="grow"><div class="t text-truncate">{{ c.comment }}</div><div class="s text-truncate">{{ c.reviewer }} #{{ c.number }} · {{ c.submission.paper.label }}</div></div>{% status_badge c "state" %}</a>
-          {% empty %}<div class="empty py-4"><div class="ic" style="--c:#0891b2"><i class="bi bi-inbox-fill"></i></div><div class="small">{% trans "No open comments assigned to you." %}</div></div>{% endfor %}
+          {% empty %}<div class="empty py-4"><div class="ic" style="--c:#2f6f78"><i class="bi bi-inbox-fill"></i></div><div class="small">{% trans "No open comments assigned to you." %}</div></div>{% endfor %}
         </div>
       </div>
     </div>
@@ -136,7 +136,7 @@
     {% endif %}
 
     {% if missing_data %}
-    <div class="card mb-4 card-accent" style="--c:#d97706">
+    <div class="card mb-4 card-accent" style="--c:#a87c22">
       <div class="card-header"><h2 class="card-title-rt"><span class="ic tone-warning"><i class="bi bi-person-lines-fill"></i></span>{% trans "Missing co-author data" %}</h2><span class="count-pill">{{ missing_data|length }}</span></div>
       {% for p in missing_data|slice:":5" %}
         <a class="list-row" href="{{ p.get_absolute_url }}#authors"><div class="grow"><div class="t text-truncate">{{ p.label }}</div>

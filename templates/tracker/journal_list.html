@@ -2,18 +2,18 @@
 {% block title %}{% trans "Journals & venues" %}{% endblock %}
 {% block content %}
 <div class="page-head">
-  <div class="ph-title"><span class="ico lg solid" style="--c:#0891b2"><i class="bi bi-journals"></i></span><div><div class="eyebrow">{% trans "Network" %}</div><h1>{% trans "Journals & venues" %}</h1><div class="sub">{% trans "Shared catalogue with your own statistics per venue" %}</div></div></div>
+  <div class="ph-title"><span class="ico lg solid" style="--c:#2f6f78"><i class="bi bi-journals"></i></span><div><div class="eyebrow">{% trans "Network" %}</div><h1>{% trans "Journals & venues" %}</h1><div class="sub">{% trans "Shared catalogue with your own statistics per venue" %}</div></div></div>
   <a href="{% url 'journal_create' %}" class="btn btn-primary"><i class="bi bi-plus-lg"></i> {% trans "Add venue" %}</a>
 </div>
 <div class="ws-bar">
   <nav class="ws-views">
-    <a href="?view=cards&q={{ q|urlencode }}" class="{% if view != 'table' %}on{% endif %}" style="--c:#2563eb"><span class="vi"><i class="bi bi-grid-3x2-gap-fill"></i></span> {% trans "Cards" %}</a>
-    <a href="?view=table&q={{ q|urlencode }}" class="{% if view == 'table' %}on{% endif %}" style="--c:#0891b2"><span class="vi"><i class="bi bi-table"></i></span> {% trans "Table" %}</a>
+    <a href="?view=cards&q={{ q|urlencode }}" class="{% if view != 'table' %}on{% endif %}" style="--c:#2c4a6e"><span class="vi"><i class="bi bi-grid-3x2-gap-fill"></i></span> {% trans "Cards" %}</a>
+    <a href="?view=table&q={{ q|urlencode }}" class="{% if view == 'table' %}on{% endif %}" style="--c:#2f6f78"><span class="vi"><i class="bi bi-table"></i></span> {% trans "Table" %}</a>
   </nav>
   <form class="ws-search" method="get"><input type="hidden" name="view" value="{{ view }}"><i class="bi bi-search"></i><input name="q" value="{{ q }}" class="form-control" placeholder="{% trans 'Search by name, publisher or ISSN' %}"></form>
 </div>
 <div class="ws-filters">
-  {% for k, label in quartile_chips %}<a href="?view={{ view }}&q={{ q|urlencode }}&quartile={{ k }}" class="ws-chip {% if quartile == k %}on{% endif %}" style="--c:{% if k == 'Q1' %}#16a34a{% elif k == 'Q2' %}#0891b2{% elif k == 'Q3' %}#d97706{% elif k == 'Q4' %}#64748b{% else %}#0f172a{% endif %}"><i class="bi {% if k %}bi-bookmark-star-fill{% else %}bi-collection-fill{% endif %}"></i> {{ label }}</a>{% endfor %}
+  {% for k, label in quartile_chips %}<a href="?view={{ view }}&q={{ q|urlencode }}&quartile={{ k }}" class="ws-chip {% if quartile == k %}on{% endif %}" style="--c:{% if k == 'Q1' %}#2f6b46{% elif k == 'Q2' %}#2f6f78{% elif k == 'Q3' %}#a87c22{% elif k == 'Q4' %}#7a7266{% else %}#0f172a{% endif %}"><i class="bi {% if k %}bi-bookmark-star-fill{% else %}bi-collection-fill{% endif %}"></i> {{ label }}</a>{% endfor %}
 </div>
 {% if view == "table" %}
 <div class="card table-card"><div class="table-responsive"><table class="table table-hover align-middle">
@@ -28,16 +28,16 @@
 {% else %}
 <div class="rec-grid">
 {% for j in journals %}
-  <a href="{{ j.get_absolute_url }}" class="card card-link card-accent text-decoration-none p-3 d-flex flex-column gap-2" style="--c:{% if j.flagged %}#dc2626{% elif j.quartile == 'Q1' %}#16a34a{% elif j.quartile == 'Q2' %}#0891b2{% elif j.quartile == 'Q3' %}#d97706{% elif j.kind == 'conference' %}#9333ea{% else %}#2563eb{% endif %}">
+  <a href="{{ j.get_absolute_url }}" class="card card-link card-accent text-decoration-none p-3 d-flex flex-column gap-2" style="--c:{% if j.flagged %}#a63a2b{% elif j.quartile == 'Q1' %}#2f6b46{% elif j.quartile == 'Q2' %}#2f6f78{% elif j.quartile == 'Q3' %}#a87c22{% elif j.kind == 'conference' %}#6b4f8a{% else %}#2c4a6e{% endif %}">
     <div class="d-flex justify-content-between align-items-start gap-2">
-      <span class="rec-ico" style="--t:{% if j.kind == 'conference' %}#9333ea{% elif j.kind == 'funder' %}#d97706{% else %}#2563eb{% endif %}"><i class="bi {% if j.kind == 'conference' %}bi-easel{% elif j.kind == 'funder' %}bi-cash-coin{% else %}bi-journal-text{% endif %}"></i></span>
+      <span class="rec-ico" style="--t:{% if j.kind == 'conference' %}#6b4f8a{% elif j.kind == 'funder' %}#a87c22{% else %}#2c4a6e{% endif %}"><i class="bi {% if j.kind == 'conference' %}bi-easel{% elif j.kind == 'funder' %}bi-cash-coin{% else %}bi-journal-text{% endif %}"></i></span>
       <div class="d-flex gap-1 flex-wrap justify-content-end">{% if j.quartile %}<span class="badge quartile-{{ j.quartile|lower }}">{{ j.quartile }}</span>{% endif %}{% if j.open_access %}<span class="badge bg-success-subtle text-success-emphasis">OA</span>{% endif %}{% if j.flagged %}<span class="badge bg-danger-subtle text-danger-emphasis"><i class="bi bi-exclamation-triangle"></i></span>{% endif %}</div>
     </div>
     <div class="fw-bold" style="color:var(--rt-text)">{{ j.name }}</div>
     <div class="small text-muted-rt">{{ j.publisher|default:"—" }} · {{ j.get_kind_display }}</div>
     <div class="d-flex justify-content-between align-items-center mt-auto pt-2" style="border-top:1px dashed var(--rt-border)">
-      <span class="small text-muted-rt text-truncate"><i class="bi bi-database-fill-check" style="color:#0d9488"></i> {{ j.indexing|default:"—" }}</span>
-      <span class="chip c" style="--c:#2563eb"><i class="bi bi-send-fill"></i> {{ j.n }}</span>
+      <span class="small text-muted-rt text-truncate"><i class="bi bi-database-fill-check" style="color:#2f6f78"></i> {{ j.indexing|default:"—" }}</span>
+      <span class="chip c" style="--c:#2c4a6e"><i class="bi bi-send-fill"></i> {{ j.n }}</span>
     </div>
   </a>
 {% empty %}<div class="card"><div class="empty"><div class="ic"><i class="bi bi-journals"></i></div><h6>{% trans "No venues yet." %}</h6></div></div>{% endfor %}
