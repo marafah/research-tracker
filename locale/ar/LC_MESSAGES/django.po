@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Research Tracker VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-07 14:34+0300\n"
+"POT-Creation-Date: 2026-11-07 14:46+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ar\n"
@@ -189,9 +189,6 @@ msgstr "يوجد حساب مسجّل بهذا البريد الإلكتروني.
 msgid "Arabic"
 msgstr "العربية"
 
-msgid "Arabic & English"
-msgstr "العربية والإنجليزية"
-
 msgid "Author data collection"
 msgstr "جمع بيانات المؤلفين"
 
@@ -209,6 +206,9 @@ msgstr "العودة لتسجيل الدخول"
 
 msgid "Board"
 msgstr "اللوحة"
+
+msgid "Board, timeline and calendar views of every submission"
+msgstr "عرض كل إرسال كلوحة وخط زمني وتقويم"
 
 msgid "Book / Book series"
 msgstr "كتاب / سلسلة كتب"
@@ -437,8 +437,8 @@ msgstr "أدخل بريدك الإلكتروني وسنرسل لك رابط إع
 msgid "Every date that matters, across all your groups"
 msgstr "كل التواريخ المهمة في جميع مجموعاتك"
 
-msgid "Every paper, every deadline, every co-author — in one place."
-msgstr "كل بحث، وكل موعد، وكل مؤلف مشارك — في مكان واحد."
+msgid "Every paper, every deadline,"
+msgstr "كل بحث، وكل موعد،"
 
 msgid "Every work your groups are writing, submitting and publishing"
 msgstr "كل الأعمال التي تكتبها مجموعاتك وترسلها وتنشرها"
@@ -1116,11 +1116,11 @@ msgstr "دليل مشترك مع إحصاءاتك الخاصة لكل مجلة"
 msgid "Show all stages"
 msgstr "إظهار كل المراحل"
 
+msgid "Show password"
+msgstr "إظهار كلمة المرور"
+
 msgid "Sign in to your research workspace"
 msgstr "سجّل الدخول إلى مساحتك البحثية"
-
-msgid "Smart reminders"
-msgstr "تذكيرات ذكية"
 
 msgid "Special issue"
 msgstr "عدد خاص"
@@ -1175,9 +1175,6 @@ msgstr "المهمة"
 
 msgid "Team"
 msgstr "الفريق"
-
-msgid "Team-ready"
-msgstr "للعمل الجماعي"
 
 msgid "Teams you collaborate with, inside and outside the university"
 msgstr "الفرق التي تتعاون معها داخل الجامعة وخارجها"
@@ -1524,6 +1521,9 @@ msgstr "معامل التأثير"
 #, python-format
 msgid "imported %(n)s comments from %(r)s"
 msgstr "استورد %(n)s ملاحظة من %(r)s"
+
+msgid "in one place."
+msgstr "في مكان واحد."
 
 msgid "in the next 30 days"
 msgstr "خلال 30 يوماً القادمة"

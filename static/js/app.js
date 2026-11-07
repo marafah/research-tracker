@@ -125,3 +125,11 @@
   const on = () => tb.classList.toggle("scrolled", scrollY > 4);
   addEventListener("scroll", on, { passive: true }); on();
 })();
+
+/* Show / hide password */
+document.addEventListener("click", e => {
+  const b = e.target.closest("[data-toggle-pw]"); if (!b) return;
+  const inp = document.querySelector(b.dataset.togglePw); if (!inp) return;
+  const show = inp.type === "password"; inp.type = show ? "text" : "password";
+  b.querySelector("i").className = show ? "bi bi-eye-slash" : "bi bi-eye";
+});

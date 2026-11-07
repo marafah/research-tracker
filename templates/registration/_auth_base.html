@@ -1,37 +1,52 @@
 {% extends "base.html" %}{% load i18n %}
 {% block shell %}{% get_current_language as LANG %}
-<div class="auth-shell uop">
-  <section class="auth-art">
-    <div class="ua-pattern" aria-hidden="true"></div>
-    <a href="/" class="ua-brand">
-      <span class="ua-mark"><i class="bi bi-journal-bookmark-fill"></i></span>
-      <span><b>{{ INSTITUTION }}</b><small>{{ INSTITUTION_UNIT }}</small></span>
-    </a>
-    <div class="ua-body">
-      <div class="ua-eyebrow"><span></span>{{ SITE_NAME }}</div>
-      <h2>{% trans "Every paper, every deadline, every co-author — in one place." %}</h2>
-      <p class="ua-lead">{% trans "Track submissions from idea to publication, never miss a revision deadline, and collect co-author data without the email chase." %}</p>
-      <ul class="ua-list">
-        <li><i class="bi bi-alarm"></i><div><b>{% trans "Smart reminders" %}</b><span>{% trans "Email alerts before every deadline" %}</span></div></li>
-        <li><i class="bi bi-people"></i><div><b>{% trans "Team-ready" %}</b><span>{% trans "Internal & external collaborators" %}</span></div></li>
-        <li><i class="bi bi-bar-chart-line"></i><div><b>{% trans "Reports" %}</b><span>{% trans "Arabic & English" %}</span></div></li>
-      </ul>
-    </div>
-    <div class="ua-foot"><i class="bi bi-shield-lock"></i> {% trans "Open-source · Self-hostable · Your data stays private" %}</div>
-  </section>
-  <section class="auth-form">
-    <div class="ua-top">
-      <a href="/" class="ua-mini d-lg-none"><span class="ua-mark sm"><i class="bi bi-journal-bookmark-fill"></i></span><span><b>{{ INSTITUTION }}</b><small>{{ SITE_NAME }}</small></span></a>
-      <form action="{% url 'set_language' %}" method="post" class="ms-auto">{% csrf_token %}
+<div class="aur">
+  <div class="aur-bg" aria-hidden="true">
+    <span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span><span class="blob b4"></span>
+    <span class="aur-grid"></span><span class="aur-grain"></span>
+  </div>
+
+  <header class="aur-nav">
+    <a href="/" class="aur-brand"><span class="aur-logo"><i class="bi bi-journal-bookmark-fill"></i></span>{{ SITE_NAME }}</a>
+    <nav class="aur-links d-none d-md-flex">
+      <span>{{ INSTITUTION }}</span>
+    </nav>
+    <div class="aur-actions">
+      <form action="{% url 'set_language' %}" method="post" class="m-0">{% csrf_token %}
         <input type="hidden" name="next" value="{{ request.get_full_path }}">
         <input type="hidden" name="language" value="{% if LANG == 'ar' %}en{% else %}ar{% endif %}">
-        <button class="btn btn-ghost btn-sm"><i class="bi bi-translate"></i> {% if LANG == 'ar' %}English{% else %}العربية{% endif %}</button>
+        <button class="aur-ghost" type="submit"><i class="bi bi-translate"></i> {% if LANG == 'ar' %}English{% else %}العربية{% endif %}</button>
       </form>
+      {% block nav_cta %}{% if ALLOW_SIGNUP %}<a href="{% url 'signup' %}" class="aur-pill">{% trans "Create account" %}</a>{% endif %}{% endblock %}
     </div>
-    <div class="auth-card">
-      {% block auth %}{% endblock %}
-    </div>
-    <div class="ua-copy">© {% now "Y" %} {{ INSTITUTION }} · {{ SITE_NAME }}</div>
-  </section>
+  </header>
+
+  <main class="aur-main">
+    <section class="aur-pitch">
+      <div class="aur-badge"><span class="dot"></span>{{ INSTITUTION }} · {{ INSTITUTION_UNIT }}</div>
+      <h1 class="aur-h">{% trans "Every paper, every deadline," %} <span class="grad">{% trans "in one place." %}</span></h1>
+      <p class="aur-lead">{% trans "Track submissions from idea to publication, never miss a revision deadline, and collect co-author data without the email chase." %}</p>
+      <ul class="aur-feats">
+        <li><span class="fi" style="--c:#2dd4bf"><i class="bi bi-lightning-charge-fill"></i></span>{% trans "Email alerts before every deadline" %}</li>
+        <li><span class="fi" style="--c:#a78bfa"><i class="bi bi-kanban-fill"></i></span>{% trans "Board, timeline and calendar views of every submission" %}</li>
+        <li><span class="fi" style="--c:#f472b6"><i class="bi bi-people-fill"></i></span>{% trans "Internal & external collaborators" %}</li>
+      </ul>
+      <div class="aur-trust">
+        <span class="stack"><i style="background:#14b8a6"></i><i style="background:#8b5cf6"></i><i style="background:#3b82f6"></i><b>AR·EN</b></span>
+        <span>{% trans "Open-source · Self-hostable · Your data stays private" %}</span>
+      </div>
+    </section>
+
+    <section class="aur-cardwrap">
+      <div class="aur-card">
+        {% block auth %}{% endblock %}
+      </div>
+    </section>
+  </main>
+
+  <footer class="aur-foot">
+    <span>© {% now "Y" %} {{ INSTITUTION }}</span>
+    <span>{{ SITE_NAME }} · {% trans "Open-source research publication tracker" %}</span>
+  </footer>
 </div>
 {% endblock %}
