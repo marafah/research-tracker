@@ -47,6 +47,7 @@
   <input type="hidden" name="view" value="{{ view }}">{% if request.GET.type %}<input type="hidden" name="type" value="{{ request.GET.type }}">{% endif %}
   {% if request.GET.q %}<input type="hidden" name="q" value="{{ request.GET.q }}">{% endif %}
   {% if request.GET.month %}<input type="hidden" name="month" value="{{ request.GET.month }}">{% endif %}
+  {% if request.GET.phase %}<input type="hidden" name="phase" value="{{ request.GET.phase }}">{% endif %}
   <select name="status" class="form-select form-select-sm" onchange="this.form.submit()" aria-label="{% trans 'Status' %}">{% for val, lab in form.fields.status.choices %}<option value="{{ val }}" {% if request.GET.status == val %}selected{% endif %}>{{ lab }}</option>{% endfor %}</select>
   <select name="group" class="form-select form-select-sm" onchange="this.form.submit()" aria-label="{% trans 'Group' %}"><option value="">{% trans "All groups" %}</option>{% for g in form.fields.group.queryset %}<option value="{{ g.pk }}" {% if request.GET.group == g.pk|stringformat:"s" %}selected{% endif %}>{{ g.name }}</option>{% endfor %}</select>
   {% if view == "cards" %}
@@ -61,24 +62,24 @@
     <label class="wf" style="--c:#0d6efd"><i class="bi bi-journal-bookmark-fill"></i>
       <select name="venue" class="form-select form-select-sm {% if request.GET.venue %}on{% endif %}" onchange="this.form.submit()" aria-label="{% trans 'Journal / conference' %}">
         <option value="">{% trans "All journals & conferences" %}</option>{% for pk, name in fopts.venues %}<option value="{{ pk }}" {% if request.GET.venue == pk|stringformat:"s" %}selected{% endif %}>{{ name }}</option>{% endfor %}</select></label>
-    <label class="wf" style="--c:#fd7e14"><i class="bi bi-building"></i>
+    {% if fopts.publishers or request.GET.publisher %}<label class="wf" style="--c:#fd7e14"><i class="bi bi-building"></i>
       <select name="publisher" class="form-select form-select-sm {% if request.GET.publisher %}on{% endif %}" onchange="this.form.submit()" aria-label="{% trans 'Publisher' %}">
-        <option value="">{% trans "All publishers" %}</option>{% for x in fopts.publishers %}<option value="{{ x }}" {% if request.GET.publisher == x %}selected{% endif %}>{{ x }}</option>{% endfor %}</select></label>
-    <label class="wf" style="--c:#198754"><i class="bi bi-award-fill"></i>
+        <option value="">{% trans "All publishers" %}</option>{% for x in fopts.publishers %}<option value="{{ x }}" {% if request.GET.publisher == x %}selected{% endif %}>{{ x }}</option>{% endfor %}</select></label>{% endif %}
+    {% if fopts.quartiles or request.GET.quartile %}<label class="wf" style="--c:#198754"><i class="bi bi-award-fill"></i>
       <select name="quartile" class="form-select form-select-sm {% if request.GET.quartile %}on{% endif %}" onchange="this.form.submit()" aria-label="{% trans 'Quartile' %}">
-        <option value="">{% trans "Any quartile" %}</option>{% for q in fopts.quartiles %}<option value="{{ q }}" {% if request.GET.quartile == q %}selected{% endif %}>{{ q }}</option>{% endfor %}</select></label>
-    <label class="wf" style="--c:#0aa2c0"><i class="bi bi-patch-check-fill"></i>
+        <option value="">{% trans "Any quartile" %}</option>{% for q in fopts.quartiles %}<option value="{{ q }}" {% if request.GET.quartile == q %}selected{% endif %}>{{ q }}</option>{% endfor %}</select></label>{% endif %}
+    {% if fopts.indexes or request.GET.index %}<label class="wf" style="--c:#0aa2c0"><i class="bi bi-patch-check-fill"></i>
       <select name="index" class="form-select form-select-sm {% if request.GET.index %}on{% endif %}" onchange="this.form.submit()" aria-label="{% trans 'Indexing' %}">
-        <option value="">{% trans "Any indexing" %}</option>{% for k, lab in fopts.indexes %}<option value="{{ k }}" {% if request.GET.index == k %}selected{% endif %}>{{ lab }}</option>{% endfor %}</select></label>
+        <option value="">{% trans "Any indexing" %}</option>{% for k, lab in fopts.indexes %}<option value="{{ k }}" {% if request.GET.index == k %}selected{% endif %}>{{ lab }}</option>{% endfor %}</select></label>{% endif %}
     <label class="wf" style="--c:#d63384"><i class="bi bi-alarm-fill"></i>
       <select name="deadline" class="form-select form-select-sm {% if request.GET.deadline %}on{% endif %}" onchange="this.form.submit()" aria-label="{% trans 'Deadline' %}">
         <option value="">{% trans "Any deadline" %}</option>{% for k, lab in fopts.deadlines %}<option value="{{ k }}" {% if request.GET.deadline == k %}selected{% endif %}>{{ lab }}</option>{% endfor %}</select></label>
-    <label class="wf" style="--c:#5b6bbf"><i class="bi bi-calendar3"></i>
+    {% if fopts.years or request.GET.year %}<label class="wf" style="--c:#5b6bbf"><i class="bi bi-calendar3"></i>
       <select name="year" class="form-select form-select-sm {% if request.GET.year %}on{% endif %}" onchange="this.form.submit()" aria-label="{% trans 'Submission year' %}">
-        <option value="">{% trans "Any year" %}</option>{% for y in fopts.years %}<option value="{{ y }}" {% if request.GET.year == y|stringformat:"s" %}selected{% endif %}>{{ y }}</option>{% endfor %}</select></label>
-    <label class="wf" style="--c:#e0a800"><i class="bi bi-person-fill"></i>
+        <option value="">{% trans "Any year" %}</option>{% for y in fopts.years %}<option value="{{ y }}" {% if request.GET.year == y|stringformat:"s" %}selected{% endif %}>{{ y }}</option>{% endfor %}</select></label>{% endif %}
+    {% if fopts.authors|length > 1 or request.GET.author %}<label class="wf" style="--c:#e0a800"><i class="bi bi-person-fill"></i>
       <select name="author" class="form-select form-select-sm {% if request.GET.author %}on{% endif %}" onchange="this.form.submit()" aria-label="{% trans 'Author' %}">
-        <option value="">{% trans "All authors" %}</option>{% for pk, name in fopts.authors %}<option value="{{ pk }}" {% if request.GET.author == pk|stringformat:"s" %}selected{% endif %}>{{ name }}</option>{% endfor %}</select></label>
+        <option value="">{% trans "All authors" %}</option>{% for pk, name in fopts.authors %}<option value="{{ pk }}" {% if request.GET.author == pk|stringformat:"s" %}selected{% endif %}>{{ name }}</option>{% endfor %}</select></label>{% endif %}
     <label class="wf wf-sort" style="--c:#14243d"><i class="bi bi-sort-down"></i>
       <select name="sort" class="form-select form-select-sm" onchange="this.form.submit()" aria-label="{% trans 'Sort by' %}">
         {% for k, lab in fopts.sorts %}<option value="{{ k }}" {% if request.GET.sort == k %}selected{% endif %}>{% trans "Sort:" %} {{ lab }}</option>{% endfor %}</select></label>
@@ -89,6 +90,11 @@
 <div class="ws-body ws-{{ view }}">
   {% if view == "cards" %}{% include "tracker/views/cards.html" %}
   {% elif view == "table" %}{% include "tracker/views/table.html" %}
+  {% elif view == "list" %}{% include "tracker/views/list.html" %}
+  {% elif view == "venues" %}{% include "tracker/views/venues.html" %}
+  {% elif view == "gantt" %}{% include "tracker/views/timeline.html" %}
+  {% elif view == "stats" %}{% include "tracker/views/stats.html" %}
+  {% elif view == "matrix" %}{% include "tracker/views/matrix.html" %}
   {% elif view == "timeline" %}{% include "tracker/views/timeline.html" %}
   {% elif view == "calendar" %}{% include "tracker/views/calendar.html" %}
   {% else %}{% include "tracker/views/board.html" %}{% endif %}
