@@ -10,3 +10,9 @@ venv/
 .idea/
 .vscode/
 locale/messages.json
+
+# private data exports (never commit: they contain accounts and research records)
+private-data/
+media/_export/
+.sync-manifest.json
+.sync-check.py
