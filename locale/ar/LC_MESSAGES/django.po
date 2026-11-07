@@ -1994,3 +1994,24 @@ msgstr "المراحل"
 
 msgid "Last update"
 msgstr "آخر تحديث"
+
+msgid "Grouped"
+msgstr "عرض مجمّع"
+
+msgid "Journal / book"
+msgstr "المجلة / الكتاب"
+
+msgid "Submission month"
+msgstr "شهر الإرسال"
+
+msgid "Next deadline month"
+msgstr "شهر الموعد القادم"
+
+msgid "Layout"
+msgstr "التخطيط"
+
+msgid "Vertical list"
+msgstr "قائمة عمودية"
+
+msgid "Open in table"
+msgstr "فتح في الجدول"
