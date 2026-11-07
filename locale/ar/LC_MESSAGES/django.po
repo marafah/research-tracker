@@ -1991,3 +1991,6 @@ msgstr "المجموع"
 
 msgid "Phases"
 msgstr "المراحل"
+
+msgid "Last update"
+msgstr "آخر تحديث"
