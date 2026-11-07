@@ -51,93 +51,83 @@
     <div class="k-foot"><span>{% blocktrans with n=published_year %}{{ n }} published{% endblocktrans %} · {{ success_rate }}% {% trans "acceptance" %}</span><div class="progress" role="presentation"><div class="progress-bar" style="width:{{ success_rate }}%"></div></div></div></a></div>
 </div>
 
-<!-- Pipeline overview -->
 <div class="row g-4 mb-4">
+  <!-- Deadlines (grouped) -->
   <div class="col-xl-8">
     <div class="card h-100">
       <div class="card-header db-ch">
-        <div><h2 class="db-ct">{% trans "Publication pipeline" %}</h2><div class="db-cs">{% trans "Where every paper stands right now" %}</div></div>
-        <a href="{% url 'paper_list' %}?view=board" class="btn btn-sm btn-light border">{% trans "Open board" %}</a>
+        <div><h2 class="db-ct"><i class="bi bi-alarm text-primary me-2"></i>{% trans "Upcoming deadlines" %}</h2><div class="db-cs">{% blocktrans count n=week_count %}{{ n }} deadline this week{% plural %}{{ n }} deadlines this week{% endblocktrans %} · {{ upcoming|length }} {% trans "in the next 30 days" %}</div></div>
+        <a class="btn btn-sm btn-light border" href="{% url 'deadline_list' %}">{% trans "All deadlines" %}</a>
       </div>
-      <div class="card-body">
-        {% if status_rows %}
-        <div class="db-stack" role="img" aria-label="{% trans 'Pipeline' %}">
-          {% for c in status_rows %}<span style="--c:{{ c.color }};flex-grow:{{ c.count }}" title="{{ c.label }}: {{ c.count }}"></span>{% endfor %}
-        </div>
-        <div class="table-responsive">
-        <table class="table table-sm align-middle db-table mb-0">
-          <thead><tr><th>{% trans "Stage" %}</th><th class="text-end">{% trans "Papers" %}</th><th class="text-end">{% trans "Share" %}</th><th class="w-25 d-none d-md-table-cell"></th></tr></thead>
-          <tbody>
-          {% for c in status_rows %}
-            <tr><td><a href="{% url 'paper_list' %}?status={{ c.code }}" class="db-stage"><i style="background:{{ c.color }}"></i>{{ c.label }}</a></td>
-              <td class="text-end fw-semibold num">{{ c.count }}</td>
-              <td class="text-end text-body-secondary num">{% widthratio c.count total 100 %}%</td>
-              <td class="d-none d-md-table-cell"><div class="progress db-thin"><div class="progress-bar" style="width:{% widthratio c.count total 100 %}%;background:{{ c.color }}"></div></div></td></tr>
-          {% endfor %}
-          </tbody>
-        </table>
-        </div>
-        {% else %}<div class="empty py-4"><div class="ic"><i class="bi bi-diagram-3"></i></div><h6>{% trans "No papers yet." %}</h6></div>{% endif %}
+      <div class="db-week">
+        {% for d in week_strip %}
+        <a href="{% url 'deadline_list' %}?view=calendar" class="db-day {% if d.today %}today{% endif %} {% if d.count %}busy{% endif %}" title="{{ d.count }}">
+          <span class="wd">{{ d.date|date:"D" }}</span><span class="dn num">{{ d.date|date:"d" }}</span>{% if d.count %}<span class="cnt">{{ d.count }}</span>{% endif %}
+        </a>
+        {% endfor %}
+      </div>
+      <div class="db-groups">
+      {% for g in deadline_groups %}{% with d=g.first %}
+        <a class="db-dg {% if g.overdue %}overdue{% elif d.urgency == 'danger' %}danger{% endif %}" href="{% if g.count == 1 %}{{ d.paper.get_absolute_url }}#deadlines{% else %}{% url 'deadline_list' %}{% endif %}">
+          <div class="db-date"><b class="num">{{ d.due_at|date:"d" }}</b><span class="num">{{ d.due_at|date:"m/Y" }}</span></div>
+          <div class="min-w-0 flex-grow-1">
+            <div class="d-flex align-items-center gap-2 min-w-0"><span class="db-dt text-truncate" dir="auto">{{ d.title }}</span>{% if g.count > 1 %}<span class="badge rounded-pill text-bg-primary">{% blocktrans count n=g.count %}{{ n }} paper{% plural %}{{ n }} papers{% endblocktrans %}</span>{% endif %}</div>
+            <div class="db-dp text-truncate">{% for x in g.items|slice:":2" %}<span dir="auto">{{ x.paper.label|truncatechars:48 }}</span>{% if not forloop.last %} · {% endif %}{% endfor %}{% if g.more %} <span class="text-body-secondary">+{{ g.more }}</span>{% endif %}</div>
+          </div>
+          <div class="d-none d-sm-block text-nowrap">{% due_badge d %}</div>
+          <i class="bi bi-chevron-{% if RTL %}left{% else %}right{% endif %} text-body-tertiary"></i>
+        </a>
+      {% endwith %}{% empty %}
+        <div class="empty py-4"><div class="ic" style="--c:#198754"><i class="bi bi-calendar-check"></i></div><h6>{% trans "You're all clear" %}</h6><div class="small">{% trans "No deadlines in the next 30 days." %}</div></div>
+      {% endfor %}
       </div>
     </div>
   </div>
 
+  <!-- Pipeline + portfolio -->
   <div class="col-xl-4">
     <div class="card h-100">
-      <div class="card-header db-ch"><div><h2 class="db-ct">{% trans "Portfolio" %}</h2><div class="db-cs">{% blocktrans with n=total %}{{ n }} works in total{% endblocktrans %}</div></div></div>
+      <div class="card-header db-ch">
+        <div><h2 class="db-ct"><i class="bi bi-diagram-3 text-primary me-2"></i>{% trans "Publication pipeline" %}</h2><div class="db-cs">{% blocktrans with n=total %}{{ n }} works in total{% endblocktrans %}</div></div>
+        <a href="{% url 'paper_list' %}?view=board" class="btn btn-sm btn-light border">{% trans "Open board" %}</a>
+      </div>
       <div class="card-body">
-        <div class="d-flex align-items-center gap-3 mb-4">
+        {% if status_rows %}
+        <div class="db-stack" role="img" aria-label="{% trans 'Pipeline' %}">{% for c in status_rows %}<span style="--c:{{ c.color }};flex-grow:{{ c.count }}" title="{{ c.label }}: {{ c.count }}"></span>{% endfor %}</div>
+        <ul class="db-legend">
+          {% for c in status_rows %}<li><a href="{% url 'paper_list' %}?status={{ c.code }}"><i style="background:{{ c.color }}"></i><span class="flex-grow-1">{{ c.label }}</span><b class="num">{{ c.count }}</b><span class="pct num">{% widthratio c.count total 100 %}%</span></a></li>{% endfor %}
+        </ul>
+        {% endif %}
+        <div class="db-split">
           <div class="db-ring" style="--p:{{ success_rate }}"><div><b class="num">{{ success_rate }}%</b><span>{% trans "accepted" %}</span></div></div>
-          <div class="small text-body-secondary">{% trans "Share of your works that are accepted or published." %}</div>
+          <div class="flex-grow-1 min-w-0">
+            {% for t in type_rows %}
+            <a class="db-type" href="{% url 'paper_list' %}?type={{ t.key }}" style="--c:{{ t.color }}"><span class="d-flex align-items-center gap-2 text-truncate"><i class="bi {{ t.icon }}"></i>{{ t.label }}</span><b class="num">{{ t.count }}</b><div class="progress db-thin"><div class="progress-bar" style="width:{{ t.pct }}%"></div></div></a>
+            {% endfor %}
+          </div>
         </div>
-        {% for t in type_rows %}
-        <a class="db-type" href="{% url 'paper_list' %}?type={{ t.key }}" style="--c:{{ t.color }}">
-          <span class="d-flex align-items-center gap-2"><i class="bi {{ t.icon }}"></i>{{ t.label }}</span><b class="num">{{ t.count }}</b>
-          <div class="progress db-thin"><div class="progress-bar" style="width:{{ t.pct }}%"></div></div>
-        </a>
-        {% empty %}<div class="small text-body-secondary">{% trans "No papers yet." %}</div>{% endfor %}
       </div>
     </div>
   </div>
 </div>
 
 <div class="row g-4">
-  <!-- Main column -->
+  <!-- Recently updated -->
   <div class="col-xl-8">
-    <div class="card mb-4">
+    <div class="card">
       <div class="card-header db-ch">
-        <div><h2 class="db-ct">{% trans "Upcoming deadlines" %}</h2><div class="db-cs">{% blocktrans count n=week_count %}{{ n }} deadline this week{% plural %}{{ n }} deadlines this week{% endblocktrans %}</div></div>
-        <a class="btn btn-sm btn-light border" href="{% url 'deadline_list' %}">{% trans "All deadlines" %}</a>
-      </div>
-      <div class="db-week">
-        {% for d in week_strip %}
-        <a href="{% url 'deadline_list' %}?view=calendar" class="db-day {% if d.today %}today{% endif %} {% if d.count %}busy{% endif %}">
-          <span class="wd">{{ d.date|date:"D" }}</span><span class="dn num">{{ d.date|date:"d" }}</span>
-          <span class="cnt">{% if d.count %}{{ d.count }}{% else %}·{% endif %}</span>
-        </a>
-        {% endfor %}
-      </div>
-      <div class="db-list">
-      {% for d in overdue %}{% include "tracker/_deadline_row.html" %}{% endfor %}
-      {% for d in upcoming|slice:":6" %}{% include "tracker/_deadline_row.html" %}{% endfor %}
-      </div>
-      {% if not overdue and not upcoming %}<div class="empty py-4"><div class="ic" style="--c:#198754"><i class="bi bi-calendar-check"></i></div><h6>{% trans "You're all clear" %}</h6><div class="small">{% trans "No deadlines in the next 30 days." %}</div></div>{% endif %}
-    </div>
-
-    <div class="card mb-4">
-      <div class="card-header db-ch">
-        <div><h2 class="db-ct">{% trans "Recently updated" %}</h2><div class="db-cs">{% trans "Latest changes across your groups" %}</div></div>
+        <div><h2 class="db-ct"><i class="bi bi-clock-history text-primary me-2"></i>{% trans "Recently updated" %}</h2><div class="db-cs">{% trans "Latest changes across your groups" %}</div></div>
         <a class="btn btn-sm btn-light border" href="{% url 'paper_list' %}?view=table">{% trans "View all" %}</a>
       </div>
       <div class="table-responsive">
-        <table class="table table-hover align-middle db-table mb-0">
-          <thead><tr><th>{% trans "Title" %}</th><th>{% trans "Status" %}</th><th class="d-none d-lg-table-cell">{% trans "Venue" %}</th><th class="text-end">{% trans "Updated" %}</th></tr></thead>
+        <table class="table table-hover align-middle db-table db-fixed mb-0">
+          <thead><tr><th>{% trans "Title" %}</th><th class="c-st">{% trans "Status" %}</th><th class="c-ve d-none d-xxl-table-cell">{% trans "Venue" %}</th><th class="c-up text-end">{% trans "Updated" %}</th></tr></thead>
           <tbody>
           {% for p in recent_papers %}{% with s=p.current_submission %}
             <tr class="db-row" data-href="{{ p.get_absolute_url }}">
-              <td class="db-tcell"><div class="db-tbox"><a href="{{ p.get_absolute_url }}" class="db-ptitle">{{ p.label }}</a><div class="small text-body-secondary">{{ p.get_type_display }}</div></div></td>
+              <td class="min-w-0"><div class="db-tbox"><a href="{{ p.get_absolute_url }}" class="db-ptitle db-auto" dir="auto">{{ p.label }}</a><div class="small text-body-secondary">{{ p.get_type_display }}</div></div></td>
               <td>{% status_badge p %}</td>
-              <td class="d-none d-lg-table-cell small"><div class="text-truncate db-venue">{% if s %}{{ s.journal.name }}{% else %}<span class="text-body-secondary">—</span>{% endif %}</div></td>
+              <td class="d-none d-xxl-table-cell small"><div class="text-truncate db-venue db-auto" dir="auto">{% if s %}{{ s.journal.name }}{% else %}—{% endif %}</div></td>
               <td class="text-end small text-body-secondary num text-nowrap">{{ p.updated_at|date:"d/m/Y" }}</td>
             </tr>
           {% endwith %}{% empty %}<tr><td colspan="4"><div class="empty py-4"><div class="ic"><i class="bi bi-file-earmark-plus"></i></div><h6>{% trans "No papers yet." %}</h6></div></td></tr>{% endfor %}
@@ -147,45 +137,32 @@
     </div>
   </div>
 
-  <!-- Side column -->
+  <!-- Tasks + activity -->
   <div class="col-xl-4">
     <div class="card mb-4">
-      <div class="card-header db-ch"><div><h2 class="db-ct">{% trans "Needs action" %}</h2><div class="db-cs">{% trans "Revisions and proofs waiting on you" %}</div></div><span class="badge rounded-pill text-bg-{% if action_papers %}danger{% else %}light border{% endif %}">{{ action_papers|length }}</span></div>
-      <div class="list-group list-group-flush">
-      {% for p in action_papers %}
-        <a class="list-group-item list-group-item-action d-flex align-items-center gap-2" href="{{ p.get_absolute_url }}"><div class="min-w-0 flex-grow-1"><div class="fw-semibold text-truncate small">{{ p.label }}</div><div class="small text-body-secondary text-truncate">{{ p.current_submission.journal.name|default:p.get_type_display }}</div></div>{% status_badge p %}</a>
-      {% empty %}<div class="db-empty"><i class="bi bi-check2-circle"></i>{% trans "Nothing needs action right now." %}</div>{% endfor %}
+      <div class="card-header db-ch"><div><h2 class="db-ct"><i class="bi bi-check2-square text-primary me-2"></i>{% trans "My tasks" %}</h2></div>
+        <span class="badge rounded-pill {% if action_papers or my_comments or missing_data %}text-bg-danger{% else %}text-bg-success{% endif %}">{% if action_papers or my_comments or missing_data %}<i class="bi bi-exclamation"></i>{% else %}<i class="bi bi-check2"></i>{% endif %}</span></div>
+      <div class="list-group list-group-flush db-tasks">
+        <div class="db-tsec"><span>{% trans "Needs action" %}</span><b class="num">{{ action_papers|length }}</b></div>
+        {% for p in action_papers|slice:":4" %}<a class="list-group-item list-group-item-action d-flex align-items-center gap-2" href="{{ p.get_absolute_url }}"><span class="small fw-semibold text-truncate flex-grow-1 db-auto" dir="auto">{{ p.label }}</span>{% status_badge p %}</a>
+        {% empty %}<div class="db-none"><i class="bi bi-check-circle-fill"></i>{% trans "Nothing needs action right now." %}</div>{% endfor %}
+        <div class="db-tsec"><span>{% trans "My reviewer-comment tasks" %}</span><b class="num">{{ my_comments|length }}</b></div>
+        {% for c in my_comments|slice:":4" %}<a class="list-group-item list-group-item-action" href="{{ c.submission.paper.get_absolute_url }}#submission-{{ c.submission_id }}"><div class="d-flex justify-content-between gap-2"><span class="small fw-semibold text-truncate" dir="auto">{{ c.comment }}</span>{% status_badge c "state" %}</div><div class="small text-body-secondary text-truncate">{{ c.reviewer }} #{{ c.number }}</div></a>
+        {% empty %}<div class="db-none"><i class="bi bi-check-circle-fill"></i>{% trans "No open comments assigned to you." %}</div>{% endfor %}
+        {% if missing_data %}
+        <div class="db-tsec"><span>{% trans "Missing co-author data" %}</span><b class="num">{{ missing_data|length }}</b></div>
+        {% for p in missing_data|slice:":3" %}<a class="list-group-item list-group-item-action" href="{{ p.get_absolute_url }}#authors"><div class="small fw-semibold text-truncate" dir="auto">{{ p.label }}</div><div class="small text-body-secondary text-truncate">{% for a in p.authors_missing_data %}{{ a.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</div></a>{% endfor %}
+        {% endif %}
       </div>
     </div>
-
-    <div class="card mb-4">
-      <div class="card-header db-ch"><div><h2 class="db-ct">{% trans "My reviewer-comment tasks" %}</h2></div><span class="badge rounded-pill text-bg-light border">{{ my_comments|length }}</span></div>
-      <div class="list-group list-group-flush">
-      {% for c in my_comments %}
-        <a class="list-group-item list-group-item-action" href="{{ c.submission.paper.get_absolute_url }}#submission-{{ c.submission_id }}"><div class="d-flex justify-content-between gap-2"><span class="small fw-semibold text-truncate">{{ c.comment }}</span>{% status_badge c "state" %}</div><div class="small text-body-secondary text-truncate">{{ c.reviewer }} #{{ c.number }} · {{ c.submission.paper.label }}</div></a>
-      {% empty %}<div class="db-empty"><i class="bi bi-inbox"></i>{% trans "No open comments assigned to you." %}</div>{% endfor %}
-      </div>
-    </div>
-
-    {% if missing_data %}
-    <div class="card mb-4">
-      <div class="card-header db-ch"><div><h2 class="db-ct">{% trans "Missing co-author data" %}</h2></div><span class="badge rounded-pill text-bg-warning">{{ missing_data|length }}</span></div>
-      <div class="list-group list-group-flush">
-      {% for p in missing_data|slice:":5" %}
-        <a class="list-group-item list-group-item-action" href="{{ p.get_absolute_url }}#authors"><div class="small fw-semibold text-truncate">{{ p.label }}</div>
-          <div class="small text-body-secondary text-truncate">{% for a in p.authors_missing_data %}{{ a.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</div></a>
-      {% endfor %}
-      </div>
-    </div>
-    {% endif %}
 
     <div class="card">
-      <div class="card-header db-ch"><div><h2 class="db-ct">{% trans "Recent activity" %}</h2></div></div>
-      <div class="card-body">
+      <div class="card-header db-ch"><div><h2 class="db-ct"><i class="bi bi-activity text-primary me-2"></i>{% trans "Recent activity" %}</h2></div></div>
+      <div class="card-body py-3">
         <ul class="db-feed">
-        {% for a in activity|slice:":6" %}
-          <li><span class="dot"></span><div class="min-w-0"><div class="small"><strong>{{ a.user|default:"—" }}</strong> {{ a.verb }}</div>
-            {% if a.paper %}<a class="small text-truncate d-block" href="{{ a.paper.get_absolute_url }}">{{ a.paper.label }}</a>{% endif %}
+        {% for a in activity|slice:":5" %}
+          <li><span class="dot"></span><div class="min-w-0"><div class="small text-truncate"><strong>{{ a.user|default:"—" }}</strong> {{ a.verb }}</div>
+            {% if a.paper %}<a class="small d-block text-truncate db-auto" dir="auto" href="{{ a.paper.get_absolute_url }}">{{ a.paper.label }}</a>{% endif %}
             <div class="db-time num">{{ a.created_at|date:"d/m/Y · H:i" }}</div></div></li>
         {% empty %}<li class="small text-body-secondary">{% trans "No activity yet." %}</li>{% endfor %}
         </ul>

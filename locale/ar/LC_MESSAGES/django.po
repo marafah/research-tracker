@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Research Tracker VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-07 15:35+0300\n"
+"POT-Creation-Date: 2026-11-07 16:08+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ar\n"
@@ -671,6 +671,9 @@ msgstr "ملفي الشخصي"
 msgid "My reviewer-comment tasks"
 msgstr "ملاحظات المحكّمين المسندة إليّ"
 
+msgid "My tasks"
+msgstr "مهامي"
+
 msgid "N/A"
 msgstr "غير متوفر"
 
@@ -913,9 +916,6 @@ msgstr "يرجى تحديد موعد تسليم التعديلات لإرسال 
 msgid "Please set the submission date."
 msgstr "يرجى تحديد تاريخ الإرسال."
 
-msgid "Portfolio"
-msgstr "الحصيلة"
-
 msgid "Preparation"
 msgstr "الإعداد"
 
@@ -1067,9 +1067,6 @@ msgstr "موعد تسليم التعديلات"
 msgid "Revision submitted"
 msgstr "تم تسليم التعديلات"
 
-msgid "Revisions and proofs waiting on you"
-msgstr "تعديلات وبروفات بانتظارك"
-
 msgid "Revoke"
 msgstr "إلغاء"
 
@@ -1121,12 +1118,6 @@ msgstr "إرسال رابط إعادة التعيين"
 msgid "Separate comments with an empty line, or number them (1. 2. 3. …)"
 msgstr "افصل الملاحظات بسطر فارغ أو رقّمها (1. 2. 3. …)"
 
-msgid "Share"
-msgstr "النسبة"
-
-msgid "Share of your works that are accepted or published."
-msgstr "نسبة أعمالك المقبولة أو المنشورة."
-
 msgid "Shared catalogue with your own statistics per venue"
 msgstr "دليل مشترك مع إحصاءاتك الخاصة لكل مجلة"
 
@@ -1144,9 +1135,6 @@ msgstr "تذكيرات ذكية"
 
 msgid "Special issue"
 msgstr "عدد خاص"
-
-msgid "Stage"
-msgstr "المرحلة"
 
 msgid "Status"
 msgstr "الحالة"
@@ -1329,9 +1317,6 @@ msgstr "أهلاً بك! ابدأ بإنشاء مجموعتك البحثية ا�
 
 msgid "When it is done, mark the deadline as completed to stop the reminders."
 msgstr "عند الإنجاز حدّد الموعد كمنجز لإيقاف التذكيرات."
-
-msgid "Where every paper stands right now"
-msgstr "أين يقف كل بحث الآن"
 
 msgid "With editor"
 msgstr "لدى المحرر"
@@ -1806,6 +1791,16 @@ msgstr[2] "موعدان هذا الأسبوع"
 msgstr[3] "%(n)s مواعيد هذا الأسبوع"
 msgstr[4] "%(n)s موعداً هذا الأسبوع"
 msgstr[5] "%(n)s موعد هذا الأسبوع"
+
+#, python-format
+msgid "%(n)s paper"
+msgid_plural "%(n)s papers"
+msgstr[0] "%(n)s أبحاث"
+msgstr[1] "%(n)s بحث"
+msgstr[2] "%(n)s أبحاث"
+msgstr[3] "%(n)s أبحاث"
+msgstr[4] "%(n)s أبحاث"
+msgstr[5] "%(n)s أبحاث"
 
 #, python-format
 msgid "in %(n)s day"

@@ -404,3 +404,58 @@ html[dir="rtl"] .k-foot .progress-bar { transform-origin: right; }
 .db-venue { max-width: 200px; }
 .min-w-0 { min-width: 0; }
 @media (max-width: 575.98px) { .db-tbox { max-width: 58vw; } }
+
+/* ---- Dashboard v7.2: tidier layout ---- */
+.db-ct { display: flex; align-items: center; }
+.db-week { gap: .4rem; padding: .7rem 1.2rem; }
+.db-day { flex-direction: row; justify-content: center; gap: .35rem; padding: .4rem .25rem; position: relative; }
+.db-day .wd { font-size: .66rem; }
+.db-day .dn { font-size: .95rem; }
+.db-day .cnt { position: absolute; top: -6px; inset-inline-end: -4px; min-width: 18px; height: 18px; line-height: 18px; font-size: .62rem; padding: 0 .3rem; border-radius: 1rem; background: #d63384; color: #fff; box-shadow: 0 0 0 2px var(--rt-surface); }
+.db-day.today .cnt, .db-day.today.busy .cnt { background: #fff; color: var(--blue); }
+@media (max-width: 575.98px) { .db-day { flex-direction: column; gap: 0; } }
+
+.db-groups { display: flex; flex-direction: column; }
+.db-dg { display: flex; align-items: center; gap: .9rem; padding: .75rem 1.2rem; border-bottom: 1px solid var(--rt-border); color: var(--rt-text) !important; text-decoration: none !important; transition: background .15s; }
+.db-dg:last-child { border-bottom: 0; }
+.db-dg:hover { background: var(--rt-surface-2); }
+.db-dg:hover .bi-chevron-right, .db-dg:hover .bi-chevron-left { color: var(--blue) !important; }
+.db-date { width: 52px; flex: 0 0 52px; text-align: center; border-radius: .6rem; padding: .3rem 0; background: var(--blue-50); color: var(--blue); line-height: 1.1; }
+.db-date b { display: block; font-size: 1.2rem; }
+.db-date span { font-size: .62rem; font-weight: 600; }
+.db-dg.danger .db-date { background: #fff3cd; color: #997404; }
+.db-dg.overdue .db-date { background: #dc3545; color: #fff; }
+[data-bs-theme="dark"] .db-dg.danger .db-date { background: rgba(255, 193, 7, .15); color: #ffda6a; }
+.db-dt { font-weight: 600; font-size: .92rem; }
+.db-dp { font-size: .8rem; color: var(--rt-muted); margin-top: .1rem; }
+.db-dg .badge { font-weight: 600; flex: 0 0 auto; }
+
+.db-legend { list-style: none; padding: 0; margin: 0 0 1rem; }
+.db-legend a { display: flex; align-items: center; gap: .55rem; padding: .4rem 0; color: var(--rt-text); text-decoration: none; font-size: .88rem; border-bottom: 1px dashed var(--rt-border); }
+.db-legend li:last-child a { border-bottom: 0; }
+.db-legend a:hover { color: var(--blue); }
+.db-legend i { width: 10px; height: 10px; border-radius: 3px; flex: 0 0 auto; }
+.db-legend b { min-width: 2ch; text-align: end; }
+.db-legend .pct { min-width: 3.5ch; text-align: end; color: var(--rt-muted); font-size: .8rem; }
+.db-split { display: flex; align-items: center; gap: 1rem; padding-top: 1rem; border-top: 1px solid var(--rt-border); }
+.db-split .db-ring { width: 92px; height: 92px; }
+.db-split .db-ring > div { width: 70px; height: 70px; }
+.db-split .db-type { border-top: 0; padding: .35rem 0; }
+
+.db-tasks .db-tsec { display: flex; justify-content: space-between; align-items: center; padding: .55rem 1.2rem; background: var(--rt-surface-2); border-bottom: 1px solid var(--rt-border);
+  font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--rt-muted); }
+html[dir="rtl"] .db-tasks .db-tsec { text-transform: none; letter-spacing: 0; font-size: .8rem; }
+.db-tasks .db-tsec b { background: var(--rt-surface); border: 1px solid var(--rt-border); border-radius: 1rem; padding: 0 .5rem; font-size: .72rem; color: var(--rt-text); }
+.db-none { display: flex; align-items: center; gap: .5rem; padding: .7rem 1.2rem; font-size: .84rem; color: var(--rt-muted); border-bottom: 1px solid var(--rt-border); }
+.db-none i { color: #198754; }
+.db-tasks > :last-child { border-bottom: 0; }
+
+html[dir="rtl"] .db-auto { text-align: right; }
+.db-ptitle { max-width: 100%; }
+.db-tbox { max-width: min(46vw, 420px); }
+.db-fixed { table-layout: fixed; width: 100%; }
+.db-fixed th.c-st { width: 130px; } .db-fixed th.c-ve { width: 30%; } .db-fixed th.c-up { width: 108px; }
+.db-fixed td { overflow: hidden; }
+.db-fixed .db-tbox { max-width: none; }
+.db-fixed .db-venue { max-width: 100%; }
+@media (max-width: 575.98px) { .db-fixed th.c-st { width: 104px; } .db-fixed th.c-up { width: 84px; } }

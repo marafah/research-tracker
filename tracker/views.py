@@ -76,7 +76,26 @@ def dashboard(request):
             "submissions__journal", "deadlines", "authors__user").order_by("-updated_at")[:6],
     }
     ctx.update(_dashboard_charts(papers, open_dl, now))
+    ctx["deadline_groups"] = _group_deadlines(open_dl[:120])
     return render(request, "tracker/dashboard.html", ctx)
+
+
+def _group_deadlines(deadlines, limit=6):
+    """Collapse deadlines that share a day and a title (e.g. one book milestone for many
+    chapters) into a single row, so the dashboard shows events rather than repetitions."""
+    groups = {}
+    for d in deadlines:
+        key = (timezone.localtime(d.due_at).date(), d.title.strip().lower())
+        g = groups.get(key)
+        if g is None:
+            g = groups[key] = {"first": d, "items": [], "overdue": False}
+        g["items"].append(d)
+        g["overdue"] = g["overdue"] or d.urgency == "overdue"
+    out = list(groups.values())[:limit]
+    for g in out:
+        g["count"] = len(g["items"])
+        g["more"] = max(0, g["count"] - 2)
+    return out
 
 
 def _dashboard_charts(papers, open_dl, now):

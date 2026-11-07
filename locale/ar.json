@@ -33,6 +33,10 @@
   "%(n)s موعد هذا الأسبوع"
  ],
  "%(n)s due this week": "%(n)s مستحقة هذا الأسبوع",
+ "%(n)s paper": [
+  "%(n)s بحث",
+  "%(n)s أبحاث"
+ ],
  "%(n)s published": "%(n)s منشور",
  "%(n)s updated their author details": "حدّث %(n)s بياناته كمؤلف",
  "%(n)s work tracked": [
@@ -270,6 +274,7 @@
  "My deadlines": "مواعيدي",
  "My profile": "ملفي الشخصي",
  "My reviewer-comment tasks": "ملاحظات المحكّمين المسندة إليّ",
+ "My tasks": "مهامي",
  "N/A": "غير متوفر",
  "Name": "الاسم",
  "Needs action": "بحاجة إلى إجراء",
