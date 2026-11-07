@@ -1072,3 +1072,21 @@ html[dir="ltr"] .rc-tab .rc-main .t[dir], html[dir="ltr"] .rc-tab .rc-card .t[di
 .sb-link:hover .sb-ic { color: var(--c, var(--blue)) !important; background: color-mix(in srgb, var(--c, var(--blue)) 22%, transparent) !important; }
 .sb-link.active .sb-ic { color: #fff !important; background: rgba(255, 255, 255, .2) !important; }
 [data-bs-theme="dark"] .sb-link:not(.active) .sb-ic { color: color-mix(in srgb, var(--c, var(--blue)) 75%, #fff) !important; background: color-mix(in srgb, var(--c, var(--blue)) 22%, transparent) !important; }
+
+/* ===== v7.9.9 — Top venues: one line per name, the count at the end of the line =====
+   Each venue is the name on one line (no wrapping), then a full-width track with its bar and the count at the line end.
+   The name's own direction comes from text_dir, so a long English name keeps its beginning and ends with "…"
+   (full name in the tooltip). The insight under the heading also stays on one line, with the name cut at its end. */
+.ov-lolly { grid-template-columns: minmax(0, 1fr) auto !important; column-gap: .6rem; row-gap: .25rem; align-items: center; padding: .45rem 0 !important; }
+.ov-lolly .lab { grid-column: 1 / -1; grid-row: 1; display: block !important; white-space: nowrap !important; overflow: hidden; text-overflow: ellipsis;
+  -webkit-line-clamp: unset; line-height: 1.35; font-size: .74rem; }
+.ov-lolly .lab[dir] { unicode-bidi: isolate; }
+html[dir="rtl"] .ov-lolly .lab[dir] { text-align: right; }
+html[dir="ltr"] .ov-lolly .lab[dir] { text-align: left; }
+.ov-lolly .stick { grid-column: 1; grid-row: 2; height: 6px; margin: 0 !important; border-radius: 99px; background: color-mix(in srgb, var(--c) 14%, transparent); }
+.ov-lolly .stick > span { height: 6px; border-radius: 99px; }
+.ov-lolly .cnt { grid-column: 2; grid-row: 2; min-width: 24px; height: 22px; padding: 0 .4rem; border-radius: 99px; background: var(--c); color: #fff;
+  font-size: .7rem; font-weight: 700; display: grid; place-items: center; }
+.ov-card .ov-ch .ov-ins { white-space: nowrap !important; overflow: hidden; text-overflow: ellipsis; display: block !important; }
+.ov-card .ov-ch .ov-ins bdi { display: inline-block !important; white-space: nowrap !important; max-width: calc(100% - 5.5em); overflow: hidden;
+  text-overflow: ellipsis; vertical-align: bottom; }
