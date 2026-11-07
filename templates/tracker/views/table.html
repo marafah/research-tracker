@@ -17,14 +17,14 @@
         <span class="rec-ico"><i class="bi {{ type_icons|get_item:p.type }}"></i></span>
         <div class="min-w-0">
           <a href="{{ p.get_absolute_url }}" class="pt-name" title="{{ p.title }}"><bdi dir="{{ p.title|text_dir }}">{{ p.title }}</bdi></a>
-          <div class="pt-sub"><span class="pt-type">{{ p.get_type_display }}</span><span class="pt-dot">·</span><bdi>{{ p.group.name }}</bdi>{% if p.priority >= 3 %} <i class="bi bi-flag-fill text-danger" title="{{ p.get_priority_display }}"></i>{% endif %}</div>
+          <div class="pt-sub"><span class="pt-type">{{ p.get_type_display }}</span><span class="pt-dot">·</span><bdi class="pt-grp">{{ p.group.name }}</bdi>{% if p.priority >= 3 %} <i class="bi bi-flag-fill text-danger" title="{{ p.get_priority_display }}"></i>{% endif %}</div>
         </div></div></td>
       <td class="c-status">{% status_badge p %}</td>
       <td class="c-venue">{% if s %}
         <div class="pt-ven"><i class="bi bi-journal-bookmark-fill"></i> <bdi dir="{{ s.journal.name|text_dir }}">{{ s.journal.name }}</bdi>{% if s.journal.quartile %} <span class="badge quartile-{{ s.journal.quartile|lower }}">{{ s.journal.quartile }}</span>{% endif %}</div>
-        <div class="pt-sub">{% if s.journal.publisher %}<bdi>{{ s.journal.publisher }}</bdi>{% endif %}{% if s.manuscript_id %}{% if s.journal.publisher %}<span class="pt-dot">·</span>{% endif %}<bdi class="num" dir="ltr">{{ s.manuscript_id }}</bdi>{% endif %}</div>
+        <div class="pt-sub">{% if s.journal.publisher %}<bdi class="pt-pub">{{ s.journal.publisher }}</bdi>{% endif %}{% if s.manuscript_id %}{% if s.journal.publisher %}<span class="pt-dot">·</span>{% endif %}<bdi class="num pt-ms" dir="ltr">{{ s.manuscript_id }}</bdi>{% endif %}</div>
       {% else %}<span class="pt-none">—</span>{% endif %}</td>
-      <td class="c-sub">{% if s.submitted_at %}<div class="pt-stack"><span class="chip c num" style="--c:#0aa2c0"><i class="bi bi-send-fill"></i><bdi dir="ltr">{{ s.submitted_at|date:"d/m/Y" }}</bdi></span><span class="pt-sub">{% blocktrans with n=s.days_in_review %}{{ n }} days{% endblocktrans %}</span></div>{% else %}<span class="pt-none">—</span>{% endif %}</td>
+      <td class="c-sub">{% if s.submitted_at %}<div class="pt-inline"><span class="chip c num" style="--c:#0aa2c0"><i class="bi bi-send-fill"></i><bdi dir="ltr">{{ s.submitted_at|date:"d/m/Y" }}</bdi></span><span class="pt-days num" title="{% trans 'Days since submission' %}"><i class="bi bi-hourglass-split"></i>{% blocktrans with n=s.days_in_review %}{{ n }} days{% endblocktrans %}</span></div>{% else %}<span class="pt-none">—</span>{% endif %}</td>
       <td class="c-due">{% if nd %}<div class="pt-stack">{% due_badge nd %}<span class="pt-sub" title="{{ nd.title }}">{{ nd.title }}</span></div>{% else %}<span class="pt-none">—</span>{% endif %}</td>
       <td class="c-team"><div class="avatar-stack">{% for a in p.authors.all|slice:":4" %}<span class="avatar avatar-sm {{ a.user|default:a.name|avatar_class }}" title="{{ a.name }}">{{ a.name|initials }}</span>{% endfor %}</div></td>
     </tr>
