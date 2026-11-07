@@ -15,10 +15,15 @@ from . import models as m
 
 VIEWS = [  # key, label, icon, colour
     ("cards", _l("All records"), "bi-grid-3x2-gap-fill", "#0d6efd"),
+    ("list", _l("Compact list"), "bi-list-ul", "#5b6bbf"),
     ("table", _l("Table"), "bi-table", "#0aa2c0"),
-    ("timeline", _l("Timeline"), "bi-bar-chart-steps", "#6f42c1"),
-    ("calendar", _l("Calendar"), "bi-calendar3-week-fill", "#fd7e14"),
     ("board", _l("Board"), "bi-kanban-fill", "#198754"),
+    ("venues", _l("By venue"), "bi-journal-bookmark-fill", "#6610f2"),
+    ("timeline", _l("Timeline"), "bi-distribute-vertical", "#6f42c1"),
+    ("gantt", _l("Gantt chart"), "bi-bar-chart-steps", "#0d9488"),
+    ("calendar", _l("Calendar"), "bi-calendar3-week-fill", "#fd7e14"),
+    ("stats", _l("Statistics"), "bi-pie-chart-fill", "#d63384"),
+    ("matrix", _l("Matrix"), "bi-grid-3x3-gap-fill", "#e0a800"),
 ]
 VIEW_KEYS = [v[0] for v in VIEWS]
 
@@ -82,6 +87,8 @@ def apply_filters(qs, data, user, skip_type=False):
         qs = qs.filter(group=data["group"])
     if data.get("mine"):
         qs = qs.filter(Q(lead=user) | Q(authors__user=user)).distinct()
+    if data.get("phase") in PHASE_STATUSES:
+        qs = qs.filter(status__in=PHASE_STATUSES[data["phase"]])
     # venue filters look at every submission of the paper (the current one and earlier ones)
     if data.get("venue_kind") in m.Journal.Kind.values:
         qs = qs.filter(submissions__journal__kind=data["venue_kind"]).distinct()
@@ -132,7 +139,7 @@ SORT_CHOICES = [("updated", _l("Recently updated")), ("deadline", _l("Next deadl
 def filter_options(base_qs):
     """Values that actually occur in the papers the user can see, for the filter bar."""
     subs = m.Submission.objects.filter(paper__in=base_qs).select_related("journal")
-    venues, publishers, kinds, quartiles, years = {}, set(), set(), set(), set()
+    venues, publishers, kinds, quartiles, years, indexed = {}, set(), set(), set(), set(), set()
     for sub in subs:
         j = sub.journal
         if j is None:
@@ -143,6 +150,9 @@ def filter_options(base_qs):
             publishers.add(j.publisher)
         if j.quartile:
             quartiles.add(j.quartile)
+        for key, flag in (("scopus", j.indexed_scopus), ("wos", j.indexed_wos), ("oa", j.open_access)):
+            if flag:
+                indexed.add(key)
         if sub.submitted_at:
             years.add(sub.submitted_at.year)
     authors = {}
@@ -156,7 +166,8 @@ def filter_options(base_qs):
         "venues": sorted(venues.items(), key=lambda x: x[1].lower()),
         "publishers": sorted(publishers, key=str.lower),
         "quartiles": [q for q, _x in m.Journal.Quartile.choices if q in quartiles],
-        "indexes": INDEX_CHOICES, "deadlines": list(DEADLINE_WINDOWS.items()),
+        "indexes": [(k, lab) for k, lab in INDEX_CHOICES if k in indexed],
+        "deadlines": list(DEADLINE_WINDOWS.items()),
         "years": sorted(years, reverse=True),
         "authors": sorted(authors.items(), key=lambda x: x[1].lower()),
         "sorts": SORT_CHOICES,
@@ -378,6 +389,10 @@ BOARD_PHASES = [
 ]
 
 
+PHASE_STATUSES = {key: sts for key, _l2, _c, _i, sts in BOARD_PHASES}
+PHASE_OF = {st: key for key, sts in PHASE_STATUSES.items() for st in sts}
+
+
 def board_columns(papers, show_all=False):
     if show_all:
         cols = []
@@ -458,3 +473,105 @@ def vertical_timeline(papers, months_back=18):
             it["first_past"] = True
             break
     return {"months": out, "count": len(items)}
+
+
+# ---------------------------------------------------------------- venues, statistics, matrix views
+def venue_groups(papers):
+    """Records grouped under the venue of their current submission, biggest venue first."""
+    groups = OrderedDict()
+    for p in papers:
+        sub = p.current_submission
+        j = sub.journal if sub else None
+        key = j.pk if j else 0
+        if key not in groups:
+            groups[key] = {"journal": j, "papers": [], "phases": OrderedDict((k, 0) for k, *_r in BOARD_PHASES)}
+        groups[key]["papers"].append(p)
+        groups[key]["phases"][PHASE_OF.get(p.status, "prep")] += 1
+    out = sorted(groups.values(), key=lambda g: (g["journal"] is None, -len(g["papers"]), g["journal"].name.lower() if g["journal"] else ""))
+    colors = {k: c for k, _l2, c, _i, _s in BOARD_PHASES}
+    labels = {k: lab for k, lab, _c, _i, _s in BOARD_PHASES}
+    for g in out:
+        n = len(g["papers"])
+        g["bar"] = [{"key": k, "label": labels[k], "color": colors[k], "count": v, "pct": round(100 * v / n)}
+                    for k, v in g["phases"].items() if v]
+    return out
+
+
+def _bars(counter, labels=None, colors=None, icons=None, limit=None):
+    total = sum(counter.values()) or 1
+    top = max(counter.values() or [1])
+    rows = sorted(counter.items(), key=lambda kv: -kv[1])
+    if limit:
+        rows = rows[:limit]
+    palette = ["#0d6efd", "#6f42c1", "#0aa2c0", "#fd7e14", "#198754", "#d63384", "#e0a800", "#5b6bbf", "#dc3545", "#0d9488"]
+    return [{"key": k, "label": (labels or {}).get(k, k), "count": v, "pct": round(100 * v / total),
+             "bar": round(100 * v / top), "color": (colors or {}).get(k, palette[i % len(palette)]),
+             "icon": (icons or {}).get(k, "")} for i, (k, v) in enumerate(rows) if v]
+
+
+def stats(papers):
+    """Counts for the statistics view, all computed from the filtered list."""
+    now = timezone.now()
+    phase, typ, kind, pub, month, dl = {}, {}, {}, {}, OrderedDict(), OrderedDict()
+    for k, *_r in BOARD_PHASES:
+        phase[k] = 0
+    for key in ("overdue", "week", "month", "later", "none"):
+        dl[key] = 0
+    for p in papers:
+        phase[PHASE_OF.get(p.status, "prep")] += 1
+        typ[p.type] = typ.get(p.type, 0) + 1
+        sub = p.current_submission
+        if sub:
+            kind[sub.journal.kind] = kind.get(sub.journal.kind, 0) + 1
+            if sub.journal.publisher:
+                pub[sub.journal.publisher] = pub.get(sub.journal.publisher, 0) + 1
+            if sub.submitted_at:
+                mk = timezone.localtime(sub.submitted_at).strftime("%Y-%m")
+                month[mk] = month.get(mk, 0) + 1
+        else:
+            kind["none"] = kind.get("none", 0) + 1
+        due = [d.due_at for d in p.deadlines.all() if d.completed_at is None]
+        if not due:
+            dl["none"] += 1
+        else:
+            days = (min(due) - now).total_seconds() / 86400
+            dl["overdue" if days < 0 else "week" if days <= 7 else "month" if days <= 30 else "later"] += 1
+    phase_lab = {k: lab for k, lab, _c, _i, _s in BOARD_PHASES}
+    phase_col = {k: c for k, _l2, c, _i, _s in BOARD_PHASES}
+    kind_lab = dict(m.Journal.Kind.choices) | {"none": _l("Not submitted yet")}
+    dl_lab = {"overdue": _l("Overdue"), "week": _l("Due within 7 days"), "month": _l("Due within 30 days"),
+              "later": _l("Later"), "none": _l("No upcoming deadline")}
+    dl_col = {"overdue": "#dc3545", "week": "#fd7e14", "month": "#e0a800", "later": "#0d6efd", "none": "#8a9bb8"}
+    months = sorted(month.items())[-12:]
+    mmax = max([v for _k, v in months] or [1])
+    return {
+        "total": len(papers),
+        "phase": [r for r in _bars(phase, phase_lab, phase_col)],
+        "type": _bars(typ, dict(m.Paper.Type.choices), TYPE_COLORS, TYPE_ICONS),
+        "kind": _bars(kind, kind_lab),
+        "publisher": _bars(pub, limit=8),
+        "deadline": [r for r in _bars(dl, dl_lab, dl_col)],
+        "months": [{"key": k, "count": v, "h": max(6, round(100 * v / mmax))} for k, v in months],
+    }
+
+
+def matrix(papers):
+    """Type x phase counts; every cell links to the table filtered to that type and phase."""
+    types = [(k, lab) for k, lab in m.Paper.Type.choices if any(p.type == k for p in papers)]
+    rows = []
+    col_tot = OrderedDict((k, 0) for k, *_r in BOARD_PHASES)
+    for k, lab in types:
+        cells = OrderedDict((ph, 0) for ph in col_tot)
+        for p in papers:
+            if p.type == k:
+                cells[PHASE_OF.get(p.status, "prep")] += 1
+        for ph, v in cells.items():
+            col_tot[ph] += v
+        rows.append({"type": k, "label": lab, "color": TYPE_COLORS.get(k), "icon": TYPE_ICONS.get(k),
+                     "cells": [{"phase": ph, "count": v} for ph, v in cells.items()], "total": sum(cells.values())})
+    cmax = max([c["count"] for r in rows for c in r["cells"]] or [1]) or 1
+    for r in rows:
+        for c in r["cells"]:
+            c["alpha"] = round(8 + 62 * c["count"] / cmax) if c["count"] else 0
+    phases = [{"key": k, "label": lab, "color": c, "icon": i, "total": col_tot[k]} for k, lab, c, i, _s in BOARD_PHASES]
+    return {"rows": rows, "phases": phases, "total": sum(col_tot.values())}

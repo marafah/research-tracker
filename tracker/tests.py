@@ -331,3 +331,36 @@ class PaperFilterAndBoardTests(Base):
         self.assertEqual(sum(len(c["papers"]) for c in cols), 2)
         r = self.client.get(reverse("paper_list") + "?view=board&all=1")
         self.assertGreaterEqual(len(r.context["columns"]), 15)
+
+
+class PaperViewsTests(Base):
+    """v7.11: every view of the records renders, and the phase filter used by the matrix works."""
+
+    def setUp(self):
+        super().setUp()
+        m.Submission.objects.create(paper=self.paper, journal=self.journal, submitted_at=timezone.now())
+        self.paper.status = "submitted"
+        self.paper.save()
+        self.client.force_login(self.owner)
+
+    def test_all_views_render(self):
+        from tracker import workspace as ws
+        for key in ws.VIEW_KEYS:
+            r = self.client.get(reverse("paper_list") + f"?view={key}")
+            self.assertEqual(r.status_code, 200, key)
+            self.assertEqual(r.context["view"], key)
+        self.assertGreaterEqual(len(ws.VIEW_KEYS), 10)
+
+    def test_stats_matrix_venues(self):
+        r = self.client.get(reverse("paper_list") + "?view=stats")
+        self.assertEqual(r.context["st"]["total"], 2)
+        r = self.client.get(reverse("paper_list") + "?view=matrix")
+        self.assertEqual(r.context["mx"]["total"], 2)
+        r = self.client.get(reverse("paper_list") + "?view=venues")
+        self.assertEqual(sum(len(g["papers"]) for g in r.context["vgroups"]), 2)
+
+    def test_phase_filter(self):
+        r = self.client.get(reverse("paper_list") + "?view=table&phase=review")
+        self.assertEqual([p.pk for p in r.context["papers"]], [self.paper.pk])
+        r = self.client.get(reverse("paper_list") + "?view=table&phase=prep")
+        self.assertEqual([p.pk for p in r.context["papers"]], [self.other_paper.pk])

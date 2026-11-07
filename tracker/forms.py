@@ -216,6 +216,7 @@ class PaperFilterForm(BootstrapMixin, forms.Form):
     year = forms.CharField(required=False)
     author = forms.CharField(required=False)
     sort = forms.CharField(required=False)
+    phase = forms.CharField(required=False)
 
     def __init__(self, *args, groups=None, **kwargs):
         super().__init__(*args, **kwargs)

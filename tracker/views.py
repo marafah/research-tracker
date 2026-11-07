@@ -380,7 +380,7 @@ def papers_workspace(request, force_view=None):
             .prefetch_related("submissions__journal", "submissions__events", "deadlines", "authors__user"))
     without_type = ws.apply_filters(base, data, request.user, skip_type=True)
     papers = ws.sort_papers(list(ws.apply_filters(base, data, request.user)), data.get("sort") or "updated")
-    extra_keys = ("venue_kind", "venue", "publisher", "quartile", "index", "deadline", "year", "author")
+    extra_keys = ("venue_kind", "venue", "publisher", "quartile", "index", "deadline", "year", "author", "phase")
     group_by = request.GET.get("group_by", request.session.get("papers_group_by", "status"))
     if group_by not in dict(ws.GROUP_BY):
         group_by = "status"
@@ -417,6 +417,17 @@ def papers_workspace(request, force_view=None):
         ctx["prev_url"] = "?" + _qs(request, month=ctx["cal"]["prev"])
         ctx["next_url"] = "?" + _qs(request, month=ctx["cal"]["next"])
         ctx["this_url"] = "?" + _qs(request, month=ctx["cal"]["this"])
+    elif view == "gantt":
+        ctx["tl_mode"] = "gantt"
+        ctx["tl_urls"] = {"vertical": "?" + _qs(request, view="timeline", tl="vertical"), "gantt": "?" + _qs(request, view="gantt")}
+        ctx["tl"] = ws.timeline(papers)
+    elif view == "venues":
+        ctx["vgroups"] = ws.venue_groups(papers)
+    elif view == "stats":
+        ctx["st"] = ws.stats(papers)
+    elif view == "matrix":
+        ctx["mx"] = ws.matrix(papers)
+        ctx["mx_url"] = reverse("paper_list") + "?" + _qs(request, view="table", type=None, phase=None)
     elif view == "board":
         ctx["columns"] = ws.board_columns(papers, ctx["show_all"])
         ctx["toggle_all_url"] = "?" + _qs(request, all=None if ctx["show_all"] else "1")
