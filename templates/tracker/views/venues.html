@@ -1,24 +1,44 @@
 {% load i18n tracker_tags %}
+<div class="vg-bar">
+  <div class="vg-by" role="group" aria-label="{% trans 'Group by' %}">
+    <span class="vg-cap"><i class="bi bi-collection"></i> {% trans "Group by" %}</span>
+    {% for c in vg_choices %}<a href="{{ c.url }}" class="vg-chip {% if c.on %}on{% endif %}" style="--c:{{ c.color }}"><i class="bi {{ c.icon }}"></i>{{ c.label }}</a>{% endfor %}
+  </div>
+  <div class="vg-lay" role="group" aria-label="{% trans 'Layout' %}">
+    <a href="{{ vl_urls.list }}" class="{% if vl == 'list' %}on{% endif %}" title="{% trans 'Vertical list' %}"><i class="bi bi-view-list"></i> {% trans "Vertical list" %}</a>
+    <a href="{{ vl_urls.grid }}" class="{% if vl == 'grid' %}on{% endif %}" title="{% trans 'Cards' %}"><i class="bi bi-grid-fill"></i> {% trans "Cards" %}</a>
+  </div>
+</div>
+
 {% if papers %}
-<div class="vv-grid">
-  {% for g in vgroups %}{% with j=g.journal %}
-  <section class="card vv-card" style="--c:{% if j %}{% cycle '#0d6efd' '#6f42c1' '#0aa2c0' '#fd7e14' '#198754' '#d63384' '#e0a800' '#5b6bbf' %}{% else %}#8a9bb8{% endif %}">
-    <header class="vv-head">
-      <span class="vv-ic"><i class="bi {% if j %}{% if j.kind == 'conference' %}bi-easel-fill{% elif j.kind == 'book' %}bi-book-fill{% else %}bi-journal-bookmark-fill{% endif %}{% else %}bi-hourglass-split{% endif %}"></i></span>
-      <div class="min-w-0">
-        <h3>{% if j %}{% if j.pk %}<a href="{% url 'journal_detail' j.pk %}"><bdi dir="{{ j.name|text_dir }}">{{ j.name }}</bdi></a>{% endif %}{% else %}{% trans "Not submitted yet" %}{% endif %}</h3>
-        {% if j %}<div class="vv-sub">{{ j.get_kind_display }}{% if j.publisher %} · <bdi>{{ j.publisher }}</bdi>{% endif %}{% if j.quartile %} · <span class="badge quartile-{{ j.quartile|lower }}">{{ j.quartile }}</span>{% endif %}</div>{% endif %}
+<div class="vg-wrap vg-{{ vl }}">
+  {% for g in vgroups %}
+  <section class="card vg-sec" style="--c:{{ g.color }}">
+    <header class="vg-head">
+      <span class="vg-ic"><i class="bi {{ g.icon }}"></i></span>
+      <div class="min-w-0 vg-titles">
+        <h3>{% if g.when and vg == "month" or g.when and vg == "due_month" %}<span class="vg-num num" dir="ltr">{{ g.label }}</span><span class="vg-month">{{ g.when|date:"F Y" }}</span>{% elif vg == "year" and g.when %}<span class="vg-num num">{{ g.label }}</span>{% else %}<bdi dir="{{ g.label|text_dir }}">{{ g.label }}</bdi>{% endif %}</h3>
+        {% if g.extra %}<div class="vg-sub"><bdi>{{ g.extra }}</bdi></div>{% endif %}
       </div>
-      <span class="count-pill">{{ g.papers|length }}</span>
+      <div class="vg-bar-mini" role="img" aria-label="{% trans 'Phases' %}">{% for b in g.bar %}<i style="width:{{ b.pct }}%;background:{{ b.color }}" title="{{ b.label }}: {{ b.count }}"></i>{% endfor %}</div>
+      <span class="vg-count num">{{ g.papers|length }}</span>
+      {% if g.url_key %}<a class="vg-open" href="{{ vg_base }}&{{ g.url_key }}" title="{% trans 'Open in table' %}"><i class="bi bi-box-arrow-up-left"></i></a>{% endif %}
     </header>
-    <div class="vv-bar" role="img" aria-label="{% trans 'Phases' %}">{% for b in g.bar %}<i style="width:{{ b.pct }}%;background:{{ b.color }}" title="{{ b.label }}: {{ b.count }}"></i>{% endfor %}</div>
-    <ul class="vv-list">
-      {% for p in g.papers %}{% with s=p.current_submission %}
-      <li><a href="{{ p.get_absolute_url }}"><bdi dir="{{ p.title|text_dir }}">{{ p.title }}</bdi></a>
-        <span class="vv-li-meta">{% status_badge p %}{% if s.manuscript_id %}<bdi class="num" dir="ltr">{{ s.manuscript_id }}</bdi>{% endif %}</span></li>
+    <div class="vg-rows">
+      {% for p in g.papers %}{% with s=p.current_submission nd=p.next_deadline %}
+      <a class="vg-row" href="{{ p.get_absolute_url }}" style="--s:{{ p.status|status_hex }};--t:{{ type_colors|get_item:p.type }}">
+        <span class="vg-cell vg-tcell">
+          <span class="vg-tic"><i class="bi {{ type_icons|get_item:p.type }}"></i></span>
+          <span class="min-w-0"><bdi class="vg-t" dir="{{ p.title|text_dir }}" title="{{ p.title }}">{{ p.title }}</bdi>
+            <span class="vg-meta"><span class="vg-type">{{ p.get_type_display }}</span>{% if s and vg != "venue" %}<span class="vg-dot">·</span><bdi class="vg-ven">{{ s.journal.name }}</bdi>{% endif %}{% if s.manuscript_id %}<span class="vg-dot">·</span><bdi class="vg-ms num" dir="ltr">{{ s.manuscript_id }}</bdi>{% endif %}</span></span>
+        </span>
+        <span class="vg-cell">{% status_badge p %}</span>
+        <span class="vg-cell vg-sub-cell">{% if s.submitted_at %}<span class="chip c num" style="--c:#0aa2c0"><i class="bi bi-send-fill"></i><bdi dir="ltr">{{ s.submitted_at|date:"d/m/Y" }}</bdi></span>{% else %}<span class="vg-none">—</span>{% endif %}</span>
+        <span class="vg-cell">{% if nd %}{% due_badge nd %}{% else %}<span class="vg-none">—</span>{% endif %}</span>
+      </a>
       {% endwith %}{% endfor %}
-    </ul>
+    </div>
   </section>
-  {% endwith %}{% endfor %}
+  {% endfor %}
 </div>
 {% else %}{% include "tracker/views/_empty.html" %}{% endif %}
