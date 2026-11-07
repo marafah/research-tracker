@@ -379,7 +379,8 @@ def papers_workspace(request, force_view=None):
             .select_related("group", "lead")
             .prefetch_related("submissions__journal", "submissions__events", "deadlines", "authors__user"))
     without_type = ws.apply_filters(base, data, request.user, skip_type=True)
-    papers = list(ws.apply_filters(base, data, request.user))
+    papers = ws.sort_papers(list(ws.apply_filters(base, data, request.user)), data.get("sort") or "updated")
+    extra_keys = ("venue_kind", "venue", "publisher", "quartile", "index", "deadline", "year", "author")
     group_by = request.GET.get("group_by", request.session.get("papers_group_by", "status"))
     if group_by not in dict(ws.GROUP_BY):
         group_by = "status"
@@ -396,6 +397,9 @@ def papers_workspace(request, force_view=None):
         "group_choices": ws.GROUP_BY, "kpi": ws.kpis(papers),
         "statuses": m.Paper.Status.choices, "type_icons": ws.TYPE_ICONS, "type_colors": ws.TYPE_COLORS,
         "show_all": bool(request.GET.get("all")), "qs_base": _qs(request),
+        "fopts": ws.filter_options(visible_papers(request.user)),
+        "active_extra": sum(1 for k in extra_keys if request.GET.get(k)),
+        "any_filter": any(request.GET.get(k) for k in extra_keys + ("status", "group", "mine", "q", "type")),
     }
     if view == "cards":
         ctx["groups"] = ws.grouped(papers, group_by)

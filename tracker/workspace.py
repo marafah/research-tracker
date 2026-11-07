@@ -82,7 +82,110 @@ def apply_filters(qs, data, user, skip_type=False):
         qs = qs.filter(group=data["group"])
     if data.get("mine"):
         qs = qs.filter(Q(lead=user) | Q(authors__user=user)).distinct()
+    # venue filters look at every submission of the paper (the current one and earlier ones)
+    if data.get("venue_kind") in m.Journal.Kind.values:
+        qs = qs.filter(submissions__journal__kind=data["venue_kind"]).distinct()
+    elif data.get("venue_kind") == "none":
+        qs = qs.filter(submissions__isnull=True)
+    if str(data.get("venue") or "").isdigit():
+        qs = qs.filter(submissions__journal_id=int(data["venue"])).distinct()
+    if data.get("publisher"):
+        qs = qs.filter(submissions__journal__publisher=data["publisher"]).distinct()
+    if data.get("quartile") and data["quartile"] in m.Journal.Quartile.values:
+        qs = qs.filter(submissions__journal__quartile=data["quartile"]).distinct()
+    idx = data.get("index")
+    if idx == "scopus":
+        qs = qs.filter(submissions__journal__indexed_scopus=True).distinct()
+    elif idx == "wos":
+        qs = qs.filter(submissions__journal__indexed_wos=True).distinct()
+    elif idx == "oa":
+        qs = qs.filter(submissions__journal__open_access=True).distinct()
+    dl = data.get("deadline")
+    if dl in DEADLINE_WINDOWS:
+        now = timezone.now()
+        open_dl = Q(deadlines__completed_at__isnull=True)
+        if dl == "overdue":
+            qs = qs.filter(open_dl, deadlines__due_at__lt=now).distinct()
+        elif dl == "none":
+            upcoming = m.Deadline.objects.filter(completed_at__isnull=True, due_at__gte=now).values("paper_id")
+            qs = qs.exclude(pk__in=upcoming)
+        else:
+            days = {"week": 7, "month": 30, "quarter": 90}[dl]
+            qs = qs.filter(open_dl, deadlines__due_at__gte=now, deadlines__due_at__lt=now + timedelta(days=days)).distinct()
+    if str(data.get("year") or "").isdigit():
+        qs = qs.filter(submissions__submitted_at__year=int(data["year"])).distinct()
+    if str(data.get("author") or "").isdigit():
+        uid = int(data["author"])
+        qs = qs.filter(Q(lead_id=uid) | Q(authors__user_id=uid)).distinct()
     return qs
+
+
+DEADLINE_WINDOWS = OrderedDict([
+    ("overdue", _l("Overdue")), ("week", _l("Due within 7 days")), ("month", _l("Due within 30 days")),
+    ("quarter", _l("Due within 90 days")), ("none", _l("No upcoming deadline")),
+])
+INDEX_CHOICES = [("scopus", "Scopus"), ("wos", "Web of Science"), ("oa", _l("Open access"))]
+SORT_CHOICES = [("updated", _l("Recently updated")), ("deadline", _l("Next deadline")),
+                ("submitted", _l("Submission date")), ("title", _l("Title A–Z")), ("status", _l("Status"))]
+
+
+def filter_options(base_qs):
+    """Values that actually occur in the papers the user can see, for the filter bar."""
+    subs = m.Submission.objects.filter(paper__in=base_qs).select_related("journal")
+    venues, publishers, kinds, quartiles, years = {}, set(), set(), set(), set()
+    for sub in subs:
+        j = sub.journal
+        if j is None:
+            continue
+        venues[j.pk] = j.name
+        kinds.add(j.kind)
+        if j.publisher:
+            publishers.add(j.publisher)
+        if j.quartile:
+            quartiles.add(j.quartile)
+        if sub.submitted_at:
+            years.add(sub.submitted_at.year)
+    authors = {}
+    for a in m.PaperAuthor.objects.filter(paper__in=base_qs, user__isnull=False).select_related("user"):
+        authors[a.user_id] = a.name or str(a.user)
+    for p in base_qs.select_related("lead"):
+        if p.lead_id and p.lead_id not in authors:
+            authors[p.lead_id] = getattr(p.lead, "display_name", "") or str(p.lead)
+    return {
+        "venue_kinds": [(k, lab) for k, lab in m.Journal.Kind.choices if k in kinds],
+        "venues": sorted(venues.items(), key=lambda x: x[1].lower()),
+        "publishers": sorted(publishers, key=str.lower),
+        "quartiles": [q for q, _x in m.Journal.Quartile.choices if q in quartiles],
+        "indexes": INDEX_CHOICES, "deadlines": list(DEADLINE_WINDOWS.items()),
+        "years": sorted(years, reverse=True),
+        "authors": sorted(authors.items(), key=lambda x: x[1].lower()),
+        "sorts": SORT_CHOICES,
+    }
+
+
+def sort_papers(papers, key):
+    """Sort the already-filtered list; uses prefetched submissions and deadlines."""
+    far = timezone.now() + timedelta(days=36500)
+    old = timezone.now() - timedelta(days=36500)
+
+    def next_due(p):
+        due = [d.due_at for d in p.deadlines.all() if d.completed_at is None]
+        return min(due) if due else far
+
+    def submitted(p):
+        dates = [s.submitted_at for s in p.submissions.all() if s.submitted_at]
+        return max(dates) if dates else old
+
+    if key == "deadline":
+        return sorted(papers, key=next_due)
+    if key == "submitted":
+        return sorted(papers, key=submitted, reverse=True)
+    if key == "title":
+        return sorted(papers, key=lambda p: (p.title or "").lower())
+    if key == "status":
+        order = {c: i for i, c in enumerate(m.Paper.Status.values)}
+        return sorted(papers, key=lambda p: order.get(p.status, 99))
+    return sorted(papers, key=lambda p: p.updated_at, reverse=True)
 
 
 def type_chips(base_qs, active):
@@ -263,12 +366,32 @@ def month_calendar(papers, month_param, first_weekday=6):
 
 
 # ---------------------------------------------------------------- board
+# The stages board always shows the whole path of a paper as five phases (the same phases as the dashboard),
+# each with its stages and their counts, so an empty phase is still visible. "All stages" opens one column per stage.
+BOARD_PHASES = [
+    ("prep", _l("Preparation"), "#5b6bbf", "bi-pencil-square",
+     ["idea", "proposal", "drafting", "internal_review", "ready"]),
+    ("review", _l("Submitted / in review"), "#0d6efd", "bi-send-fill", ["submitted", "under_review", "resubmitted"]),
+    ("revision", _l("Revision"), "#fd7e14", "bi-arrow-repeat", ["major_revision", "minor_revision"]),
+    ("done", _l("Accepted & published"), "#198754", "bi-patch-check-fill", ["accepted", "proofs", "published"]),
+    ("closed", _l("Rejected / stopped"), "#dc3545", "bi-x-octagon-fill", ["rejected", "withdrawn", "on_hold"]),
+]
+
+
 def board_columns(papers, show_all=False):
+    if show_all:
+        cols = []
+        for st in m.Paper.PIPELINE + [m.Paper.Status.REJECTED, m.Paper.Status.WITHDRAWN, m.Paper.Status.ON_HOLD]:
+            cols.append({"status": st, "label": m.Paper.Status(st).label, "papers": [p for p in papers if p.status == st],
+                         "stages": []})
+        return cols
+    order = {st: i for i, st in enumerate(m.Paper.Status.values)}
     cols = []
-    for st in m.Paper.PIPELINE + [m.Paper.Status.REJECTED, m.Paper.Status.ON_HOLD]:
-        items = [p for p in papers if p.status == st]
-        if items or show_all:
-            cols.append({"status": st, "label": m.Paper.Status(st).label, "papers": items})
+    for key, label, color, icon, sts in BOARD_PHASES:
+        items = sorted([p for p in papers if p.status in sts], key=lambda p: order.get(p.status, 99))
+        stages = [{"status": st, "label": m.Paper.Status(st).label, "count": sum(1 for p in items if p.status == st)}
+                  for st in sts]
+        cols.append({"phase": key, "label": label, "color": color, "icon": icon, "papers": items, "stages": stages})
     return cols
 
 

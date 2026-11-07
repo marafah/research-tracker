@@ -284,3 +284,50 @@ class DashboardOverviewTests(Base):
         self.assertEqual(len(ov["deadlines"]), 6)
         for chart in ("Papers by phase", "Status breakdown", "Papers by type", "Submissions per month", "Deadline load", "Top venues"):
             self.assertContains(r, chart)
+
+
+class PaperFilterAndBoardTests(Base):
+    """v7.10: venue filters on the papers page, sorting, and a stages board that always shows every phase."""
+
+    def setUp(self):
+        super().setUp()
+        self.conf = m.Journal.objects.create(name="ICSE", kind="conference", publisher="ACM", quartile="Q1")
+        m.Submission.objects.create(paper=self.paper, journal=self.journal, submitted_at=timezone.now())
+        m.Submission.objects.create(paper=self.other_paper, journal=self.conf)
+        self.client.force_login(self.owner)
+
+    def ids(self, query):
+        r = self.client.get(reverse("paper_list") + "?view=table&" + query)
+        self.assertEqual(r.status_code, 200)
+        return {p.pk for p in r.context["papers"]}
+
+    def test_venue_filters(self):
+        self.assertEqual(self.ids("venue_kind=conference"), {self.other_paper.pk})
+        self.assertEqual(self.ids("venue_kind=journal"), {self.paper.pk})
+        self.assertEqual(self.ids(f"venue={self.conf.pk}"), {self.other_paper.pk})
+        self.assertEqual(self.ids("publisher=Elsevier"), {self.paper.pk})
+        self.assertEqual(self.ids("quartile=Q1"), {self.other_paper.pk})
+        self.assertEqual(self.ids(f"year={timezone.now().year}"), {self.paper.pk})
+        self.assertEqual(self.ids("quartile="), {self.paper.pk, self.other_paper.pk})
+
+    def test_deadline_and_author_filters(self):
+        m.Deadline.objects.create(paper=self.paper, title="Revision", kind="revision", due_at=timezone.now() + timedelta(days=3))
+        self.assertEqual(self.ids("deadline=week"), {self.paper.pk})
+        self.assertEqual(self.ids("deadline=none"), {self.other_paper.pk})
+        self.assertEqual(self.ids(f"author={self.external.pk}"), {self.paper.pk})
+
+    def test_filter_options_and_sort(self):
+        r = self.client.get(reverse("paper_list") + "?view=table&sort=title")
+        self.assertEqual([p.title for p in r.context["papers"]], ["Paper A", "Paper B"])
+        opts = r.context["fopts"]
+        self.assertIn(("conference", m.Journal.Kind.CONFERENCE.label), opts["venue_kinds"])
+        self.assertIn("ACM", opts["publishers"])
+        self.assertContains(r, 'name="venue_kind"')
+
+    def test_board_shows_all_phases(self):
+        r = self.client.get(reverse("paper_list") + "?view=board")
+        cols = r.context["columns"]
+        self.assertEqual([c["phase"] for c in cols], ["prep", "review", "revision", "done", "closed"])
+        self.assertEqual(sum(len(c["papers"]) for c in cols), 2)
+        r = self.client.get(reverse("paper_list") + "?view=board&all=1")
+        self.assertGreaterEqual(len(r.context["columns"]), 15)

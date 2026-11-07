@@ -206,6 +206,16 @@ class PaperFilterForm(BootstrapMixin, forms.Form):
     group = forms.ModelChoiceField(label=_("Group"), required=False, queryset=m.ResearchGroup.objects.none(),
                                    empty_label=_("All groups"))
     mine = forms.BooleanField(label=_("Only mine"), required=False)
+    # extra filters (free values, checked in workspace.apply_filters)
+    venue_kind = forms.CharField(required=False)
+    venue = forms.CharField(required=False)
+    publisher = forms.CharField(required=False)
+    quartile = forms.CharField(required=False)
+    index = forms.CharField(required=False)
+    deadline = forms.CharField(required=False)
+    year = forms.CharField(required=False)
+    author = forms.CharField(required=False)
+    sort = forms.CharField(required=False)
 
     def __init__(self, *args, groups=None, **kwargs):
         super().__init__(*args, **kwargs)
