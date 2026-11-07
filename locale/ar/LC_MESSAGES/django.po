@@ -1172,7 +1172,7 @@ msgid "Shared catalogue with your own statistics per venue"
 msgstr "دليل مشترك مع إحصاءاتك الخاصة لكل مجلة"
 
 msgid "Show all stages"
-msgstr "إظهار كل المراحل"
+msgstr "عرض كل المراحل الفرعية"
 
 msgid "Show password"
 msgstr "إظهار كلمة المرور"
@@ -1890,3 +1890,77 @@ msgstr[3] "خلال %(n)s أيام"
 msgstr[4] "خلال %(n)s يوماً"
 msgstr[5] "خلال %(n)s يوم"
 
+msgid "Venue type"
+msgstr "نوع جهة النشر"
+
+msgid "All venue types"
+msgstr "كل أنواع جهات النشر"
+
+msgid "Journal / conference"
+msgstr "المجلة / المؤتمر"
+
+msgid "All journals & conferences"
+msgstr "كل المجلات والمؤتمرات"
+
+msgid "All publishers"
+msgstr "كل الناشرين"
+
+msgid "Any quartile"
+msgstr "أي ربع"
+
+msgid "Any indexing"
+msgstr "أي فهرسة"
+
+msgid "Any deadline"
+msgstr "أي موعد"
+
+msgid "Submission year"
+msgstr "سنة الإرسال"
+
+msgid "Any year"
+msgstr "أي سنة"
+
+msgid "Author"
+msgstr "المؤلف"
+
+msgid "All authors"
+msgstr "كل المؤلفين"
+
+msgid "Sort by"
+msgstr "ترتيب حسب"
+
+msgid "Sort:"
+msgstr "ترتيب:"
+
+msgid "More filters"
+msgstr "مرشحات إضافية"
+
+msgid "Due within 7 days"
+msgstr "يستحق خلال 7 أيام"
+
+msgid "Due within 30 days"
+msgstr "يستحق خلال 30 يومًا"
+
+msgid "Due within 90 days"
+msgstr "يستحق خلال 90 يومًا"
+
+msgid "No upcoming deadline"
+msgstr "لا موعد قادم"
+
+msgid "Title A–Z"
+msgstr "العنوان (أ–ي)"
+
+msgid "Submission date"
+msgstr "تاريخ الإرسال"
+
+msgid "One column per stage"
+msgstr "عمود لكل مرحلة فرعية"
+
+msgid "Five phases · every stage with its count"
+msgstr "خمس مراحل رئيسية · وكل مرحلة فرعية بعددها"
+
+msgid "Show phases"
+msgstr "عرض المراحل الرئيسية"
+
+msgid "No papers in this phase"
+msgstr "لا أعمال في هذه المرحلة"
