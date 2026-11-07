@@ -1090,3 +1090,22 @@ html[dir="ltr"] .ov-lolly .lab[dir] { text-align: left; }
 .ov-card .ov-ch .ov-ins { white-space: nowrap !important; overflow: hidden; text-overflow: ellipsis; display: block !important; }
 .ov-card .ov-ch .ov-ins bdi { display: inline-block !important; white-space: nowrap !important; max-width: calc(100% - 5.5em); overflow: hidden;
   text-overflow: ellipsis; vertical-align: bottom; }
+
+/* ===== v7.9.10 — Recent activity: full titles, one alignment, no empty half-card =====
+   The paper title is shown in full (paper.title, not the 77-character label) and wraps; every title lines up on the
+   page's start side (right in Arabic), reading in its own direction inside its <bdi>. Items are separated by hairlines,
+   the title is the strongest text, and up to four items fill the card instead of leaving it half empty. */
+.wk-feed { gap: 0; padding: 0 1.1rem .9rem; }
+.wk-feed li { padding: .6rem 0; border-bottom: 1px solid color-mix(in srgb, var(--rt-border) 75%, transparent); }
+.wk-feed li:last-child { border-bottom: 0; }
+.wk-feed .ic { width: 30px; height: 30px; font-size: .85rem; background: color-mix(in srgb, var(--c, var(--blue)) 16%, var(--rt-surface)); color: var(--c, var(--blue)); }
+.wk-feed li > .min-w-0 { flex: 1 1 auto; display: flex; flex-direction: column; gap: .15rem; }
+.wk-feed .s { font-size: .74rem; color: var(--rt-muted); white-space: normal; }
+.wk-feed .s strong { color: var(--rt-text); font-weight: 600; }
+.wk-feed a.t { display: block; white-space: normal; overflow: visible; text-overflow: clip; overflow-wrap: anywhere; line-height: 1.45;
+  font-size: .8rem; font-weight: 600; color: var(--rt-text) !important; text-align: start; }
+.wk-feed a.t:hover { color: var(--blue) !important; }
+.wk-feed a.t bdi { unicode-bidi: isolate; }
+.wk-feed .tm { font-size: .68rem; }
+html[dir="rtl"] .wk-feed .tm { text-align: right; }
+html[dir="ltr"] .wk-feed .tm { text-align: left; }
