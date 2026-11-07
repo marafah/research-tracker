@@ -30,6 +30,7 @@
         {% endfor %}
       </div>
 
+      {% if not week_count and deadline_groups %}{% with nd=deadline_groups.0.first %}<div class="wk-note"><i class="bi bi-info-circle-fill"></i>{% trans "No deadlines this week" %} · {% trans "Next deadline" %}: <b class="num">{{ nd.due_at|date:"d/m/Y" }}</b> {% due_badge nd %}</div>{% endwith %}{% endif %}
       <div class="wk-body">
         <!-- list -->
         <div data-pane="list" class="wk-list">
@@ -59,7 +60,12 @@
           {% for g in deadline_groups|slice:":5" %}{% with d=g.first %}
           <div class="wk-tli" style="--c:var(--cat-{{ g.slot }})">
             <span class="node"><i class="bi bi-flag-fill"></i></span>
-            <div class="min-w-0"><div class="when num">{{ d.due_at|date:"d/m/Y" }} · {% due_badge d %}</div><bdi class="t">{{ d.title }}</bdi>{% if g.count > 1 %} <span class="wk-cnt">{{ g.count }}</span>{% endif %}</div>
+            <div class="wk-date sm"><b class="num">{{ d.due_at|date:"d" }}</b><span class="num">{{ d.due_at|date:"m/Y" }}</span></div>
+            <div class="min-w-0 flex-grow-1">
+              <div class="d-flex align-items-center gap-2 min-w-0"><bdi class="t">{{ d.title }}</bdi>{% if g.count > 1 %}<span class="wk-cnt">{% blocktrans count n=g.count %}{{ n }} paper{% plural %}{{ n }} papers{% endblocktrans %}</span>{% endif %}</div>
+              <div class="s">{% for x in g.items|slice:":2" %}<bdi>{{ x.paper.label|truncatechars:44 }}</bdi>{% if not forloop.last %} · {% endif %}{% endfor %}{% if g.more %} <span class="more" dir="ltr">+{{ g.more }}</span>{% endif %}</div>
+            </div>
+            <div class="d-none d-md-block">{% due_badge d %}</div>
           </div>
           {% endwith %}{% endfor %}
         </div>
@@ -74,6 +80,7 @@
       <div class="wk-foot"><a href="{% url 'deadline_list' %}">{% trans "All deadlines" %} <i class="bi bi-arrow-{% if RTL %}left{% else %}right{% endif %}"></i></a></div>
     </div>
 
+    <div class="wk-aside">
     <!-- Tasks -->
     <div class="card wk-side">
       <div class="ov-ch"><div class="min-w-0"><h3><i class="bi bi-check2-square text-success me-1"></i>{% trans "My tasks" %}</h3></div></div>
@@ -96,6 +103,7 @@
           <div class="min-w-0"><div class="s"><strong>{{ a.user|default:"—" }}</strong> {{ a.verb|activity_verb }}</div>{% if a.paper %}<a href="{{ a.paper.get_absolute_url }}"><bdi>{{ a.paper.label }}</bdi></a>{% endif %}<div class="tm num">{{ a.created_at|date:"d/m/Y · H:i" }}</div></div></li>
         {% empty %}<li class="ov-none">{% trans "No activity yet." %}</li>{% endfor %}
       </ul>
+    </div>
     </div>
   </div>
 </div>

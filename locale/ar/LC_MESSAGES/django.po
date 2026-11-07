@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Research Tracker VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-07 17:50+0300\n"
+"POT-Creation-Date: 2026-11-07 18:00+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ar\n"
@@ -762,6 +762,9 @@ msgstr "لا يوجد مؤلفون بعد."
 
 msgid "No deadlines in the next 30 days."
 msgstr "لا توجد مواعيد خلال الثلاثين يوماً القادمة."
+
+msgid "No deadlines this week"
+msgstr "لا مواعيد هذا الأسبوع"
 
 msgid "No deadlines."
 msgstr "لا توجد مواعيد."
