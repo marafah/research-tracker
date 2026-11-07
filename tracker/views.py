@@ -422,7 +422,17 @@ def papers_workspace(request, force_view=None):
         ctx["tl_urls"] = {"vertical": "?" + _qs(request, view="timeline", tl="vertical"), "gantt": "?" + _qs(request, view="gantt")}
         ctx["tl"] = ws.timeline(papers)
     elif view == "venues":
-        ctx["vgroups"] = ws.venue_groups(papers)
+        by = request.GET.get("vg") or request.session.get("papers_vg", "venue")
+        by = by if by in ws.GROUPING_KEYS else "venue"
+        layout = request.GET.get("vl") or request.session.get("papers_vl", "list")
+        layout = layout if layout in ("list", "grid") else "list"
+        request.session["papers_vg"], request.session["papers_vl"] = by, layout
+        ctx["vgroups"] = ws.group_records(papers, by)
+        ctx["vg"], ctx["vl"] = by, layout
+        ctx["vg_choices"] = [{"key": k, "label": lab, "icon": ic, "color": c, "on": k == by,
+                              "url": "?" + _qs(request, vg=k)} for k, lab, ic, c in ws.GROUPINGS]
+        ctx["vl_urls"] = {k: "?" + _qs(request, vl=k) for k in ("list", "grid")}
+        ctx["vg_base"] = reverse("paper_list") + "?" + _qs(request, view="table", vg=None, vl=None)
     elif view == "stats":
         ctx["st"] = ws.stats(papers)
     elif view == "matrix":

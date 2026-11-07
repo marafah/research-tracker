@@ -18,7 +18,7 @@ VIEWS = [  # key, label, icon, colour
     ("list", _l("Compact list"), "bi-list-ul", "#5b6bbf"),
     ("table", _l("Table"), "bi-table", "#0aa2c0"),
     ("board", _l("Board"), "bi-kanban-fill", "#198754"),
-    ("venues", _l("By venue"), "bi-journal-bookmark-fill", "#6610f2"),
+    ("venues", _l("Grouped"), "bi-collection-fill", "#6610f2"),
     ("timeline", _l("Timeline"), "bi-distribute-vertical", "#6f42c1"),
     ("gantt", _l("Gantt chart"), "bi-bar-chart-steps", "#0d9488"),
     ("calendar", _l("Calendar"), "bi-calendar3-week-fill", "#fd7e14"),
@@ -575,3 +575,110 @@ def matrix(papers):
             c["alpha"] = round(8 + 62 * c["count"] / cmax) if c["count"] else 0
     phases = [{"key": k, "label": lab, "color": c, "icon": i, "total": col_tot[k]} for k, lab, c, i, _s in BOARD_PHASES]
     return {"rows": rows, "phases": phases, "total": sum(col_tot.values())}
+
+
+# ---------------------------------------------------------------- grouped view (by venue, month, year, ...)
+GROUPINGS = [  # key, label, icon, colour
+    ("venue", _l("Journal / book"), "bi-journal-bookmark-fill", "#6610f2"),
+    ("publisher", _l("Publisher"), "bi-building-fill", "#fd7e14"),
+    ("kind", _l("Venue type"), "bi-easel-fill", "#0aa2c0"),
+    ("month", _l("Submission month"), "bi-calendar-month-fill", "#0d6efd"),
+    ("year", _l("Submission year"), "bi-calendar3", "#5b6bbf"),
+    ("due_month", _l("Next deadline month"), "bi-alarm-fill", "#d63384"),
+    ("phase", _l("Phase"), "bi-diagram-3-fill", "#198754"),
+    ("type", _l("Type"), "bi-collection-fill", "#e0a800"),
+    ("group", _l("Research group"), "bi-people-fill", "#0d9488"),
+]
+GROUPING_KEYS = [g[0] for g in GROUPINGS]
+_PALETTE = ["#0d6efd", "#6f42c1", "#0aa2c0", "#fd7e14", "#198754", "#d63384", "#e0a800", "#5b6bbf", "#dc3545", "#0d9488"]
+
+
+def group_records(papers, by):
+    """Groups for the grouped view. Each group: label, optional sub-label/number, icon, colour,
+    its records and a phase bar. Dated groupings are newest first; 'none' groups go last."""
+    from datetime import date as _date
+    phase_meta = {k: (lab, c, i) for k, lab, c, i, _s in BOARD_PHASES}
+    groups = OrderedDict()
+    for p in papers:
+        sub = p.current_submission
+        j = sub.journal if sub else None
+        sort, label, extra, icon, color, when, url_key = None, "", "", "", None, None, ""
+        if by == "venue":
+            key = j.pk if j else 0
+            label = j.name if j else str(_l("Not submitted yet"))
+            extra = " · ".join(x for x in [str(j.get_kind_display()), j.publisher] if x) if j else ""
+            icon = ("bi-easel-fill" if j and j.kind == "conference" else "bi-book-fill" if j and j.kind == "book"
+                    else "bi-journal-bookmark-fill" if j else "bi-hourglass-split")
+            url_key = f"venue={j.pk}" if j else "venue_kind=none"
+        elif by == "publisher":
+            key = (j.publisher or "—") if j else ""
+            label = key or str(_l("Not submitted yet"))
+            icon = "bi-building-fill"
+            url_key = f"publisher={key}" if j and j.publisher else ""
+        elif by == "kind":
+            key = j.kind if j else ""
+            label = str(j.get_kind_display()) if j else str(_l("Not submitted yet"))
+            icon = {"conference": "bi-easel-fill", "book": "bi-book-fill"}.get(key, "bi-journal-bookmark-fill" if j else "bi-hourglass-split")
+            url_key = f"venue_kind={key or 'none'}"
+        elif by in ("month", "year"):
+            dt = sub.submitted_at if sub and sub.submitted_at else None
+            if dt:
+                dt = timezone.localtime(dt)
+                key = (dt.year, dt.month) if by == "month" else (dt.year,)
+                when = _date(dt.year, dt.month if by == "month" else 1, 1)
+                label = f"{dt.month:02d} / {dt.year}" if by == "month" else str(dt.year)
+                sort = key
+                url_key = f"year={dt.year}"
+            else:
+                key = ()
+                label = str(_l("Not submitted yet"))
+            icon = "bi-calendar-month-fill" if by == "month" else "bi-calendar3"
+        elif by == "due_month":
+            due = [d.due_at for d in p.deadlines.all() if d.completed_at is None]
+            if due:
+                dt = timezone.localtime(min(due))
+                key = (dt.year, dt.month)
+                when = _date(dt.year, dt.month, 1)
+                label = f"{dt.month:02d} / {dt.year}"
+                sort = key
+            else:
+                key = ()
+                label = str(_l("No upcoming deadline"))
+            icon = "bi-alarm-fill"
+        elif by == "phase":
+            key = PHASE_OF.get(p.status, "prep")
+            label, color, icon = phase_meta[key]
+            label = str(label)
+            sort = [k for k, *_r in BOARD_PHASES].index(key)
+            url_key = f"phase={key}"
+        elif by == "type":
+            key = p.type
+            label, color, icon = str(p.get_type_display()), TYPE_COLORS.get(p.type), TYPE_ICONS.get(p.type)
+            url_key = f"type={key}"
+        else:  # research group
+            key = p.group_id
+            label, icon = p.group.name, "bi-people-fill"
+            url_key = f"group={key}"
+        if key not in groups:
+            groups[key] = {"key": key, "label": label, "extra": extra, "icon": icon, "color": color, "when": when,
+                           "sort": sort, "url_key": url_key, "papers": [], "empty": key in (0, "", ())}
+        groups[key]["papers"].append(p)
+    out = list(groups.values())
+    if by in ("month", "year"):
+        out.sort(key=lambda g: (g["empty"], tuple(-x for x in (g["sort"] or ()))))
+    elif by == "due_month":
+        out.sort(key=lambda g: (g["empty"], g["sort"] or ()))
+    elif by == "phase":
+        out.sort(key=lambda g: g["sort"])
+    else:
+        out.sort(key=lambda g: (g["empty"], -len(g["papers"]), str(g["label"]).lower()))
+    labels = {k: lab for k, lab, _c, _i, _s in BOARD_PHASES}
+    colors = {k: c for k, _l2, c, _i, _s in BOARD_PHASES}
+    for i, g in enumerate(out):
+        g["color"] = g["color"] or ("#8a9bb8" if g["empty"] else _PALETTE[i % len(_PALETTE)])
+        counts = OrderedDict((k, 0) for k, *_r in BOARD_PHASES)
+        for p in g["papers"]:
+            counts[PHASE_OF.get(p.status, "prep")] += 1
+        n = len(g["papers"])
+        g["bar"] = [{"label": labels[k], "color": colors[k], "count": v, "pct": round(100 * v / n)} for k, v in counts.items() if v]
+    return out

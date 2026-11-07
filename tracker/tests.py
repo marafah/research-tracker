@@ -356,8 +356,16 @@ class PaperViewsTests(Base):
         self.assertEqual(r.context["st"]["total"], 2)
         r = self.client.get(reverse("paper_list") + "?view=matrix")
         self.assertEqual(r.context["mx"]["total"], 2)
-        r = self.client.get(reverse("paper_list") + "?view=venues")
-        self.assertEqual(sum(len(g["papers"]) for g in r.context["vgroups"]), 2)
+        from tracker import workspace as ws
+        for by in ws.GROUPING_KEYS:
+            for layout in ("list", "grid"):
+                r = self.client.get(reverse("paper_list") + f"?view=venues&vg={by}&vl={layout}")
+                self.assertEqual(r.status_code, 200, by)
+                self.assertEqual(sum(len(g["papers"]) for g in r.context["vgroups"]), 2, by)
+        r = self.client.get(reverse("paper_list") + "?view=venues&vg=month")
+        labels = [g["label"] for g in r.context["vgroups"]]
+        now = timezone.localtime(timezone.now())
+        self.assertIn(f"{now.month:02d} / {now.year}", labels)
 
     def test_phase_filter(self):
         r = self.client.get(reverse("paper_list") + "?view=table&phase=review")
