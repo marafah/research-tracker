@@ -972,3 +972,27 @@ html[dir="ltr"] .ov-lolly .stick b { right: -10px; left: auto; }
 html[dir="rtl"] .ov-lolly .stick b { left: -10px; right: auto; }
 html[dir="rtl"] .ov-lolly .stick { margin-left: 12px; }
 html[dir="ltr"] .ov-lolly .stick { margin-right: 12px; }
+
+/* ===== v7.9.2 — switching a card to Table keeps the SAME card size (no growing, no spanning, no reordering) ===== */
+.ov-grid, .ov-grid:has([data-pane="numbers"]:not([hidden])) { grid-auto-rows: var(--ovh); grid-auto-flow: row; }
+@media (min-width: 1200px) {
+  .ov-card.wide:has([data-pane="numbers"]:not([hidden])) { grid-column: auto; }
+  .ov-grid:has([data-pane="numbers"]:not([hidden])) > .ov-card { order: 0 !important; }
+}
+@media (max-width: 767.98px) { .ov-grid, .ov-grid:has([data-pane="numbers"]:not([hidden])) { grid-auto-rows: auto; } }
+/* the table lives inside the card body; long tables scroll inside the card with a sticky header */
+.ov-card .ov-tw, .ov-card:has([data-pane="numbers"]:not([hidden])) .ov-tw { overflow-y: auto !important; overflow-x: hidden; min-height: 0; flex: 1 1 0; padding-top: 0; padding-bottom: .6rem; }
+.ov-tbl thead th { position: sticky; top: 0; z-index: 2; }
+/* compact rows so most tables fit without scrolling */
+.ov-tbl { border-spacing: 0 3px; font-size: .76rem; }
+.ov-tbl td { padding: .24rem .45rem; }
+.ov-tbl thead th { padding: .3rem .45rem; font-size: .68rem; }
+.ov-tbl td.n { font-size: .82rem; }
+.ov-tbl .pb { width: 44px; height: 6px; }
+.ov-tbl td.l { line-height: 1.25; }
+.ov-tw.two { gap: .5rem; }
+.ov-tw.two .ov-tbl th.p, .ov-tw.two .ov-tbl td.p { display: none; }
+.ov-tbl { border-spacing: 0 2px; }
+.ov-tbl td { padding: .17rem .45rem; }
+.ov-tbl thead th { padding: .24rem .45rem; }
+.ov-card .ov-tw { padding-bottom: .4rem; }
