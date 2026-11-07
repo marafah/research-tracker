@@ -996,3 +996,13 @@ html[dir="ltr"] .ov-lolly .stick { margin-right: 12px; }
 .ov-tbl td { padding: .17rem .45rem; }
 .ov-tbl thead th { padding: .24rem .45rem; }
 .ov-card .ov-tw { padding-bottom: .4rem; }
+
+/* ===== v7.9.3 — a card keeps its WIDTH in every view, and nothing scrolls inside a card =====
+   Chart and table panes sit in the same grid cell (no spanning). The row grows to fit the tallest table
+   (minmax), the card follows the row, the table shows all its rows, and the chart pane takes the space left
+   without pushing the row (flex-basis 0). */
+.ov-grid, .ov-grid:has([data-pane="numbers"]:not([hidden])) { grid-auto-rows: minmax(var(--ovh), auto); }
+.ov-card, .ov-card:has([data-pane="numbers"]:not([hidden])) { height: auto; }
+.ov-card [data-pane="chart"] { flex: 1 1 0; min-height: 0; }
+.ov-card .ov-tw, .ov-card:has([data-pane="numbers"]:not([hidden])) .ov-tw { overflow: visible !important; flex: 0 0 auto; }
+.ov-tbl thead th { position: static; }
