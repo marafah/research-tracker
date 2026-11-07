@@ -1,0 +1,104 @@
+{% load i18n tracker_tags %}
+{% get_current_language_bidi as RTL %}
+<div class="ov wk-tab">
+  <!-- Summary tiles -->
+  <div class="wk-tiles">
+    <a class="wk-tile" style="--c:#dc3545" href="{% url 'deadline_list' %}"><i class="bi bi-exclamation-octagon-fill"></i><div><b class="num">{{ dl_buckets.overdue }}</b><span>{% trans "Overdue" %}</span></div></a>
+    <a class="wk-tile" style="--c:#fd7e14" href="{% url 'deadline_list' %}"><i class="bi bi-lightning-charge-fill"></i><div><b class="num">{{ dl_buckets.week }}</b><span>{% trans "This week" %}</span></div></a>
+    <a class="wk-tile" style="--c:#0d6efd" href="{% url 'deadline_list' %}"><i class="bi bi-calendar-week-fill"></i><div><b class="num">{{ dl_buckets.month }}</b><span>{% trans "Next 30 days" %}</span></div></a>
+    <a class="wk-tile" style="--c:#6f42c1" href="{% url 'deadline_list' %}"><i class="bi bi-hourglass-split"></i><div><b class="num">{{ dl_buckets.later }}</b><span>{% trans "Later" %}</span></div></a>
+    <a class="wk-tile" style="--c:#198754" href="{% url 'paper_list' %}?status=revision"><i class="bi bi-check2-square"></i><div><b class="num">{{ action_papers|length|add:my_comments|length }}</b><span>{% trans "My tasks" %}</span></div></a>
+  </div>
+
+  <div class="wk-grid">
+    <!-- Deadlines with view switch -->
+    <div class="card wk-main" data-views="wk-dl">
+      <div class="ov-ch">
+        <div class="min-w-0"><h3><i class="bi bi-alarm-fill text-danger me-1"></i>{% trans "Upcoming deadlines" %}</h3><div class="ov-ins">{% trans "Grouped by event" %} · <bdi>{{ deadline_groups|length }}</bdi></div></div>
+        <div class="vsw" role="group" aria-label="{% trans 'View' %}">
+          <button type="button" data-view="list" class="on" title="{% trans 'List' %}"><i class="bi bi-list-ul"></i><span>{% trans "List" %}</span></button>
+          <button type="button" data-view="cards" title="{% trans 'Cards' %}"><i class="bi bi-grid-3x2-gap"></i><span>{% trans "Cards" %}</span></button>
+          <button type="button" data-view="timeline" title="{% trans 'Timeline' %}"><i class="bi bi-bar-chart-steps"></i><span>{% trans "Timeline" %}</span></button>
+          <button type="button" data-view="chart" title="{% trans 'Chart' %}"><i class="bi bi-bar-chart-fill"></i><span>{% trans "Chart" %}</span></button>
+        </div>
+      </div>
+      <div class="wk-week">
+        {% for d in week_strip %}
+        <a href="{% url 'deadline_list' %}?view=calendar" class="wk-day {% if d.today %}today{% endif %} {% if d.count %}busy{% endif %}" style="--c:var(--cat-{{ forloop.counter }})">
+          <span class="wd">{{ d.date|date:"D" }}</span><span class="dn num">{{ d.date|date:"d" }}</span><span class="cn num">{% if d.count %}{{ d.count }}{% else %}–{% endif %}</span>
+        </a>
+        {% endfor %}
+      </div>
+
+      <div class="wk-body">
+        <!-- list -->
+        <div data-pane="list" class="wk-list">
+          {% for g in deadline_groups %}{% with d=g.first %}
+          <a class="wk-row {% if g.overdue %}overdue{% endif %}" style="--c:var(--cat-{{ g.slot }})" href="{% if g.count == 1 %}{{ d.paper.get_absolute_url }}#deadlines{% else %}{% url 'deadline_list' %}{% endif %}">
+            <div class="wk-date"><b class="num">{{ d.due_at|date:"d" }}</b><span class="num">{{ d.due_at|date:"m/Y" }}</span></div>
+            <div class="min-w-0 flex-grow-1">
+              <div class="d-flex align-items-center gap-2 min-w-0"><bdi class="t">{{ d.title }}</bdi>{% if g.count > 1 %}<span class="wk-cnt">{% blocktrans count n=g.count %}{{ n }} paper{% plural %}{{ n }} papers{% endblocktrans %}</span>{% endif %}</div>
+              <div class="s">{% for x in g.items|slice:":2" %}<bdi>{{ x.paper.label|truncatechars:44 }}</bdi>{% if not forloop.last %} · {% endif %}{% endfor %}{% if g.more %} +{{ g.more }}{% endif %}</div>
+            </div>
+            <div class="d-none d-md-block">{% due_badge d %}</div>
+          </a>
+          {% endwith %}{% empty %}<div class="ov-none p-3">{% trans "No deadlines in the next 30 days." %}</div>{% endfor %}
+        </div>
+        <!-- cards -->
+        <div data-pane="cards" class="wk-cards" hidden>
+          {% for g in deadline_groups %}{% with d=g.first %}
+          <a class="wk-card" style="--c:var(--cat-{{ g.slot }})" href="{% url 'deadline_list' %}">
+            <div class="top"><span class="num">{{ d.due_at|date:"d/m/Y" }}</span>{% due_badge d %}</div>
+            <bdi class="t">{{ d.title }}</bdi>
+            <div class="big num">{{ g.count }}<small>{% if g.count == 1 %}{% trans "paper" %}{% else %}{% trans "papers" %}{% endif %}</small></div>
+          </a>
+          {% endwith %}{% endfor %}
+        </div>
+        <!-- timeline -->
+        <div data-pane="timeline" class="wk-tl" hidden>
+          {% for g in deadline_groups %}{% with d=g.first %}
+          <div class="wk-tli" style="--c:var(--cat-{{ g.slot }})">
+            <span class="node"><i class="bi bi-flag-fill"></i></span>
+            <div class="min-w-0"><div class="when num">{{ d.due_at|date:"d/m/Y" }} · {% due_badge d %}</div><bdi class="t">{{ d.title }}</bdi>{% if g.count > 1 %} <span class="wk-cnt">{{ g.count }}</span>{% endif %}</div>
+          </div>
+          {% endwith %}{% endfor %}
+        </div>
+        <!-- chart -->
+        <div data-pane="chart" class="wk-chart" hidden>
+          <div class="ov-cols" dir="ltr">
+            {% for b in ov.deadlines %}<a class="ov-c" href="{% url 'deadline_list' %}?view=calendar&month={{ b.date|date:'Y-m' }}" data-tip="{{ b.date|date:'m/Y' }}: {{ b.count }}"><b class="num">{% if b.count %}{{ b.count }}{% endif %}</b><span class="bar" style="height:{{ b.h }}%;--c:var(--cat-{{ b.slot }})"></span></a>{% endfor %}
+          </div>
+          <div class="ov-xax even" dir="ltr">{% for b in ov.deadlines %}<span class="num">{{ b.date|date:"m/y" }}</span>{% endfor %}</div>
+        </div>
+      </div>
+      <div class="wk-foot"><a href="{% url 'deadline_list' %}">{% trans "All deadlines" %} <i class="bi bi-arrow-{% if RTL %}left{% else %}right{% endif %}"></i></a></div>
+    </div>
+
+    <!-- Tasks -->
+    <div class="card wk-side">
+      <div class="ov-ch"><div class="min-w-0"><h3><i class="bi bi-check2-square text-success me-1"></i>{% trans "My tasks" %}</h3></div></div>
+      <div class="wk-tasks">
+        <div class="wk-tsec" style="--c:#fd7e14"><i class="bi bi-pencil-square"></i><span>{% trans "Needs action" %}</span><b class="num">{{ action_papers|length }}</b></div>
+        {% for p in action_papers|slice:":3" %}<a class="wk-ti" href="{{ p.get_absolute_url }}"><bdi>{{ p.label }}</bdi>{% status_badge p %}</a>
+        {% empty %}<div class="wk-ok"><i class="bi bi-check-circle-fill"></i>{% trans "Nothing needs action right now." %}</div>{% endfor %}
+        <div class="wk-tsec" style="--c:#6f42c1"><i class="bi bi-chat-square-text-fill"></i><span>{% trans "My reviewer-comment tasks" %}</span><b class="num">{{ my_comments|length }}</b></div>
+        {% for c in my_comments|slice:":3" %}<a class="wk-ti" href="{{ c.submission.paper.get_absolute_url }}#submission-{{ c.submission_id }}"><bdi>{{ c.comment }}</bdi>{% status_badge c "state" %}</a>
+        {% empty %}<div class="wk-ok"><i class="bi bi-check-circle-fill"></i>{% trans "No open comments assigned to you." %}</div>{% endfor %}
+        <div class="wk-tsec" style="--c:#0aa2c0"><i class="bi bi-person-lines-fill"></i><span>{% trans "Missing co-author data" %}</span><b class="num">{{ missing_data|length }}</b></div>
+        {% for p in missing_data|slice:":2" %}<a class="wk-ti" href="{{ p.get_absolute_url }}#authors"><bdi>{{ p.label }}</bdi></a>
+        {% empty %}<div class="wk-ok"><i class="bi bi-check-circle-fill"></i>{% trans "All co-author data complete." %}</div>{% endfor %}
+      </div>
+    </div>
+
+    <!-- Activity -->
+    <div class="card wk-side">
+      <div class="ov-ch"><div class="min-w-0"><h3><i class="bi bi-activity text-primary me-1"></i>{% trans "Recent activity" %}</h3></div></div>
+      <ul class="wk-feed">
+        {% for a in activity|slice:":4" %}
+        <li style="--c:var(--cat-{{ forloop.counter }})"><span class="ic"><i class="bi bi-lightning-charge-fill"></i></span>
+          <div class="min-w-0"><div class="s"><strong>{{ a.user|default:"—" }}</strong> {{ a.verb }}</div>{% if a.paper %}<a href="{{ a.paper.get_absolute_url }}"><bdi>{{ a.paper.label }}</bdi></a>{% endif %}<div class="tm num">{{ a.created_at|date:"d/m/Y · H:i" }}</div></div></li>
+        {% empty %}<li class="ov-none">{% trans "No activity yet." %}</li>{% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>

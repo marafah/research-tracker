@@ -79,6 +79,14 @@ def dashboard(request):
     ctx.update(_dashboard_charts(papers, open_dl, now))
     ctx["deadline_groups"] = _group_deadlines(open_dl[:120])
     ctx["ov"] = _research_overview(papers, open_dl, now)
+    ctx["dl_buckets"] = {
+        "overdue": open_dl.filter(due_at__lt=now).count(),
+        "week": ctx["week_count"],
+        "month": open_dl.filter(due_at__gte=now, due_at__lte=now + timedelta(days=30)).count(),
+        "later": open_dl.filter(due_at__gt=now + timedelta(days=30)).count(),
+    }
+    for i, g in enumerate(ctx["deadline_groups"]):
+        g["slot"] = i % 8 + 1
     return render(request, "tracker/dashboard.html", ctx)
 
 

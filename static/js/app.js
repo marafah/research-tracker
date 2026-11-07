@@ -172,3 +172,28 @@ document.addEventListener("click", e => {
   });
   document.addEventListener("focusout", () => { if (tip) tip.style.opacity = "0"; });
 })();
+
+/* View switches: [data-views] cards with .vsw buttons [data-view] and panes [data-pane]; remembered per card. */
+(function () {
+  const KEY = "rt-views";
+  let saved = {}; try { saved = JSON.parse(localStorage.getItem(KEY) || "{}"); } catch (e) {}
+  const setView = (box, v, persist = true) => {
+    const panes = [...box.querySelectorAll("[data-pane]")].filter(p => p.closest("[data-views]") === box);
+    if (!panes.some(p => p.dataset.pane === v)) v = panes[0]?.dataset.pane;
+    panes.forEach(p => { p.hidden = p.dataset.pane !== v; if (!p.hidden) p.classList.add("vfade"); });
+    box.querySelectorAll(".vsw [data-view]").forEach(b => { if (b.closest("[data-views]") === box) { b.classList.toggle("on", b.dataset.view === v); b.setAttribute("aria-pressed", b.dataset.view === v); } });
+    if (persist) { saved[box.dataset.views] = v; try { localStorage.setItem(KEY, JSON.stringify(saved)); } catch (e) {} }
+  };
+  document.querySelectorAll("[data-views]").forEach(box => {
+    if (saved[box.dataset.views]) setView(box, saved[box.dataset.views], false);
+    box.addEventListener("click", e => {
+      const b = e.target.closest(".vsw [data-view]"); if (!b || b.closest("[data-views]") !== box) return;
+      setView(box, b.dataset.view);
+    });
+  });
+  document.querySelectorAll("[data-views-all]").forEach(sw => sw.addEventListener("click", e => {
+    const b = e.target.closest("[data-view]"); if (!b) return;
+    sw.querySelectorAll("[data-view]").forEach(x => x.classList.toggle("on", x === b));
+    document.querySelectorAll(".ov-grid [data-views]").forEach(box => setView(box, b.dataset.view));
+  }));
+})();

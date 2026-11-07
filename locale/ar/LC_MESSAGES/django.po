@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Research Tracker VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-07 16:59+0300\n"
+"POT-Creation-Date: 2026-11-07 17:18+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ar\n"
@@ -154,6 +154,9 @@ msgstr "لوحة الإدارة"
 msgid "All"
 msgstr "الكل"
 
+msgid "All co-author data complete."
+msgstr "بيانات جميع المؤلفين مكتملة."
+
 msgid "All deadlines"
 msgstr "كل المواعيد"
 
@@ -234,6 +237,12 @@ msgstr "بطاقات"
 
 msgid "Change password"
 msgstr "تغيير كلمة المرور"
+
+msgid "Chart"
+msgstr "رسم"
+
+msgid "Charts"
+msgstr "رسوم"
 
 msgid "Check your email"
 msgstr "تحقق من بريدك الإلكتروني"
@@ -370,9 +379,6 @@ msgstr "التفاصيل"
 
 msgid "Done"
 msgstr "منجز"
-
-msgid "Donut"
-msgstr "دائري"
 
 msgid "Download"
 msgstr "تنزيل"
@@ -511,8 +517,8 @@ msgstr "المجموعة"
 msgid "Group by"
 msgstr "تجميع حسب"
 
-msgid "Heat map"
-msgstr "خريطة حرارية"
+msgid "Grouped by event"
+msgstr "مجمّعة حسب الحدث"
 
 msgid "Hello,"
 msgstr "مرحباً،"
@@ -820,6 +826,9 @@ msgstr "لا شيء متأخر"
 msgid "Nothing scheduled this month."
 msgstr "لا شيء مجدول هذا الشهر."
 
+msgid "Numbers"
+msgstr "أرقام"
+
 msgid "ORCID iD"
 msgstr "معرّف ORCID"
 
@@ -923,9 +932,6 @@ msgstr "دعوات معلّقة"
 
 msgid "Pick a platform member, or leave empty and type the details"
 msgstr "اختر عضواً من المنصة، أو اتركه فارغاً واكتب البيانات"
-
-msgid "Pie"
-msgstr "قطاعي"
 
 msgid "Please complete your author details"
 msgstr "يرجى إكمال بياناتك كمؤلف"
@@ -1271,6 +1277,9 @@ msgstr "يسمح لك هذا الرابط الخاص بتعديل بياناتك
 msgid "This reset link is invalid or has expired."
 msgstr "رابط إعادة التعيين غير صالح أو منتهي الصلاحية."
 
+msgid "This week"
+msgstr "هذا الأسبوع"
+
 msgid "Timeline"
 msgstr "الخط الزمني"
 
@@ -1303,9 +1312,6 @@ msgstr "تابع الإرسالات من الفكرة حتى النشر، ولا
 
 msgid "Transfer offered"
 msgstr "عرض نقل لمجلة أخرى"
-
-msgid "Treemap"
-msgstr "خريطة شجرية"
 
 msgid "Try clearing the filters, or add a new paper."
 msgstr "جرّب مسح التصفية أو أضف بحثاً جديداً."
@@ -1354,6 +1360,9 @@ msgstr "المجلة"
 
 msgid "Vertical timeline"
 msgstr "خط زمني عمودي"
+
+msgid "View"
+msgstr "طريقة العرض"
 
 msgid "View all"
 msgstr "عرض الكل"
@@ -1408,9 +1417,6 @@ msgstr "طلبت إعادة تعيين كلمة المرور."
 #, python-format
 msgid "You will be reminded %(d)s days before."
 msgstr "ستصلك تذكيرات قبل %(d)s يوم."
-
-msgid "You're all clear"
-msgstr "لا يوجد ما يقلق"
 
 msgid "Your details were saved and the research team has been notified."
 msgstr "تم حفظ بياناتك وإشعار فريق البحث."
@@ -1840,16 +1846,6 @@ msgstr[2] "موعدان متأخران"
 msgstr[3] "%(n)s مواعيد متأخرة"
 msgstr[4] "%(n)s موعداً متأخراً"
 msgstr[5] "%(n)s موعد متأخر"
-
-#, python-format
-msgid "%(n)s deadline this week"
-msgid_plural "%(n)s deadlines this week"
-msgstr[0] "لا مواعيد هذا الأسبوع"
-msgstr[1] "موعد واحد هذا الأسبوع"
-msgstr[2] "موعدان هذا الأسبوع"
-msgstr[3] "%(n)s مواعيد هذا الأسبوع"
-msgstr[4] "%(n)s موعداً هذا الأسبوع"
-msgstr[5] "%(n)s موعد هذا الأسبوع"
 
 #, python-format
 msgid "%(n)s paper"
