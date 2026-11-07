@@ -1,6 +1,6 @@
 Django>=5.2.8,<6.0
 dj-database-url>=2.2
-whitenoise>=6.7
+whitenoise>=6.12.0
 gunicorn>=23.0
 psycopg[binary]>=3.2
 openpyxl>=3.1
