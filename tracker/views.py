@@ -14,6 +14,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _l
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
@@ -77,7 +78,121 @@ def dashboard(request):
     }
     ctx.update(_dashboard_charts(papers, open_dl, now))
     ctx["deadline_groups"] = _group_deadlines(open_dl[:120])
+    ctx["ov"] = _research_overview(papers, open_dl, now)
     return render(request, "tracker/dashboard.html", ctx)
+
+
+# Five phases instead of 16 colours: a palette of five validated hues stays readable
+# (and colour-blind safe); the full status breakdown lives in the table beside the donut.
+PHASES = [
+    ("prep", _l("Preparation"), ["idea", "proposal", "drafting", "internal_review", "ready"]),
+    ("review", _l("Submitted / in review"), ["submitted", "under_review", "resubmitted"]),
+    ("revision", _l("Revision"), ["major_revision", "minor_revision"]),
+    ("done", _l("Accepted & published"), ["accepted", "proofs", "published"]),
+    ("closed", _l("Rejected / stopped"), ["rejected", "withdrawn", "on_hold"]),
+]
+PHASE_OF = {st: key for key, _lab, sts in PHASES for st in sts}
+
+
+def _pct(n, total):
+    return round(100 * n / total) if total else 0
+
+
+def _research_overview(papers, open_dl, now):
+    """Everything the 'Research overview' section draws: phases, statuses, types,
+    type x phase, submissions per month, deadline load, venues and publishers."""
+    from . import workspace as ws
+    rows = list(papers.values("status", "type", "group__name"))
+    total = len(rows)
+    status_labels = dict(m.Paper.Status.choices)
+    type_labels = dict(m.Paper.Type.choices)
+
+    by_status, by_type, by_group, matrix = {}, {}, {}, {}
+    for r in rows:
+        by_status[r["status"]] = by_status.get(r["status"], 0) + 1
+        by_type[r["type"]] = by_type.get(r["type"], 0) + 1
+        by_group[r["group__name"]] = by_group.get(r["group__name"], 0) + 1
+        ph = PHASE_OF.get(r["status"], "prep")
+        matrix.setdefault(r["type"], {}).setdefault(ph, 0)
+        matrix[r["type"]][ph] += 1
+
+    # donut geometry (SVG circle, r=60 -> circumference 376.99)
+    circ, offset, phases = 376.99, 0.0, []
+    for key, label, sts in PHASES:
+        n = sum(by_status.get(st, 0) for st in sts)
+        length = circ * n / total if total else 0
+        phases.append({"key": key, "label": label, "count": n, "pct": _pct(n, total),
+                       "dash": f"{max(length - 2, 0):.2f} {circ:.2f}", "offset": f"{-offset:.2f}",
+                       "statuses": [{"code": st, "label": status_labels[st], "count": by_status[st]}
+                                    for st in sts if by_status.get(st)]})
+        offset += length
+
+    statuses = [{"code": st, "label": status_labels[st], "count": by_status[st],
+                 "pct": _pct(by_status[st], total), "phase": PHASE_OF.get(st, "prep")}
+                for st, _ in m.Paper.Status.choices if by_status.get(st)]
+
+    tmax = max(by_type.values(), default=1)
+    types = sorted(({"key": k, "label": type_labels.get(k, k), "count": n, "pct": _pct(n, total),
+                     "bar": _pct(n, tmax), "icon": ws.TYPE_ICONS.get(k, "bi-file-earmark"),
+                     "segments": [{"key": key, "label": label, "count": matrix[k].get(key, 0),
+                                   "pct": round(100 * matrix[k].get(key, 0) / n, 1)}
+                                  for key, label, _s in PHASES if matrix[k].get(key)]}
+                    for k, n in by_type.items()), key=lambda t: -t["count"])
+
+    # submissions per month, last 12 months
+    first = (timezone.localdate().replace(day=1) - timedelta(days=330)).replace(day=1)
+    months, cur = [], first
+    for _i in range(12):
+        months.append(cur)
+        cur = (cur + timedelta(days=32)).replace(day=1)
+    subs = m.Submission.objects.filter(paper__in=papers, submitted_at__date__gte=first).values_list("submitted_at", flat=True)
+    per_month = {}
+    for dt in subs:
+        d = timezone.localtime(dt).date().replace(day=1)
+        per_month[d] = per_month.get(d, 0) + 1
+    smax = max(per_month.values(), default=0)
+    submissions = [{"date": mo, "count": per_month.get(mo, 0), "h": _pct(per_month.get(mo, 0), smax)} for mo in months]
+
+    # open-deadline load, next 6 months
+    nxt, cur = [], timezone.localdate().replace(day=1)
+    for _i in range(6):
+        nxt.append(cur)
+        cur = (cur + timedelta(days=32)).replace(day=1)
+    load = {}
+    for dt in open_dl.filter(due_at__date__gte=nxt[0]).values_list("due_at", flat=True):
+        d = timezone.localtime(dt).date().replace(day=1)
+        load[d] = load.get(d, 0) + 1
+    dmax = max((load.get(mo, 0) for mo in nxt), default=0)
+    deadlines = [{"date": mo, "count": load.get(mo, 0), "h": _pct(load.get(mo, 0), dmax)} for mo in nxt]
+    overdue_n = open_dl.filter(due_at__lt=now).count()
+
+    # venues & publishers (where each paper currently sits: its latest submission)
+    venue, publisher = {}, {}
+    for sub in (m.Submission.objects.filter(paper__in=papers).select_related("journal")
+                .order_by("paper_id", "-submitted_at", "-id")):
+        if sub.paper_id in venue:
+            continue
+        venue[sub.paper_id] = sub.journal
+    vcount, pcount = {}, {}
+    for j in venue.values():
+        vcount[(j.pk, j.name)] = vcount.get((j.pk, j.name), 0) + 1
+        pub = (j.publisher or "").strip() or "—"
+        pcount[pub] = pcount.get(pub, 0) + 1
+    vtop = sorted(vcount.items(), key=lambda kv: -kv[1])[:7]
+    vmax = vtop[0][1] if vtop else 1
+    venues = [{"pk": k[0], "name": k[1], "count": n, "bar": _pct(n, vmax)} for k, n in vtop]
+    ptop = sorted(pcount.items(), key=lambda kv: -kv[1])[:6]
+    pmax = ptop[0][1] if ptop else 1
+    publishers = [{"name": k, "count": n, "bar": _pct(n, pmax), "pct": _pct(n, len(venue))} for k, n in ptop]
+
+    gmax = max(by_group.values(), default=1)
+    groups = [{"name": k, "count": n, "bar": _pct(n, gmax)} for k, n in sorted(by_group.items(), key=lambda kv: -kv[1])]
+
+    return {"total": total, "phases": phases, "statuses": statuses, "types": types,
+            "submissions": submissions, "sub_total": sum(per_month.values()), "sub_max": smax,
+            "deadlines": deadlines, "dl_total": sum(x["count"] for x in deadlines), "dl_max": dmax, "overdue": overdue_n,
+            "venues": venues, "venue_total": len(vcount), "publishers": publishers, "groups": groups,
+            "with_venue": len(venue)}
 
 
 def _group_deadlines(deadlines, limit=6):

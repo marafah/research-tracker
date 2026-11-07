@@ -151,3 +151,24 @@ document.addEventListener("click", e => {
   addEventListener("resize", () => place(active()));
   document.getElementById("sb-toggle")?.addEventListener("click", () => setTimeout(() => place(active()), 260));
 })();
+
+/* Chart tooltips: any element with data-tip */
+(function () {
+  let tip;
+  const show = (el, x, y) => {
+    if (!tip) { tip = document.createElement("div"); tip.className = "ov-tip"; tip.setAttribute("role", "tooltip"); document.body.appendChild(tip); }
+    tip.textContent = el.dataset.tip; tip.style.opacity = "1";
+    const r = tip.getBoundingClientRect();
+    tip.style.left = Math.min(innerWidth - r.width - 8, Math.max(8, x - r.width / 2)) + "px";
+    tip.style.top = Math.max(8, y - r.height - 12) + "px";
+  };
+  document.addEventListener("pointermove", e => {
+    const el = e.target.closest?.("[data-tip]");
+    if (el) show(el, e.clientX, e.clientY); else if (tip) tip.style.opacity = "0";
+  });
+  document.addEventListener("focusin", e => {
+    const el = e.target.closest?.("[data-tip]"); if (!el) return;
+    const r = el.getBoundingClientRect(); show(el, r.left + r.width / 2, r.top);
+  });
+  document.addEventListener("focusout", () => { if (tip) tip.style.opacity = "0"; });
+})();

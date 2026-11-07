@@ -1,0 +1,176 @@
+{% load i18n tracker_tags %}
+{% get_current_language_bidi as RTL %}
+<section class="ov mb-4" aria-labelledby="ov-title">
+  <div class="ov-head">
+    <div>
+      <h2 class="db-section mb-1" id="ov-title"><i class="bi bi-graph-up"></i>{% trans "Research overview" %}</h2>
+      <p class="ov-lead mb-0">
+        <b class="num">{{ ov.total }}</b> {% trans "works" %}
+        {% for t in ov.types %} · <b class="num">{{ t.count }}</b> {{ t.label }}{% endfor %}
+        {% for ph in ov.phases %}{% if ph.count %} · <span class="ov-sw" style="--c:var(--ph-{{ ph.key }})"></span><b class="num">{{ ph.pct }}%</b> {{ ph.label }}{% endif %}{% endfor %}
+      </p>
+    </div>
+    <div class="ov-legend" aria-label="{% trans 'Phases' %}">
+      {% for ph in ov.phases %}<span><i style="--c:var(--ph-{{ ph.key }})"></i>{{ ph.label }}</span>{% endfor %}
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <!-- 1. Phase donut -->
+    <div class="col-lg-5">
+      <div class="card h-100">
+        <div class="card-header db-ch"><div><h3 class="db-ct">{% trans "Papers by phase" %}</h3><div class="db-cs">{% trans "Where your work stands in the publication cycle" %}</div></div></div>
+        <div class="card-body ov-donut-wrap">
+          <svg class="ov-donut" viewBox="0 0 160 160" role="img" aria-label="{% trans 'Papers by phase' %}">
+            <circle cx="80" cy="80" r="60" class="ov-track"></circle>
+            {% for ph in ov.phases %}{% if ph.count %}
+            <circle cx="80" cy="80" r="60" class="ov-seg" style="--c:var(--ph-{{ ph.key }})" stroke-dasharray="{{ ph.dash }}" stroke-dashoffset="{{ ph.offset }}"
+              data-tip="{{ ph.label }}: {{ ph.count }} ({{ ph.pct }}%)"></circle>
+            {% endif %}{% endfor %}
+            <text x="80" y="78" class="ov-dnum">{{ ov.total }}</text>
+            <text x="80" y="98" class="ov-dlab">{% trans "papers" %}</text>
+          </svg>
+          <ul class="ov-dlist">
+            {% for ph in ov.phases %}
+            <li class="{% if not ph.count %}zero{% endif %}"><span class="ov-sw" style="--c:var(--ph-{{ ph.key }})"></span><span class="flex-grow-1">{{ ph.label }}</span><b class="num">{{ ph.count }}</b><span class="num pct">{{ ph.pct }}%</span></li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Status table (the detailed / accessible view) -->
+    <div class="col-lg-7">
+      <div class="card h-100">
+        <div class="card-header db-ch"><div><h3 class="db-ct">{% trans "Status breakdown" %}</h3><div class="db-cs">{% trans "Every status, with its count and share" %}</div></div>
+          <a class="btn btn-sm btn-light border" href="{% url 'paper_list' %}?view=table">{% trans "Open table" %}</a></div>
+        <div class="table-responsive">
+          <table class="table table-hover align-middle db-table mb-0 ov-table">
+            <thead><tr><th>{% trans "Status" %}</th><th>{% trans "Phase" %}</th><th class="text-end">{% trans "Papers" %}</th><th class="text-end">{% trans "Share" %}</th><th class="w-25 d-none d-md-table-cell"></th></tr></thead>
+            <tbody>
+            {% for st in ov.statuses %}
+              <tr class="db-row" data-href="{% url 'paper_list' %}?status={{ st.code }}">
+                <td><a href="{% url 'paper_list' %}?status={{ st.code }}" class="text-decoration-none">{% status_badge_code st.code st.label %}</a></td>
+                <td class="small text-body-secondary"><span class="ov-sw" style="--c:var(--ph-{{ st.phase }})"></span>{% for ph in ov.phases %}{% if ph.key == st.phase %}{{ ph.label }}{% endif %}{% endfor %}</td>
+                <td class="text-end fw-semibold num">{{ st.count }}</td>
+                <td class="text-end text-body-secondary num">{{ st.pct }}%</td>
+                <td class="d-none d-md-table-cell"><div class="ov-hbar"><span style="width:{{ st.pct }}%;--c:var(--ph-{{ st.phase }})"></span></div></td>
+              </tr>
+            {% empty %}<tr><td colspan="5" class="text-body-secondary small">{% trans "No papers yet." %}</td></tr>{% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. Types -->
+    <div class="col-lg-5">
+      <div class="card h-100">
+        <div class="card-header db-ch"><div><h3 class="db-ct">{% trans "Papers by type" %}</h3><div class="db-cs">{% trans "Journal articles, chapters, conference papers…" %}</div></div></div>
+        <div class="card-body">
+          {% for t in ov.types %}
+          <a class="ov-bar-row" href="{% url 'paper_list' %}?type={{ t.key }}" data-tip="{{ t.label }}: {{ t.count }} ({{ t.pct }}%)">
+            <span class="lab"><i class="bi {{ t.icon }}"></i>{{ t.label }}</span>
+            <span class="val num">{{ t.count }} <small>{{ t.pct }}%</small></span>
+            <span class="ov-hbar lg"><span style="width:{{ t.bar }}%"></span></span>
+          </a>
+          {% empty %}<div class="small text-body-secondary">{% trans "No papers yet." %}</div>{% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. Type x phase -->
+    <div class="col-lg-7">
+      <div class="card h-100">
+        <div class="card-header db-ch"><div><h3 class="db-ct">{% trans "Type × phase" %}</h3><div class="db-cs">{% trans "How each type of work is progressing" %}</div></div></div>
+        <div class="card-body">
+          {% for t in ov.types %}
+          <div class="ov-stack-row">
+            <div class="d-flex justify-content-between small mb-1"><span class="fw-semibold"><i class="bi {{ t.icon }} me-1 text-body-secondary"></i>{{ t.label }}</span><span class="num text-body-secondary">{{ t.count }}</span></div>
+            <div class="ov-stack">
+              {% for sg in t.segments %}<span style="flex-grow:{{ sg.count }};--c:var(--ph-{{ sg.key }})" data-tip="{{ t.label }} · {{ sg.label }}: {{ sg.count }}">{% if sg.pct >= 12 %}<b class="num">{{ sg.count }}</b>{% endif %}</span>{% endfor %}
+            </div>
+          </div>
+          {% empty %}<div class="small text-body-secondary">{% trans "No papers yet." %}</div>{% endfor %}
+          <div class="ov-legend mt-3">{% for ph in ov.phases %}{% if ph.count %}<span><i style="--c:var(--ph-{{ ph.key }})"></i>{{ ph.label }}</span>{% endif %}{% endfor %}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. Submissions per month -->
+    <div class="col-lg-7">
+      <div class="card h-100">
+        <div class="card-header db-ch"><div><h3 class="db-ct">{% trans "Submissions per month" %}</h3><div class="db-cs">{% blocktrans with n=ov.sub_total %}{{ n }} submissions in the last 12 months{% endblocktrans %}</div></div></div>
+        <div class="card-body">
+          <div class="ov-cols" role="img" aria-label="{% trans 'Submissions per month' %}">
+            {% for b in ov.submissions %}
+            <div class="ov-col" data-tip="{{ b.date|date:'m/Y' }}: {{ b.count }}">
+              <span class="v num">{% if b.count %}{{ b.count }}{% endif %}</span>
+              <span class="bar" style="height:{% if b.count %}{{ b.h }}{% else %}0{% endif %}%"></span>
+              <span class="m num">{{ b.date|date:"m/y" }}</span>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6. Deadline load -->
+    <div class="col-lg-5">
+      <div class="card h-100">
+        <div class="card-header db-ch"><div><h3 class="db-ct">{% trans "Deadline load" %}</h3><div class="db-cs">{% blocktrans with n=ov.dl_total %}{{ n }} open deadlines in the next 6 months{% endblocktrans %}{% if ov.overdue %} · <b class="text-danger">{{ ov.overdue }} {% trans "Overdue" %}</b>{% endif %}</div></div>
+          <a class="btn btn-sm btn-light border" href="{% url 'deadline_list' %}?view=calendar">{% trans "Calendar" %}</a></div>
+        <div class="card-body">
+          <div class="ov-cols alt" role="img" aria-label="{% trans 'Deadline load' %}">
+            {% for b in ov.deadlines %}
+            <a class="ov-col" href="{% url 'deadline_list' %}?view=calendar&month={{ b.date|date:'Y-m' }}" data-tip="{{ b.date|date:'m/Y' }}: {{ b.count }}">
+              <span class="v num">{% if b.count %}{{ b.count }}{% endif %}</span>
+              <span class="bar" style="height:{% if b.count %}{{ b.h }}{% else %}0{% endif %}%"></span>
+              <span class="m num">{{ b.date|date:"m/y" }}</span>
+            </a>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 7. Venues -->
+    <div class="col-lg-7">
+      <div class="card h-100">
+        <div class="card-header db-ch"><div><h3 class="db-ct">{% trans "Top venues" %}</h3><div class="db-cs">{% blocktrans with n=ov.venue_total %}Journals and books receiving your work · {{ n }} venues{% endblocktrans %}</div></div>
+          <a class="btn btn-sm btn-light border" href="{% url 'journal_list' %}">{% trans "Journals" %}</a></div>
+        <div class="card-body">
+          {% for v in ov.venues %}
+          <a class="ov-bar-row" href="{% url 'journal_detail' v.pk %}" data-tip="{{ v.name }}: {{ v.count }}">
+            <span class="lab text-truncate" dir="auto">{{ v.name }}</span>
+            <span class="val num">{{ v.count }}</span>
+            <span class="ov-hbar"><span style="width:{{ v.bar }}%"></span></span>
+          </a>
+          {% empty %}<div class="small text-body-secondary">{% trans "No submissions yet." %}</div>{% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <!-- 8. Publishers (+ groups) -->
+    <div class="col-lg-5">
+      <div class="card h-100">
+        <div class="card-header db-ch"><div><h3 class="db-ct">{% trans "Publishers" %}</h3><div class="db-cs">{% trans "Share of works by publisher" %}</div></div></div>
+        <div class="card-body">
+          {% for p in ov.publishers %}
+          <div class="ov-bar-row" data-tip="{{ p.name }}: {{ p.count }} ({{ p.pct }}%)">
+            <span class="lab" dir="auto">{{ p.name }}</span>
+            <span class="val num">{{ p.count }} <small>{{ p.pct }}%</small></span>
+            <span class="ov-hbar"><span style="width:{{ p.bar }}%"></span></span>
+          </div>
+          {% empty %}<div class="small text-body-secondary">{% trans "No submissions yet." %}</div>{% endfor %}
+          {% if ov.groups|length > 1 %}
+          <div class="ov-sub mt-3">{% trans "By research group" %}</div>
+          {% for g in ov.groups %}
+          <div class="ov-bar-row" data-tip="{{ g.name }}: {{ g.count }}"><span class="lab text-truncate" dir="auto">{{ g.name }}</span><span class="val num">{{ g.count }}</span><span class="ov-hbar"><span style="width:{{ g.bar }}%"></span></span></div>
+          {% endfor %}
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

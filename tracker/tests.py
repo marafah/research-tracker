@@ -263,3 +263,24 @@ class ButtonFlowTests(Base):
         r = self.client.post(reverse("group_invite", args=[self.group.pk]), {"email": "new@uni.edu", "role": "member"})
         self.assertEqual(r.status_code, 302)
         self.assertTrue(m.Invitation.objects.filter(email="new@uni.edu").exists())
+
+
+class DashboardOverviewTests(Base):
+    """The home page is the dashboard and carries the full research overview."""
+
+    def test_home_is_dashboard_with_overview(self):
+        self.client.force_login(self.owner)
+        m.Paper.objects.create(group=self.group, title="Chapter A", type="chapter", status="accepted", lead=self.owner)
+        r = self.client.get("/")
+        self.assertEqual(r.status_code, 200)
+        self.assertTemplateUsed(r, "tracker/dashboard.html")
+        ov = r.context["ov"]
+        self.assertEqual(ov["total"], sum(p["count"] for p in ov["phases"]))
+        self.assertEqual(ov["total"], sum(s["count"] for s in ov["statuses"]))
+        self.assertEqual(ov["total"], sum(t["count"] for t in ov["types"]))
+        for t in ov["types"]:
+            self.assertEqual(t["count"], sum(sg["count"] for sg in t["segments"]))
+        self.assertEqual(len(ov["submissions"]), 12)
+        self.assertEqual(len(ov["deadlines"]), 6)
+        for chart in ("Papers by phase", "Status breakdown", "Papers by type", "Submissions per month", "Deadline load", "Top venues"):
+            self.assertContains(r, chart)

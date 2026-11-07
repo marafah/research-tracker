@@ -51,6 +51,9 @@
     <div class="k-foot"><span>{% blocktrans with n=published_year %}{{ n }} published{% endblocktrans %} · {{ success_rate }}% {% trans "acceptance" %}</span><div class="progress" role="presentation"><div class="progress-bar" style="width:{{ success_rate }}%"></div></div></div></a></div>
 </div>
 
+{% include "tracker/_overview.html" %}
+
+<h2 class="db-section"><i class="bi bi-list-check"></i>{% trans "Work in progress" %}</h2>
 <div class="row g-4 mb-4">
   <!-- Deadlines (grouped) -->
   <div class="col-xl-8">
@@ -84,62 +87,9 @@
     </div>
   </div>
 
-  <!-- Pipeline + portfolio -->
-  <div class="col-xl-4">
-    <div class="card h-100">
-      <div class="card-header db-ch">
-        <div><h2 class="db-ct"><i class="bi bi-diagram-3 text-primary me-2"></i>{% trans "Publication pipeline" %}</h2><div class="db-cs">{% blocktrans with n=total %}{{ n }} works in total{% endblocktrans %}</div></div>
-        <a href="{% url 'paper_list' %}?view=board" class="btn btn-sm btn-light border">{% trans "Open board" %}</a>
-      </div>
-      <div class="card-body">
-        {% if status_rows %}
-        <div class="db-stack" role="img" aria-label="{% trans 'Pipeline' %}">{% for c in status_rows %}<span style="--c:{{ c.color }};flex-grow:{{ c.count }}" title="{{ c.label }}: {{ c.count }}"></span>{% endfor %}</div>
-        <ul class="db-legend">
-          {% for c in status_rows %}<li><a href="{% url 'paper_list' %}?status={{ c.code }}"><i style="background:{{ c.color }}"></i><span class="flex-grow-1">{{ c.label }}</span><b class="num">{{ c.count }}</b><span class="pct num">{% widthratio c.count total 100 %}%</span></a></li>{% endfor %}
-        </ul>
-        {% endif %}
-        <div class="db-split">
-          <div class="db-ring" style="--p:{{ success_rate }}"><div><b class="num">{{ success_rate }}%</b><span>{% trans "accepted" %}</span></div></div>
-          <div class="flex-grow-1 min-w-0">
-            {% for t in type_rows %}
-            <a class="db-type" href="{% url 'paper_list' %}?type={{ t.key }}" style="--c:{{ t.color }}"><span class="d-flex align-items-center gap-2 text-truncate"><i class="bi {{ t.icon }}"></i>{{ t.label }}</span><b class="num">{{ t.count }}</b><div class="progress db-thin"><div class="progress-bar" style="width:{{ t.pct }}%"></div></div></a>
-            {% endfor %}
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="row g-4">
-  <!-- Recently updated -->
-  <div class="col-xl-8">
+  <!-- Tasks -->
+  <div class="col-xl-4 d-flex flex-column gap-4">
     <div class="card">
-      <div class="card-header db-ch">
-        <div><h2 class="db-ct"><i class="bi bi-clock-history text-primary me-2"></i>{% trans "Recently updated" %}</h2><div class="db-cs">{% trans "Latest changes across your groups" %}</div></div>
-        <a class="btn btn-sm btn-light border" href="{% url 'paper_list' %}?view=table">{% trans "View all" %}</a>
-      </div>
-      <div class="table-responsive">
-        <table class="table table-hover align-middle db-table db-fixed mb-0">
-          <thead><tr><th>{% trans "Title" %}</th><th class="c-st">{% trans "Status" %}</th><th class="c-ve d-none d-xxl-table-cell">{% trans "Venue" %}</th><th class="c-up text-end">{% trans "Updated" %}</th></tr></thead>
-          <tbody>
-          {% for p in recent_papers %}{% with s=p.current_submission %}
-            <tr class="db-row" data-href="{{ p.get_absolute_url }}">
-              <td class="min-w-0"><div class="db-tbox"><a href="{{ p.get_absolute_url }}" class="db-ptitle db-auto" dir="auto">{{ p.label }}</a><div class="small text-body-secondary">{{ p.get_type_display }}</div></div></td>
-              <td>{% status_badge p %}</td>
-              <td class="d-none d-xxl-table-cell small"><div class="text-truncate db-venue db-auto" dir="auto">{% if s %}{{ s.journal.name }}{% else %}—{% endif %}</div></td>
-              <td class="text-end small text-body-secondary num text-nowrap">{{ p.updated_at|date:"d/m/Y" }}</td>
-            </tr>
-          {% endwith %}{% empty %}<tr><td colspan="4"><div class="empty py-4"><div class="ic"><i class="bi bi-file-earmark-plus"></i></div><h6>{% trans "No papers yet." %}</h6></div></td></tr>{% endfor %}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <!-- Tasks + activity -->
-  <div class="col-xl-4">
-    <div class="card mb-4">
       <div class="card-header db-ch"><div><h2 class="db-ct"><i class="bi bi-check2-square text-primary me-2"></i>{% trans "My tasks" %}</h2></div>
         <span class="badge rounded-pill {% if action_papers or my_comments or missing_data %}text-bg-danger{% else %}text-bg-success{% endif %}">{% if action_papers or my_comments or missing_data %}<i class="bi bi-exclamation"></i>{% else %}<i class="bi bi-check2"></i>{% endif %}</span></div>
       <div class="list-group list-group-flush db-tasks">
@@ -156,11 +106,11 @@
       </div>
     </div>
 
-    <div class="card">
+    <div class="card flex-grow-1">
       <div class="card-header db-ch"><div><h2 class="db-ct"><i class="bi bi-activity text-primary me-2"></i>{% trans "Recent activity" %}</h2></div></div>
       <div class="card-body py-3">
         <ul class="db-feed">
-        {% for a in activity|slice:":5" %}
+        {% for a in activity|slice:":4" %}
           <li><span class="dot"></span><div class="min-w-0"><div class="small text-truncate"><strong>{{ a.user|default:"—" }}</strong> {{ a.verb }}</div>
             {% if a.paper %}<a class="small d-block text-truncate db-auto" dir="auto" href="{{ a.paper.get_absolute_url }}">{{ a.paper.label }}</a>{% endif %}
             <div class="db-time num">{{ a.created_at|date:"d/m/Y · H:i" }}</div></div></li>
@@ -169,6 +119,34 @@
       </div>
     </div>
   </div>
+</div>
+
+<div class="row g-4">
+  <!-- Recently updated -->
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header db-ch">
+        <div><h2 class="db-ct"><i class="bi bi-clock-history text-primary me-2"></i>{% trans "Recently updated" %}</h2><div class="db-cs">{% trans "Latest changes across your groups" %}</div></div>
+        <a class="btn btn-sm btn-light border" href="{% url 'paper_list' %}?view=table">{% trans "View all" %}</a>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-hover align-middle db-table db-fixed mb-0">
+          <thead><tr><th>{% trans "Title" %}</th><th class="c-st">{% trans "Status" %}</th><th class="c-ve d-none d-md-table-cell">{% trans "Venue" %}</th><th class="c-up text-end">{% trans "Updated" %}</th></tr></thead>
+          <tbody>
+          {% for p in recent_papers %}{% with s=p.current_submission %}
+            <tr class="db-row" data-href="{{ p.get_absolute_url }}">
+              <td class="min-w-0"><div class="db-tbox"><a href="{{ p.get_absolute_url }}" class="db-ptitle db-auto" dir="auto">{{ p.label }}</a><div class="small text-body-secondary">{{ p.get_type_display }}</div></div></td>
+              <td>{% status_badge p %}</td>
+              <td class="d-none d-md-table-cell small"><div class="text-truncate db-venue db-auto" dir="auto">{% if s %}{{ s.journal.name }}{% else %}—{% endif %}</div></td>
+              <td class="text-end small text-body-secondary num text-nowrap">{{ p.updated_at|date:"d/m/Y" }}</td>
+            </tr>
+          {% endwith %}{% empty %}<tr><td colspan="4"><div class="empty py-4"><div class="ic"><i class="bi bi-file-earmark-plus"></i></div><h6>{% trans "No papers yet." %}</h6></div></td></tr>{% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
 </div>
 {% endblock %}
 

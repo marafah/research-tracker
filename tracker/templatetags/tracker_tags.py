@@ -63,6 +63,11 @@ def status_badge(obj, field="status"):
 
 
 @register.simple_tag
+def status_badge_code(code, label):
+    return format_html('<span class="sbadge" data-s="{}" style="--s:{}">{}</span>', code, status_hex(code), label)
+
+
+@register.simple_tag
 def due_badge(deadline):
     if deadline.is_done:
         return format_html('<span class="due due-done"><i class="bi bi-check2"></i>{}</span>', _("Done"))
