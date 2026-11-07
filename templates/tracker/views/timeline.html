@@ -38,26 +38,39 @@
   </div>
 </div>
 {% else %}
-<div class="card"><div class="card-body">
-  {% if tl.months %}
-  <div class="vtl">
-    {% for mo in tl.months %}
-      <div class="vt-month"><span><i class="bi bi-calendar3"></i> <span class="num">{{ mo.month|date:"m/Y" }}</span> · {{ mo.month|date:"F" }}</span></div>
-      {% for it in mo.items %}
-        {% if it.first_past %}<div class="vt-today"><span><i class="bi bi-geo-alt-fill"></i> {% trans "Today" %} · <span class="num">{% now "d/m/Y" %}</span></span></div>{% endif %}
-        <div class="vt-item {% cycle 'l' 'r' %} {% if it.future %}future{% endif %}" style="--c:{{ it.color }}">
-          <span class="vt-node"><i class="bi {{ it.icon }}"></i></span>
-          <div class="vt-card" style="--c:{{ it.color }}">
-            <span class="vt-kind"><i class="bi {{ it.icon }}"></i> {{ it.title|truncatechars:48 }}</span>
-            <a class="vt-title" href="{{ it.url }}">{{ it.paper.label }}</a>
-            <div class="vt-sub">{% if it.sub %}<i class="bi bi-journal-bookmark-fill" style="color:#6610f2"></i><span class="text-truncate">{{ it.sub }}</span>{% endif %}{% status_badge it.paper %}</div>
-          </div>
-          <div class="vt-date">{{ it.when|date:"d/m/Y" }}</div>
+{% if tl.months %}
+<div class="vx">
+  {% for mo in tl.months %}
+  <h3 class="vx-month"><span>{{ mo.month|date:"F Y" }}</span><span class="vx-mnum num" dir="ltr">{{ mo.month|date:"m/Y" }}</span><span class="vx-mcount num">{{ mo.items|length }}</span></h3>
+  {% for it in mo.items %}
+    {% if it.first_past %}<div class="vx-today"><span><i class="bi bi-geo-alt-fill"></i> {% trans "Today" %} · <bdi class="num" dir="ltr">{% now "d/m/Y" %}</bdi></span></div>{% endif %}
+    {% with p=it.paper s=it.paper.current_submission %}
+    <div class="vx-item {% if it.future %}is-future{% endif %} {% if it.kind == 'overdue' %}is-late{% endif %}" style="--c:{{ it.color }};--t:{{ type_colors|get_item:p.type }}">
+      <div class="vx-rail">
+        <div class="vx-date"><b class="num" dir="ltr">{{ it.when|date:"j/n/Y" }}</b><span>{{ it.when|date:"l" }} <bdi class="num" dir="ltr">{{ it.when|date:"H:i" }}</bdi></span></div>
+        <span class="vx-node"><i class="bi {{ it.icon }}"></i></span>
+      </div>
+      <article class="vx-card">
+        <div class="vx-top">
+          <span class="vx-kind"><i class="bi {{ it.icon }}"></i>{{ it.title }}</span>
+          <span class="vx-status">{% status_badge p %}</span>
         </div>
-      {% endfor %}
-    {% endfor %}
-  </div>
-  {% else %}<div class="empty"><div class="ic"><i class="bi bi-distribute-vertical"></i></div><h6>{% trans "No milestones in the last 18 months." %}</h6></div>{% endif %}
-</div></div>
+        <a class="vx-title" href="{{ it.url }}"><bdi dir="{{ p.title|text_dir }}">{{ p.title }}</bdi></a>
+        <div class="vx-meta">
+          <span class="vx-when"><i class="bi bi-flag-fill"></i><bdi class="num" dir="ltr">{{ it.when|date:"j/n/Y · H:i" }}</bdi></span>
+          {% if it.sub %}<span class="vx-ven"><i class="bi bi-journal-bookmark-fill"></i><bdi>{{ it.sub }}</bdi></span>{% endif %}
+          {% if s.manuscript_id %}<span class="vx-ms"><i class="bi bi-hash"></i><bdi class="num" dir="ltr">{{ s.manuscript_id }}</bdi></span>{% endif %}
+          {% with a=p.authors.all|first %}{% if a %}<span class="vx-who"><i class="bi bi-person-fill"></i>{{ a.name }}{% if p.authors.all|length > 1 %} <span class="num">+{{ p.authors.all|length|add:"-1" }}</span>{% endif %}</span>{% endif %}{% endwith %}
+          {% if it.future %}<span class="vx-in"><i class="bi bi-hourglass-split"></i>{% trans "Upcoming" %}</span>{% endif %}
+        </div>
+        <div class="vx-prog" title="{{ it.progress }}%"><i style="width:{{ it.progress }}%"></i></div>
+        <div class="vx-tags"><span class="vx-tag vx-type"><i class="bi {{ type_icons|get_item:p.type }}"></i>{{ p.get_type_display }}</span><span class="vx-tag">#<bdi>{{ p.group.name }}</bdi></span>{% if s %}<span class="vx-tag">#<bdi>{{ s.journal.get_kind_display }}</bdi></span>{% endif %}</div>
+      </article>
+    </div>
+    {% endwith %}
+  {% endfor %}
+  {% endfor %}
+</div>
+{% else %}<div class="card"><div class="card-body"><div class="empty"><div class="ic"><i class="bi bi-distribute-vertical"></i></div><h6>{% trans "No milestones in the last 18 months." %}</h6></div></div></div>{% endif %}
 {% endif %}
 {% else %}{% include "tracker/views/_empty.html" %}{% endif %}

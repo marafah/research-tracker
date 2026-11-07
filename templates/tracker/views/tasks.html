@@ -1,0 +1,32 @@
+{% load i18n tracker_tags %}
+{% if papers %}
+<div class="tk-board">
+  {% for col in tcols %}
+  <section class="tk-col" style="--col:{{ col.color }}">
+    <h3 class="tk-head"><i class="bi {{ col.icon }}"></i><span>{{ col.label }}</span><b class="num">{{ col.tasks|length }}</b></h3>
+    <div class="tk-list">
+      {% for d in col.tasks %}{% with p=d.rec %}
+      <article class="tk-card {% if col.key == 'done' %}is-done{% endif %}" style="--k:{{ d.k_color }}">
+        <div class="tk-top">
+          <span class="tk-kind"><i class="bi {{ d.k_icon }}"></i>{{ d.get_kind_display }}</span>
+          <form method="post" action="{% url 'deadline_toggle' p.pk d.pk %}" class="tk-toggle">{% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+            <button type="submit" class="tk-state" title="{% if col.key == 'done' %}{% trans 'Reopen' %}{% else %}{% trans 'Mark as done' %}{% endif %}">
+              <i class="bi {% if col.key == 'done' %}bi-check-circle-fill{% else %}bi-circle{% endif %}"></i>{% if col.key == 'done' %}{% trans "Done" %}{% else %}{% trans "Open" %}{% endif %}</button>
+          </form>
+        </div>
+        <a class="tk-title" href="{{ p.get_absolute_url }}#deadlines">{{ d.title }}</a>
+        <div class="tk-meta">
+          <span class="tk-due {% if col.key == 'overdue' %}late{% endif %}"><i class="bi bi-flag-fill"></i><bdi class="num" dir="ltr">{{ d.due_at|date:"j/n/Y · H:i" }}</bdi></span>
+          {% if col.key != 'done' %}{% due_badge d %}{% else %}<span class="tk-donewhen"><i class="bi bi-check2-all"></i><bdi class="num" dir="ltr">{{ d.completed_at|date:"j/n/Y" }}</bdi></span>{% endif %}
+        </div>
+        <a class="tk-rec" href="{{ p.get_absolute_url }}" style="--t:{{ type_colors|get_item:p.type }}"><i class="bi {{ type_icons|get_item:p.type }}"></i><bdi dir="{{ p.title|text_dir }}">{{ p.title }}</bdi></a>
+        {% with who=d.assignees.all %}{% if who %}<div class="tk-who"><i class="bi bi-person-fill"></i>{% for u in who %}{{ u.display_name|default:u }}{% if not forloop.last %}، {% endif %}{% endfor %}</div>{% endif %}{% endwith %}
+        <div class="tk-tags"><span class="tk-tag">#<bdi>{{ p.get_type_display }}</bdi></span>{% if d.submission %}<span class="tk-tag">#<bdi>{{ d.submission.journal.name|truncatechars:28 }}</bdi></span>{% endif %}</div>
+      </article>
+      {% endwith %}{% empty %}<div class="tk-empty"><i class="bi bi-inbox"></i> {% trans "Nothing here" %}</div>{% endfor %}
+    </div>
+  </section>
+  {% endfor %}
+</div>
+{% else %}{% include "tracker/views/_empty.html" %}{% endif %}
