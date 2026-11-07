@@ -372,3 +372,23 @@ class PaperViewsTests(Base):
         self.assertEqual([p.pk for p in r.context["papers"]], [self.paper.pk])
         r = self.client.get(reverse("paper_list") + "?view=table&phase=prep")
         self.assertEqual([p.pk for p in r.context["papers"]], [self.other_paper.pk])
+
+
+class TasksViewTests(Base):
+    """v7.13: the tasks view places each deadline in the right column and can complete it."""
+
+    def test_task_columns(self):
+        now = timezone.now()
+        m.Deadline.objects.create(paper=self.paper, title="Late", due_at=now - timedelta(days=2))
+        m.Deadline.objects.create(paper=self.paper, title="Soon", due_at=now + timedelta(days=3))
+        m.Deadline.objects.create(paper=self.other_paper, title="Far", due_at=now + timedelta(days=90))
+        m.Deadline.objects.create(paper=self.paper, title="Done", due_at=now, completed_at=now)
+        self.client.force_login(self.owner)
+        r = self.client.get(reverse("paper_list") + "?view=tasks")
+        self.assertEqual(r.status_code, 200)
+        cols = {c["key"]: [t.title for t in c["tasks"]] for c in r.context["tcols"]}
+        self.assertEqual(cols["overdue"], ["Late"])
+        self.assertEqual(cols["week"], ["Soon"])
+        self.assertEqual(cols["later"], ["Far"])
+        self.assertEqual(cols["done"], ["Done"])
+        self.assertContains(r, "Late")

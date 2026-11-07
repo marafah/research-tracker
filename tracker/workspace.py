@@ -18,6 +18,7 @@ VIEWS = [  # key, label, icon, colour
     ("list", _l("Compact list"), "bi-list-ul", "#5b6bbf"),
     ("table", _l("Table"), "bi-table", "#0aa2c0"),
     ("board", _l("Board"), "bi-kanban-fill", "#198754"),
+    ("tasks", _l("Tasks"), "bi-check2-square", "#dc3545"),
     ("venues", _l("Grouped"), "bi-collection-fill", "#6610f2"),
     ("timeline", _l("Timeline"), "bi-distribute-vertical", "#6f42c1"),
     ("gantt", _l("Gantt chart"), "bi-bar-chart-steps", "#0d9488"),
@@ -459,6 +460,11 @@ def vertical_timeline(papers, months_back=18):
             if d.completed_at is None:
                 add(d.due_at, "overdue" if d.due_at < now else "deadline", d.title, p, d.get_kind_display(),
                     p.get_absolute_url() + "#deadlines", future=d.due_at >= now)
+    # progress along the publication path, for the bar on each card
+    path = [str(x) for x in m.Paper.PIPELINE]
+    for it in items:
+        st = it["paper"].status
+        it["progress"] = round(100 * (path.index(st) + 1) / len(path)) if st in path else (100 if st == "withdrawn" else 0)
     items.sort(key=lambda x: x["when"], reverse=True)
     months = OrderedDict()
     for it in items:
@@ -682,3 +688,42 @@ def group_records(papers, by):
         n = len(g["papers"])
         g["bar"] = [{"label": labels[k], "color": colors[k], "count": v, "pct": round(100 * v / n)} for k, v in counts.items() if v]
     return out
+
+
+# ---------------------------------------------------------------- tasks view (deadlines as a task board)
+TASK_KIND_STYLE = {  # deadline kind -> (icon, colour)
+    "revision": ("bi-arrow-repeat", "#fd7e14"), "submission": ("bi-send-fill", "#0d6efd"),
+    "proposal": ("bi-lightbulb-fill", "#e0a800"), "proofs": ("bi-file-earmark-check-fill", "#198754"),
+    "camera_ready": ("bi-camera-fill", "#6f42c1"), "author_data": ("bi-person-vcard-fill", "#0aa2c0"),
+    "internal": ("bi-flag-fill", "#5b6bbf"), "payment": ("bi-credit-card-fill", "#d63384"), "other": ("bi-check2-square", "#0d9488"),
+}
+TASK_COLUMNS = [  # key, label, icon, colour
+    ("overdue", _l("Overdue"), "bi-exclamation-triangle-fill", "#dc3545"),
+    ("week", _l("Due within 7 days"), "bi-hourglass-split", "#fd7e14"),
+    ("month", _l("Due within 30 days"), "bi-calendar-week-fill", "#0d6efd"),
+    ("later", _l("Later"), "bi-calendar3", "#6f42c1"),
+    ("done", _l("Done"), "bi-check-circle-fill", "#198754"),
+]
+
+
+def task_columns(papers):
+    """Every deadline of the filtered records, placed in a column by how soon it is due (or done)."""
+    cols = OrderedDict((k, {"key": k, "label": lab, "icon": ic, "color": c, "tasks": []}) for k, lab, ic, c in TASK_COLUMNS)
+    today = timezone.localdate()
+    for p in papers:
+        for d in p.deadlines.all():
+            if d.completed_at:
+                key = "done"
+            else:
+                days = (timezone.localtime(d.due_at).date() - today).days
+                key = "overdue" if days < 0 else "week" if days <= 7 else "month" if days <= 30 else "later"
+                d.days_to = days
+            icon, color = TASK_KIND_STYLE.get(d.kind, TASK_KIND_STYLE["other"])
+            d.k_icon, d.k_color, d.rec = icon, color, p
+            cols[key]["tasks"].append(d)
+    for key, col in cols.items():
+        if key == "done":
+            col["tasks"].sort(key=lambda d: d.completed_at, reverse=True)
+        else:
+            col["tasks"].sort(key=lambda d: d.due_at)
+    return list(cols.values())

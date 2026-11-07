@@ -438,6 +438,8 @@ def papers_workspace(request, force_view=None):
     elif view == "matrix":
         ctx["mx"] = ws.matrix(papers)
         ctx["mx_url"] = reverse("paper_list") + "?" + _qs(request, view="table", type=None, phase=None)
+    elif view == "tasks":
+        ctx["tcols"] = ws.task_columns(papers)
     elif view == "board":
         ctx["columns"] = ws.board_columns(papers, ctx["show_all"])
         ctx["toggle_all_url"] = "?" + _qs(request, all=None if ctx["show_all"] else "1")
