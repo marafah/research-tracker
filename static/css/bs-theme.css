@@ -1052,3 +1052,14 @@ html[dir="ltr"] .rc-main .t, html[dir="ltr"] .rc-card .t, html[dir="ltr"] .rc-ca
 .rc-row { align-items: flex-start; }
 .rc-row .rc-ic { margin-top: .1rem; }
 .rc-side { padding-top: .15rem; }
+
+/* ===== v7.9.6 — Recently updated: only the TITLE follows its own language =====
+   The row keeps the page direction (icon, venue line, status, date). The title <bdi> carries dir from text_dir,
+   and text-align:start makes an English title start at the left and an Arabic one at the right. */
+.rc-tab .rc-main .t[dir], .rc-tab .rc-card .t[dir] { text-align: start; }
+/* An English title and its details read as one block: the venue line under it starts on the same side,
+   so the eye goes down, not across the row. The row frame (icon, status, date) keeps the page direction. */
+.rc-tab .rc-main:has(> .t[dir="ltr"]) .meta { direction: ltr; justify-content: flex-start; }
+.rc-tab .rc-main:has(> .t[dir="ltr"]) .meta .rc-type { direction: rtl; }
+.rc-tab .rc-main .meta { margin-top: .3rem; }
+.rc-tab .rc-card:has(> .t[dir="ltr"]) .v { direction: ltr; text-align: left; }
