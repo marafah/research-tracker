@@ -99,8 +99,8 @@
     <div data-pane="chart" class="ov-body ov-scrollless">
       {% for v in ov.venues|slice:":3" %}
       <a class="ov-lolly" href="{% url 'journal_detail' v.pk %}" style="--c:var(--cat-{{ v.slot }})" data-tip="{{ v.name }}: {{ v.count }}">
-        <span class="lab" dir="auto" title="{{ v.name }}">{{ v.name }}</span>
-        <span class="stick"><span style="width:{{ v.bar }}%"><b class="num">{{ v.count }}</b></span></span>
+        <span class="lab" dir="{{ v.name|text_dir }}" title="{{ v.name }}">{{ v.name }}</span>
+        <span class="stick"><span style="width:{{ v.bar }}%"></span></span><b class="cnt num">{{ v.count }}</b>
       </a>
       {% empty %}<p class="ov-none">{% trans "No submissions yet." %}</p>{% endfor %}
     </div>
