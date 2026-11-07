@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Research Tracker VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-07 16:31+0300\n"
+"POT-Creation-Date: 2026-11-07 16:59+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ar\n"
@@ -55,16 +55,8 @@ msgid "%(n)s days"
 msgstr "%(n)s يوم"
 
 #, python-format
-msgid "%(n)s open deadlines in the next 6 months"
-msgstr "%(n)s موعداً مفتوحاً خلال الأشهر الستة القادمة"
-
-#, python-format
 msgid "%(n)s published"
 msgstr "%(n)s منشور"
-
-#, python-format
-msgid "%(n)s submissions in the last 12 months"
-msgstr "%(n)s إرسالاً خلال آخر 12 شهراً"
 
 #, python-format
 msgid "%(n)s updated their author details"
@@ -208,7 +200,7 @@ msgid "Back to log in"
 msgstr "العودة لتسجيل الدخول"
 
 msgid "Board"
-msgstr "اللوحة"
+msgstr "لوحة المراحل"
 
 msgid "Book / Book series"
 msgstr "كتاب / سلسلة كتب"
@@ -216,8 +208,8 @@ msgstr "كتاب / سلسلة كتب"
 msgid "Book chapter"
 msgstr "فصل في كتاب"
 
-msgid "By research group"
-msgstr "حسب المجموعة البحثية"
+msgid "Busiest month"
+msgstr "الشهر الأكثر ضغطاً"
 
 msgid "By venue"
 msgstr "حسب المجلة"
@@ -263,9 +255,6 @@ msgstr "إغلاق"
 
 msgid "Co-author confirmation"
 msgstr "تأكيد بيانات المؤلف المشارك"
-
-msgid "Co-authors need these for submissions."
-msgstr "يحتاجها المؤلفون المشاركون عند الإرسال."
 
 msgid "Code / data"
 msgstr "الكود / البيانات"
@@ -348,6 +337,9 @@ msgstr "المواعيد النهائية"
 msgid "Deadlines & reminders"
 msgstr "المواعيد والتذكيرات"
 
+msgid "Deadlines & tasks"
+msgstr "المواعيد والمهام"
+
 msgid "Deadlines this week"
 msgstr "مواعيد هذا الأسبوع"
 
@@ -378,6 +370,9 @@ msgstr "التفاصيل"
 
 msgid "Done"
 msgstr "منجز"
+
+msgid "Donut"
+msgstr "دائري"
 
 msgid "Download"
 msgstr "تنزيل"
@@ -445,9 +440,6 @@ msgstr "كل التواريخ المهمة في جميع مجموعاتك"
 
 msgid "Every paper, every deadline, every co-author — in one place."
 msgstr "كل بحث، وكل موعد، وكل مؤلف مشارك — في مكان واحد."
-
-msgid "Every status, with its count and share"
-msgstr "كل حالة مع عددها ونسبتها"
 
 msgid "Every work your groups are writing, submitting and publishing"
 msgstr "كل الأعمال التي تكتبها مجموعاتك وترسلها وتنشرها"
@@ -519,6 +511,9 @@ msgstr "المجموعة"
 msgid "Group by"
 msgstr "تجميع حسب"
 
+msgid "Heat map"
+msgstr "خريطة حرارية"
+
 msgid "Hello,"
 msgstr "مرحباً،"
 
@@ -533,9 +528,6 @@ msgstr "عالية"
 
 msgid "History"
 msgstr "السجل"
-
-msgid "How each type of work is progressing"
-msgstr "كيف يتقدّم كل نوع من الأعمال"
 
 msgid "Idea"
 msgstr "فكرة"
@@ -594,9 +586,6 @@ msgstr "مجلة"
 msgid "Journal article"
 msgstr "بحث في مجلة"
 
-msgid "Journal articles, chapters, conference papers…"
-msgstr "أبحاث مجلات، فصول كتب، أوراق مؤتمرات…"
-
 msgid "Journal not in the list? Add it"
 msgstr "المجلة غير موجودة؟ أضفها"
 
@@ -606,12 +595,11 @@ msgstr "المجلات"
 msgid "Journals & venues"
 msgstr "المجلات والمؤتمرات"
 
-#, python-format
-msgid "Journals and books receiving your work · %(n)s venues"
-msgstr "المجلات والكتب التي تستقبل أعمالك · %(n)s جهة"
-
 msgid "Keep it secret. If it leaks, regenerate it."
 msgstr "احتفظ به سرياً، وإذا تسرّب فأنشئ رابطاً جديداً."
+
+msgid "Largest share"
+msgstr "النسبة الأكبر"
 
 msgid "Later"
 msgstr "لاحقاً"
@@ -639,6 +627,9 @@ msgstr "منخفضة"
 
 msgid "Main navigation"
 msgstr "التنقل الرئيسي"
+
+msgid "Main type"
+msgstr "النوع الغالب"
 
 msgid "Major revision"
 msgstr "تعديلات جوهرية"
@@ -684,6 +675,12 @@ msgstr "بيانات مؤلفين ناقصة"
 
 msgid "More"
 msgstr "المزيد"
+
+msgid "Most common status"
+msgstr "الحالة الأكثر"
+
+msgid "Most papers"
+msgstr "أكثر تركيز"
 
 msgid "Move to"
 msgstr "نقل إلى"
@@ -918,17 +915,17 @@ msgstr "تم تحديث كلمة المرور"
 msgid "Paste the reviewer's comments"
 msgstr "الصق ملاحظات المحكّم"
 
+msgid "Peak month"
+msgstr "الشهر الأعلى"
+
 msgid "Pending invitations"
 msgstr "دعوات معلّقة"
 
-msgid "Phase"
-msgstr "المرحلة"
-
-msgid "Phases"
-msgstr "المراحل"
-
 msgid "Pick a platform member, or leave empty and type the details"
 msgstr "اختر عضواً من المنصة، أو اتركه فارغاً واكتب البيانات"
+
+msgid "Pie"
+msgstr "قطاعي"
 
 msgid "Please complete your author details"
 msgstr "يرجى إكمال بياناتك كمؤلف"
@@ -1159,12 +1156,6 @@ msgstr "إرسال رابط إعادة التعيين"
 msgid "Separate comments with an empty line, or number them (1. 2. 3. …)"
 msgstr "افصل الملاحظات بسطر فارغ أو رقّمها (1. 2. 3. …)"
 
-msgid "Share"
-msgstr "النسبة"
-
-msgid "Share of works by publisher"
-msgstr "توزيع الأعمال حسب الناشر"
-
 msgid "Shared catalogue with your own statistics per venue"
 msgstr "دليل مشترك مع إحصاءاتك الخاصة لكل مجلة"
 
@@ -1298,6 +1289,12 @@ msgstr "تبديل الوضع الداكن"
 msgid "Tomorrow"
 msgstr "غداً"
 
+msgid "Top publisher"
+msgstr "أبرز ناشر"
+
+msgid "Top venue"
+msgstr "أبرز جهة"
+
 msgid "Top venues"
 msgstr "أبرز جهات النشر"
 
@@ -1306,6 +1303,9 @@ msgstr "تابع الإرسالات من الفكرة حتى النشر، ولا
 
 msgid "Transfer offered"
 msgstr "عرض نقل لمجلة أخرى"
+
+msgid "Treemap"
+msgstr "خريطة شجرية"
 
 msgid "Try clearing the filters, or add a new paper."
 msgstr "جرّب مسح التصفية أو أضف بحثاً جديداً."
@@ -1377,17 +1377,11 @@ msgstr "أهلاً بك! ابدأ بإنشاء مجموعتك البحثية ا�
 msgid "When it is done, mark the deadline as completed to stop the reminders."
 msgstr "عند الإنجاز حدّد الموعد كمنجز لإيقاف التذكيرات."
 
-msgid "Where your work stands in the publication cycle"
-msgstr "موقع أعمالك في دورة النشر"
-
 msgid "With editor"
 msgstr "لدى المحرر"
 
 msgid "Withdrawn"
 msgstr "مسحوب"
-
-msgid "Work in progress"
-msgstr "العمل الجاري"
 
 msgid "Work started"
 msgstr "بدء العمل"
@@ -1423,9 +1417,6 @@ msgstr "تم حفظ بياناتك وإشعار فريق البحث."
 
 msgid "Your password was changed."
 msgstr "تم تغيير كلمة المرور."
-
-msgid "Your profile is missing:"
-msgstr "ينقص ملفك الشخصي:"
 
 msgid "Your research data is private to your groups"
 msgstr "بياناتك البحثية خاصة بمجموعاتك"

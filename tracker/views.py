@@ -135,7 +135,7 @@ def _research_overview(papers, open_dl, now):
     types = sorted(({"key": k, "label": type_labels.get(k, k), "count": n, "pct": _pct(n, total),
                      "bar": _pct(n, tmax), "icon": ws.TYPE_ICONS.get(k, "bi-file-earmark"),
                      "segments": [{"key": key, "label": label, "count": matrix[k].get(key, 0),
-                                   "pct": round(100 * matrix[k].get(key, 0) / n, 1)}
+                                   "pct": round(100 * matrix[k].get(key, 0) / n)}
                                   for key, label, _s in PHASES if matrix[k].get(key)]}
                     for k, n in by_type.items()), key=lambda t: -t["count"])
 
@@ -188,7 +188,70 @@ def _research_overview(papers, open_dl, now):
     gmax = max(by_group.values(), default=1)
     groups = [{"name": k, "count": n, "bar": _pct(n, gmax)} for k, n in sorted(by_group.items(), key=lambda kv: -kv[1])]
 
-    return {"total": total, "phases": phases, "statuses": statuses, "types": types,
+    # ---- extra shapes for the varied charts ----
+    from .templatetags.tracker_tags import STATUS_HEX
+    smax_st = max((x["count"] for x in statuses), default=1)
+    for x in statuses:
+        x["color"] = STATUS_HEX.get(x["code"], "#6c757d")
+        x["bar"] = _pct(x["count"], smax_st)
+    # type pie (circle r=40, stroke 80 -> full pie), slots in fixed categorical order
+    pcirc, poff = 251.33, 0.0
+    for i, t in enumerate(types):
+        ln = pcirc * t["count"] / total if total else 0
+        t["slot"] = i % 8 + 1
+        t["dash"], t["offset"] = f"{ln:.2f} {pcirc:.2f}", f"{-poff:.2f}"
+        poff += ln
+    # type x phase heat-map
+    cmax = max((matrix[k].get(key, 0) for k in matrix for key, _l2, _s in PHASES), default=0) or 1
+    heat = [{"label": t["label"], "icon": t["icon"], "key": t["key"],
+             "cells": [{"count": matrix[t["key"]].get(key, 0), "phase": label,
+                        "a": round(12 + 78 * matrix[t["key"]].get(key, 0) / cmax) if matrix[t["key"]].get(key, 0) else 0}
+                       for key, label, _s in PHASES]} for t in types]
+    # submissions line/area chart in a 300x110 box
+    pts = []
+    for i, b in enumerate(submissions):
+        x = round(8 + i * 284 / 11, 1)
+        y = round(100 - (b["count"] / smax * 86 if smax else 0), 1)
+        b["x"], b["y"] = f"{x}", f"{y}"
+        pts.append(f"{x},{y}")
+    line = " ".join(pts)
+    area = f"M8,100 L{' L'.join(pts)} L292,100 Z" if pts else ""
+    for i, b in enumerate(deadlines):
+        b["slot"] = i % 8 + 1
+    for i, v in enumerate(venues):
+        v["slot"] = i % 8 + 1
+    # publisher treemap: biggest block on one side, the rest stacked beside it
+    tm = None
+    if publishers:
+        tot = sum(x["count"] for x in publishers) or 1
+        first, rest = publishers[0], publishers[1:]
+        rtot = sum(x["count"] for x in rest) or 1
+        tm = {"first": {**first, "w": f'{round(100 * first["count"] / tot, 1) if rest else 100}', "slot": 1},
+              "rest": [{**x, "h": f'{round(100 * x["count"] / rtot, 1)}', "slot": i + 2} for i, x in enumerate(rest)]}
+
+    # one-line takeaways shown under each chart title
+    def _top(items, key="count"):
+        return max(items, key=lambda x: x[key]) if items else None
+    tp, ts, tt = _top(phases), _top(statuses), _top(types)
+    tsub = _top([b for b in submissions if b["count"]])
+    tdl = _top([b for b in deadlines if b["count"]])
+    hot = None
+    for r in heat:
+        for c in r["cells"]:
+            if c["count"] and (hot is None or c["count"] > hot[2]):
+                hot = (r["label"], c["phase"], c["count"])
+    insights = {
+        "phase": f'{tp["pct"]}% · {tp["label"]}' if tp and tp["count"] else "",
+        "status": f'{ts["label"]} · {ts["count"]}' if ts else "",
+        "type": f'{tt["label"]} · {tt["pct"]}%' if tt else "",
+        "heat": f"{hot[0]} · {hot[1]}" if hot else "",
+        "sub": f'{tsub["date"]:%m/%Y} · {tsub["count"]}' if tsub else "",
+        "dl": f'{tdl["date"]:%m/%Y} · {tdl["count"]}' if tdl else "",
+        "venue": venues[0]["name"] if venues else "",
+        "pub": f'{publishers[0]["name"]} · {publishers[0]["pct"]}%' if publishers else "",
+    }
+
+    return {"total": total, "phases": phases, "heat": heat, "insights": insights, "line": line, "area": area, "treemap": tm, "statuses": statuses, "types": types,
             "submissions": submissions, "sub_total": sum(per_month.values()), "sub_max": smax,
             "deadlines": deadlines, "dl_total": sum(x["count"] for x in deadlines), "dl_max": dmax, "overdue": overdue_n,
             "venues": venues, "venue_total": len(vcount), "publishers": publishers, "groups": groups,

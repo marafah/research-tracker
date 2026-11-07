@@ -20,7 +20,7 @@
   <div class="col-6 col-lg-3"><div class="card kpi"><span class="ic tone-primary"><i class="bi bi-send"></i></span><div><div class="label">{% trans "Submissions" %}</div><div class="value">{{ stats.total }}</div></div></div></div>
   <div class="col-6 col-lg-3"><div class="card kpi"><span class="ic tone-success"><i class="bi bi-patch-check"></i></span><div><div class="label">{% trans "Accepted" %}</div><div class="value">{{ stats.accepted }}</div></div></div></div>
   <div class="col-6 col-lg-3"><div class="card kpi"><span class="ic tone-danger"><i class="bi bi-x-octagon"></i></span><div><div class="label">{% trans "Rejected" %}</div><div class="value">{{ stats.rejected }}</div></div></div></div>
-  <div class="col-6 col-lg-3"><div class="card kpi"><span class="ic tone-warning"><i class="bi bi-stopwatch"></i></span><div><div class="label">{% trans "Avg. first decision" %}</div><div class="value">{{ stats.avg_first_decision_days|default_if_none:"—" }}<small class="fs-6 text-muted-rt"> {% trans "days" %}</small></div></div></div></div>
+  <div class="col-6 col-lg-3"><div class="card kpi"><span class="ic tone-warning"><i class="bi bi-stopwatch"></i></span><div><div class="label">{% trans "Avg. first decision" %}</div><div class="value">{% if stats.avg_first_decision_days is None %}—{% else %}{{ stats.avg_first_decision_days }}<small class="fs-6 text-muted-rt"> {% trans "days" %}</small>{% endif %}</div></div></div></div>
 </div>
 <div class="row g-4">
   <div class="col-lg-4"><div class="card"><div class="card-header"><h2 class="card-title-rt"><span class="ic tone-slate"><i class="bi bi-info-circle"></i></span>{% trans "Details" %}</h2></div><div class="card-body">

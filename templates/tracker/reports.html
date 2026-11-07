@@ -9,7 +9,7 @@
 <div class="row g-3 mb-4">
   <div class="col-6 col-xl-3"><div class="stat" style="--c:#0d6efd"><div class="s-top"><span class="s-ic"><i class="bi bi-send-fill"></i></span></div><div class="s-value">{{ total_submissions }}</div><div class="s-label">{% trans "Submissions" %}</div></div></div>
   <div class="col-6 col-xl-3"><div class="stat" style="--c:#198754"><div class="s-top"><span class="s-ic"><i class="bi bi-graph-up-arrow"></i></span></div><div class="s-value">{{ accept_rate }}%</div><div class="s-label">{% trans "Acceptance rate" %}</div><div class="s-bar"><span style="width:{{ accept_rate }}%"></span></div></div></div>
-  <div class="col-6 col-xl-3"><div class="stat" style="--c:#fd7e14"><div class="s-top"><span class="s-ic"><i class="bi bi-stopwatch-fill"></i></span></div><div class="s-value">{{ avg_decision_days|default_if_none:"—" }} <small class="fs-6">{% trans "days" %}</small></div><div class="s-label">{% trans "Avg. first decision" %}</div></div></div>
+  <div class="col-6 col-xl-3"><div class="stat" style="--c:#fd7e14"><div class="s-top"><span class="s-ic"><i class="bi bi-stopwatch-fill"></i></span></div><div class="s-value">{% if avg_decision_days is None %}—<small class="fs-6">{% else %}{{ avg_decision_days }} <small class="fs-6">{% trans "days" %}{% endif %}</small></div><div class="s-label">{% trans "Avg. first decision" %}</div></div></div>
   <div class="col-6 col-xl-3"><div class="stat" style="--c:#6f42c1"><div class="s-top"><span class="s-ic"><i class="bi bi-award-fill"></i></span></div><div class="s-value">{{ published|length }}</div><div class="s-label">{% trans "Accepted / published" %}</div></div></div>
 </div>
 <div class="row g-4 mb-4">
