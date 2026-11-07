@@ -180,3 +180,16 @@ def activity_verb(verb):
     if m:
         return (_("completed %(x)s") if m.group(1) == "completed" else _("reopened %(x)s")) % {"x": m.group(2)}
     return v
+
+
+@register.filter
+def text_dir(value):
+    """"rtl" or "ltr" from the first letter that has a direction, for a block that mixes a title with its details.
+    (dir="auto" skips <bdi> children, so a row whose first child is the title cannot take the title's direction by itself.)"""
+    for ch in str(value or ""):
+        o = ord(ch)
+        if 0x0590 <= o <= 0x08FF or 0xFB1D <= o <= 0xFDFF or 0xFE70 <= o <= 0xFEFF:
+            return "rtl"
+        if ch.isalpha():
+            return "ltr"
+    return "auto"
