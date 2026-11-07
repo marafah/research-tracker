@@ -5,7 +5,7 @@
   <tr><td style="background:#16324f;padding:18px 24px;color:#ffffff;font-size:18px;font-weight:bold">{{ SITE_NAME }}</td></tr>
   {% block banner %}{% endblock %}
   <tr><td style="padding:24px;font-size:15px;line-height:1.6;text-align:{% if RTL %}right{% else %}left{% endif %}">{% block body %}{% endblock %}</td></tr>
-  <tr><td style="padding:14px 24px;background:#f8fafc;color:#6b7280;font-size:12px;text-align:center">
+  <tr><td style="padding:14px 24px;background:#f8fafc;color:#4a6286;font-size:12px;text-align:center">
     {% trans "You receive this because you are part of a research group on" %} {{ SITE_NAME }}.
     <a href="{{ SITE_URL }}{% url 'profile' %}" style="color:#1f4e79">{% trans "Email preferences" %}</a></td></tr>
 </table></td></tr></table></body></html>

@@ -37,12 +37,12 @@ TYPE_ICONS = {
 }
 TYPE_COLORS = {
     "journal": "#0d6efd", "conference": "#6f42c1", "chapter": "#0aa2c0", "review": "#0aa2c0",
-    "proposal": "#e0a800", "thesis": "#d63384", "other": "#6c757d",
+    "proposal": "#e0a800", "thesis": "#d63384", "other": "#5b6bbf",
 }
 
 # Colour of the timeline segment that *starts* with each event.
 PHASE = {
-    "prep": ("#94a3b8", _l("Preparation")),
+    "prep": ("#7c8fd6", _l("Preparation")),
     m.Submission.Decision.SUBMITTED: ("#0d6efd", _l("Submitted")),
     m.Submission.Decision.WITH_EDITOR: ("#0d6efd", _l("With editor")),
     m.Submission.Decision.UNDER_REVIEW: ("#6f42c1", _l("Under review")),
@@ -53,7 +53,7 @@ PHASE = {
     m.Submission.Decision.REJECTED: ("#dc3545", _l("Rejected")),
     m.Submission.Decision.DESK_REJECTED: ("#dc3545", _l("Desk rejected")),
     m.Submission.Decision.TRANSFER: ("#be123c", _l("Transfer offered")),
-    m.Submission.Decision.WITHDRAWN: ("#475569", _l("Withdrawn")),
+    m.Submission.Decision.WITHDRAWN: ("#8a5a83", _l("Withdrawn")),
     "published": ("#198754", _l("Published")),
 }
 
@@ -192,7 +192,7 @@ def timeline(papers, months_back=12, months_ahead=3):
                 stop = when + timedelta(days=4)  # short red tick, not a bar to today
             if kind == "published":
                 stop = when + timedelta(days=6)
-            color, label = PHASE.get(kind, ("#94a3b8", kind))
+            color, label = PHASE.get(kind, ("#7c8fd6", kind))
             left, right = pos(when), pos(stop)
             if right <= 0 or left >= 100:
                 continue
@@ -274,13 +274,13 @@ def board_columns(papers, show_all=False):
 
 # ---------------------------------------------------------------- vertical timeline
 EVENT_STYLE = {  # kind -> (icon, colour)
-    "start": ("bi-lightbulb-fill", "#6c757d"),
+    "start": ("bi-lightbulb-fill", "#5b6bbf"),
     "submitted": ("bi-send-fill", "#0d6efd"), "with_editor": ("bi-person-workspace", "#0d6efd"),
     "under_review": ("bi-hourglass-split", "#6f42c1"), "major": ("bi-arrow-repeat", "#fd7e14"),
     "minor": ("bi-wrench-adjustable", "#e0a800"), "revision_submitted": ("bi-send-check-fill", "#6610f2"),
     "accepted": ("bi-patch-check-fill", "#198754"), "rejected": ("bi-x-octagon-fill", "#dc3545"),
     "desk_rejected": ("bi-x-octagon-fill", "#dc3545"), "transfer": ("bi-arrow-left-right", "#be123c"),
-    "withdrawn": ("bi-box-arrow-left", "#475569"), "published": ("bi-award-fill", "#198754"),
+    "withdrawn": ("bi-box-arrow-left", "#8a5a83"), "published": ("bi-award-fill", "#198754"),
     "deadline": ("bi-alarm-fill", "#d63384"), "overdue": ("bi-exclamation-triangle-fill", "#dc3545"),
 }
 
@@ -294,7 +294,7 @@ def vertical_timeline(papers, months_back=18):
     def add(when, kind, title, paper, sub="", url=None, future=False):
         if when is None or when < since:
             return
-        icon, color = EVENT_STYLE.get(kind, ("bi-circle-fill", "#6c757d"))
+        icon, color = EVENT_STYLE.get(kind, ("bi-circle-fill", "#5b6bbf"))
         items.append({"when": when, "kind": kind, "icon": icon, "color": color, "title": title,
                       "paper": paper, "sub": sub, "url": url or paper.get_absolute_url(), "future": future})
 

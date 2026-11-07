@@ -46,7 +46,7 @@
   </div>
 
   <!-- 4. Type x phase: heat-map -->
-  <div class="card ov-card" data-views="ov4">
+  <div class="card ov-card wide" data-views="ov4">
     <div class="ov-ch"><div class="min-w-0"><h3>{% trans "Type × phase" %}</h3>{% if ov.insights.heat %}<div class="ov-ins"><span>{% trans "Most papers" %}:</span> <bdi title="{{ ov.insights.heat }}">{{ ov.insights.heat }}</bdi></div>{% endif %}</div><div class="vsw sm" role="group"><button type="button" data-view="chart" class="on" title="{% trans 'Chart' %}"><i class="bi bi-pie-chart"></i></button><button type="button" data-view="numbers" title="{% trans 'Table' %}"><i class="bi bi-table"></i></button></div></div>
     <div data-pane="chart" class="ov-body">
       <table class="ov-heat">
@@ -63,7 +63,7 @@
   </div>
 
   <!-- 5. Submissions per month: area/line -->
-  <div class="card ov-card" data-views="ov5">
+  <div class="card ov-card wide" data-views="ov5">
     <div class="ov-ch"><div class="min-w-0"><h3>{% trans "Submissions per month" %}</h3>{% if ov.insights.sub %}<div class="ov-ins"><span>{% trans "Peak month" %}:</span> <bdi title="{{ ov.insights.sub }}">{{ ov.insights.sub }}</bdi></div>{% endif %}</div><span class="ov-tag num">{{ ov.sub_total }}</span><div class="vsw sm" role="group"><button type="button" data-view="chart" class="on" title="{% trans 'Chart' %}"><i class="bi bi-pie-chart"></i></button><button type="button" data-view="numbers" title="{% trans 'Table' %}"><i class="bi bi-table"></i></button></div></div>
     <div data-pane="chart" class="ov-body ov-col-body">
       <div class="ov-plot" dir="ltr">
@@ -75,11 +75,11 @@
       </div>
       <div class="ov-xax" dir="ltr">{% for b in ov.submissions %}<span class="num">{% if forloop.counter0|divisibleby:2 %}{{ b.date|date:"m/y" }}{% endif %}</span>{% endfor %}</div>
     </div>
-  <div data-pane="numbers" class="ov-body ov-tw two" hidden><table class="ov-tbl"><thead><tr><th>{% trans "Month" %}</th><th class="n">{% trans "Submissions" %}</th></tr></thead><tbody>{% for x in ov.submissions|slice:":6" %}<tr class="{% if not x.count %}zero{% endif %}" style="--c:var(--cat-1)"><td class="l m"><span class="sw"></span><span class="num">{{ x.date|date:"m/Y" }}</span></td><td class="n num">{{ x.count }}</td></tr>{% endfor %}</tbody></table><table class="ov-tbl"><thead><tr><th>{% trans "Month" %}</th><th class="n">{% trans "Submissions" %}</th></tr></thead><tbody>{% for x in ov.submissions|slice:"6:" %}<tr class="{% if not x.count %}zero{% endif %}" style="--c:var(--cat-1)"><td class="l m"><span class="sw"></span><span class="num">{{ x.date|date:"m/Y" }}</span></td><td class="n num">{{ x.count }}</td></tr>{% endfor %}</tbody></table></div>
+  <div data-pane="numbers" class="ov-body ov-tw two" hidden><table class="ov-tbl"><thead><tr><th>{% trans "Month" %}</th><th class="n">{% trans "Submissions" %}</th><th class="p"></th></tr></thead><tbody>{% for x in ov.submissions|slice:":6" %}<tr class="{% if not x.count %}zero{% endif %}" style="--c:var(--cat-1)"><td class="l m"><span class="sw"></span><span class="num">{{ x.date|date:"m/Y" }}</span></td><td class="n num">{{ x.count }}</td><td class="p"><span class="pc"><span class="pb"><i style="width:{{ x.h }}%"></i></span></span></td></tr>{% endfor %}</tbody></table><table class="ov-tbl"><thead><tr><th>{% trans "Month" %}</th><th class="n">{% trans "Submissions" %}</th><th class="p"></th></tr></thead><tbody>{% for x in ov.submissions|slice:"6:" %}<tr class="{% if not x.count %}zero{% endif %}" style="--c:var(--cat-1)"><td class="l m"><span class="sw"></span><span class="num">{{ x.date|date:"m/Y" }}</span></td><td class="n num">{{ x.count }}</td><td class="p"><span class="pc"><span class="pb"><i style="width:{{ x.h }}%"></i></span></span></td></tr>{% endfor %}</tbody></table></div>
   </div>
 
   <!-- 6. Deadline load: coloured columns -->
-  <div class="card ov-card" data-views="ov6">
+  <div class="card ov-card wide" data-views="ov6">
     <div class="ov-ch"><div class="min-w-0"><h3>{% trans "Deadline load" %}</h3>{% if ov.insights.dl %}<div class="ov-ins"><span>{% trans "Busiest month" %}:</span> <bdi title="{{ ov.insights.dl }}">{{ ov.insights.dl }}</bdi></div>{% endif %}</div><a class="ov-link" href="{% url 'deadline_list' %}?view=calendar">{% trans "Calendar" %}</a><div class="vsw sm" role="group"><button type="button" data-view="chart" class="on" title="{% trans 'Chart' %}"><i class="bi bi-pie-chart"></i></button><button type="button" data-view="numbers" title="{% trans 'Table' %}"><i class="bi bi-table"></i></button></div></div>
     <div data-pane="chart" class="ov-body ov-col-body">
       <div class="ov-cols" dir="ltr">
@@ -90,11 +90,11 @@
       </div>
       <div class="ov-xax even" dir="ltr">{% for b in ov.deadlines %}<span class="num">{{ b.date|date:"m/y" }}</span>{% endfor %}</div>
     </div>
-  <div data-pane="numbers" class="ov-body ov-tw" hidden><table class="ov-tbl"><thead><tr><th>{% trans "Month" %}</th><th class="n">{% trans "Deadlines" %}</th></tr></thead><tbody>{% for x in ov.deadlines %}<tr class="{% if not x.count %}zero{% endif %}" style="--c:var(--cat-{{ x.slot }})"><td class="l m"><span class="sw"></span><span class="num">{{ x.date|date:"m/Y" }}</span></td><td class="n num">{{ x.count }}</td></tr>{% endfor %}</tbody></table></div>
+  <div data-pane="numbers" class="ov-body ov-tw" hidden><table class="ov-tbl"><thead><tr><th>{% trans "Month" %}</th><th class="n">{% trans "Deadlines" %}</th><th class="p"></th></tr></thead><tbody>{% for x in ov.deadlines %}<tr class="{% if not x.count %}zero{% endif %}" style="--c:var(--cat-{{ x.slot }})"><td class="l m"><span class="sw"></span><span class="num">{{ x.date|date:"m/Y" }}</span></td><td class="n num">{{ x.count }}</td><td class="p"><span class="pc"><span class="pb"><i style="width:{{ x.h }}%"></i></span></span></td></tr>{% endfor %}</tbody></table></div>
   </div>
 
   <!-- 7. Venues: lollipops -->
-  <div class="card ov-card" data-views="ov7">
+  <div class="card ov-card wide" data-views="ov7">
     <div class="ov-ch"><div class="min-w-0"><h3>{% trans "Top venues" %}</h3>{% if ov.insights.venue %}<div class="ov-ins"><span>{% trans "Top venue" %}:</span> <bdi title="{{ ov.insights.venue }}">{{ ov.insights.venue }}</bdi></div>{% endif %}</div><a class="ov-link" href="{% url 'journal_list' %}">{% trans "Journals" %}</a><div class="vsw sm" role="group"><button type="button" data-view="chart" class="on" title="{% trans 'Chart' %}"><i class="bi bi-pie-chart"></i></button><button type="button" data-view="numbers" title="{% trans 'Table' %}"><i class="bi bi-table"></i></button></div></div>
     <div data-pane="chart" class="ov-body ov-scrollless">
       {% for v in ov.venues|slice:":3" %}

@@ -27,7 +27,7 @@
 <div class="row g-4">
   {% for b in buckets %}
   <div class="col-lg-6">
-    <div class="card h-100 card-accent" style="--c:{% if b.tone == 'danger' %}#dc3545{% elif b.tone == 'warning' %}#e0a800{% elif b.tone == 'success' %}#198754{% elif b.tone == 'slate' %}#6c757d{% else %}#0d6efd{% endif %}">
+    <div class="card h-100 card-accent" style="--c:{% if b.tone == 'danger' %}#dc3545{% elif b.tone == 'warning' %}#e0a800{% elif b.tone == 'success' %}#198754{% elif b.tone == 'slate' %}#5b6bbf{% else %}#0d6efd{% endif %}">
       <div class="card-header"><h2 class="card-title-rt"><span class="ic tone-{{ b.tone }}"><i class="bi {{ b.icon }}"></i></span>{{ b.label }}</h2><span class="count-pill">{{ b.items|length }}</span></div>
       {% for d in b.items %}{% include "tracker/_deadline_row.html" %}
       {% empty %}<div class="empty py-4"><div class="ic tone-success"><i class="bi bi-check2"></i></div><div class="small">{% trans "Nothing here." %}</div></div>{% endfor %}

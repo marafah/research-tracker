@@ -5,5 +5,5 @@
 <p style="font-size:16px;background:#f8fafc;padding:12px;border-radius:6px"><strong>{{ paper.title }}</strong></p>
 <p>{% trans "Please confirm your name, affiliation, country, ORCID and contribution, and approve the submission. It takes one minute and no account is needed." %}</p>
 {% with href=url label=_("Complete my details") %}{% include "emails/_button.html" %}{% endwith %}
-<p style="color:#6b7280;font-size:13px">{% trans "This private link only lets you edit your own author entry." %}</p>
+<p style="color:#4a6286;font-size:13px">{% trans "This private link only lets you edit your own author entry." %}</p>
 {% endblock %}

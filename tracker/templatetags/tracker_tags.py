@@ -19,11 +19,11 @@ STATUS_COLORS = {
 
 # A distinct, flat colour for every status so pipelines, badges and boards read at a glance.
 STATUS_HEX = {
-    "idea": "#6c757d", "proposal": "#0aa2c0", "drafting": "#0aa2c0", "internal_review": "#3d8bfd",
+    "idea": "#5b6bbf", "proposal": "#0aa2c0", "drafting": "#0aa2c0", "internal_review": "#3d8bfd",
     "ready": "#6610f2", "submitted": "#0d6efd", "under_review": "#6f42c1", "major_revision": "#fd7e14",
     "minor_revision": "#e0a800", "resubmitted": "#6366f1", "accepted": "#198754", "proofs": "#65a30d",
-    "published": "#198754", "rejected": "#dc3545", "withdrawn": "#475569", "on_hold": "#a16207",
-    "draft": "#6c757d", "with_editor": "#0d6efd", "major": "#fd7e14", "minor": "#e0a800",
+    "published": "#198754", "rejected": "#dc3545", "withdrawn": "#8a5a83", "on_hold": "#a16207",
+    "draft": "#5b6bbf", "with_editor": "#0d6efd", "major": "#fd7e14", "minor": "#e0a800",
     "revision_submitted": "#6366f1", "desk_rejected": "#dc3545", "transfer": "#be123c",
     "open": "#dc3545", "in_progress": "#e0a800", "done": "#198754", "rebutted": "#0aa2c0",
 }
@@ -43,7 +43,7 @@ def status_color(value):
 
 @register.filter
 def status_hex(value):
-    return STATUS_HEX.get(value, "#6c757d")
+    return STATUS_HEX.get(value, "#5b6bbf")
 
 
 @register.filter
@@ -141,7 +141,7 @@ def get_item(d, key):
 @register.filter
 def type_hex(value):
     from tracker.workspace import TYPE_COLORS
-    return TYPE_COLORS.get(value, "#6c757d")
+    return TYPE_COLORS.get(value, "#5b6bbf")
 
 
 @register.filter

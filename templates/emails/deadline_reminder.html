@@ -5,12 +5,12 @@
 <p>{% blocktrans with name=user.display_name %}Dear {{ name }},{% endblocktrans %}</p>
 <p>{% trans "This is a reminder for the following deadline:" %}</p>
 <table cellpadding="6" style="border-collapse:collapse;width:100%;font-size:14px;background:#f8fafc;border-radius:6px">
-  <tr><td style="color:#6b7280;width:130px">{% trans "Task" %}</td><td><strong>{{ deadline.title }}</strong></td></tr>
-  <tr><td style="color:#6b7280">{% trans "Paper" %}</td><td>{{ paper.title }}</td></tr>
-  <tr><td style="color:#6b7280">{% trans "Due" %}</td><td><strong>{{ deadline.due_at|date:"d/m/Y · H:i" }}</strong></td></tr>
-  {% if deadline.submission %}<tr><td style="color:#6b7280">{% trans "Venue" %}</td><td>{{ deadline.submission.journal.name }}{% if deadline.submission.manuscript_id %} ({{ deadline.submission.manuscript_id }}){% endif %}</td></tr>{% endif %}
-  {% if deadline.notes %}<tr><td style="color:#6b7280">{% trans "Notes" %}</td><td>{{ deadline.notes|linebreaksbr }}</td></tr>{% endif %}
+  <tr><td style="color:#4a6286;width:130px">{% trans "Task" %}</td><td><strong>{{ deadline.title }}</strong></td></tr>
+  <tr><td style="color:#4a6286">{% trans "Paper" %}</td><td>{{ paper.title }}</td></tr>
+  <tr><td style="color:#4a6286">{% trans "Due" %}</td><td><strong>{{ deadline.due_at|date:"d/m/Y · H:i" }}</strong></td></tr>
+  {% if deadline.submission %}<tr><td style="color:#4a6286">{% trans "Venue" %}</td><td>{{ deadline.submission.journal.name }}{% if deadline.submission.manuscript_id %} ({{ deadline.submission.manuscript_id }}){% endif %}</td></tr>{% endif %}
+  {% if deadline.notes %}<tr><td style="color:#4a6286">{% trans "Notes" %}</td><td>{{ deadline.notes|linebreaksbr }}</td></tr>{% endif %}
 </table>
 {% url 'paper_detail' paper.pk as purl %}{% with href=SITE_URL|add:purl label=_("Open the paper") %}{% include "emails/_button.html" %}{% endwith %}
-<p style="color:#6b7280;font-size:13px">{% trans "When it is done, mark the deadline as completed to stop the reminders." %}</p>
+<p style="color:#4a6286;font-size:13px">{% trans "When it is done, mark the deadline as completed to stop the reminders." %}</p>
 {% endblock %}

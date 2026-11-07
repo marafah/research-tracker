@@ -20,7 +20,7 @@
         <div class="d-flex flex-wrap gap-2 align-items-center small text-muted-rt">
           {% if paper.lead %}<span class="d-flex align-items-center gap-2"><span class="avatar avatar-sm {{ paper.lead|avatar_class }}">{{ paper.lead|initials }}</span>{{ paper.lead }}</span>{% endif %}
           {% if paper.target_submission_date %}<span class="chip c" style="--c:#fd7e14"><i class="bi bi-flag-fill"></i> {% trans "Target" %}: <span class="num">{{ paper.target_submission_date|date:"d/m/Y" }}</span></span>{% endif %}
-          <span class="chip c" style="--c:#6c757d"><i class="bi bi-clock-history"></i> {% trans "Updated" %} {{ paper.updated_at|timesince }}</span>
+          <span class="chip c" style="--c:#5b6bbf"><i class="bi bi-clock-history"></i> {% trans "Updated" %} {{ paper.updated_at|timesince }}</span>
         </div>
       </div></div>
       {% if can_edit %}

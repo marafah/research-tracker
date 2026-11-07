@@ -8,7 +8,7 @@
   <title>{% block title %}{{ SITE_NAME }}{% endblock %} · {{ SITE_NAME }}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap">
   <script>
     try { if (localStorage.getItem("rt-sb") === "mini") document.documentElement.classList.add("sb-mini"); } catch (e) {}
     try { const t = localStorage.getItem("rt-theme") || "light";
@@ -142,7 +142,7 @@
       <a href="{% url 'paper_create' %}" style="--c:#0d6efd"><i class="bi bi-plus-lg"></i>{% trans "New paper" %}</a>
       <a href="{% url 'journal_create' %}" style="--c:#0aa2c0"><i class="bi bi-journal-plus"></i>{% trans "Add venue" %}</a>
       <a href="{% url 'group_create' %}" style="--c:#e0a800"><i class="bi bi-person-plus-fill"></i>{% trans "New group" %}</a>
-      <a href="{% url 'profile' %}" style="--c:#6c757d"><i class="bi bi-person-gear"></i>{% trans "My profile" %}</a>
+      <a href="{% url 'profile' %}" style="--c:#5b6bbf"><i class="bi bi-person-gear"></i>{% trans "My profile" %}</a>
       <a href="#" class="palette-search-link" data-search-url="{% url 'paper_list' %}?view=table&q=" style="--c:#6610f2"><i class="bi bi-search"></i><span>{% trans "Search papers for" %} “<b></b>”</span></a>
     </div>
   </div></div>

@@ -212,7 +212,7 @@ def _research_overview(papers, open_dl, now):
     from .templatetags.tracker_tags import STATUS_HEX
     smax_st = max((x["count"] for x in statuses), default=1)
     for x in statuses:
-        x["color"] = STATUS_HEX.get(x["code"], "#6c757d")
+        x["color"] = STATUS_HEX.get(x["code"], "#5b6bbf")
         x["bar"] = _pct(x["count"], smax_st)
     # type pie (circle r=40, stroke 80 -> full pie), slots in fixed categorical order
     pcirc, poff = 251.33, 0.0
@@ -305,7 +305,7 @@ def _dashboard_charts(papers, open_dl, now):
     stops, acc = [], 0
     for c in counts:
         share = 100 * c["count"] / (sum(x["count"] for x in counts) or 1)
-        c["color"] = STATUS_HEX.get(c["code"], "#6c757d")
+        c["color"] = STATUS_HEX.get(c["code"], "#5b6bbf")
         stops.append(f"{c['color']} {acc:.2f}% {acc + share:.2f}%")
         acc += share
     types = {}

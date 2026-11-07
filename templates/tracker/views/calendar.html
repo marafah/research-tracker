@@ -27,7 +27,7 @@
     <div class="card">
       <div class="card-header"><h2 class="card-title-rt"><span class="ic tone-orange"><i class="bi bi-list-task"></i></span>{% trans "This month" %}</h2><span class="count-pill">{{ cal.count }}</span></div>
       {% for it in cal.agenda %}
-        <a class="list-row" href="{{ it.url }}"><div class="dl-date" style="width:52px;flex-basis:52px;--c:{% if it.kind == 'overdue' or it.kind == 'bad' %}#dc3545{% elif it.kind == 'event' %}#6f42c1{% elif it.kind == 'good' %}#198754{% elif it.kind == 'warn' %}#fd7e14{% elif it.kind == 'done' %}#6c757d{% else %}#d63384{% endif %}"><div class="m">{{ it.date|date:"m/Y" }}</div><div class="d" style="font-size:1rem">{{ it.date|date:"d" }}</div></div>
+        <a class="list-row" href="{{ it.url }}"><div class="dl-date" style="width:52px;flex-basis:52px;--c:{% if it.kind == 'overdue' or it.kind == 'bad' %}#dc3545{% elif it.kind == 'event' %}#6f42c1{% elif it.kind == 'good' %}#198754{% elif it.kind == 'warn' %}#fd7e14{% elif it.kind == 'done' %}#5b6bbf{% else %}#d63384{% endif %}"><div class="m">{{ it.date|date:"m/Y" }}</div><div class="d" style="font-size:1rem">{{ it.date|date:"d" }}</div></div>
           <div class="grow"><div class="t text-truncate"><span class="cal-dot {{ it.kind }}"></span>{{ it.title }}</div><div class="s text-truncate">{{ it.sub }}</div></div></a>
       {% empty %}<div class="empty py-4"><div class="ic"><i class="bi bi-calendar"></i></div><div class="small">{% trans "Nothing scheduled this month." %}</div></div>{% endfor %}
     </div>
