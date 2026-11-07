@@ -1054,10 +1054,13 @@ html[dir="ltr"] .rc-main .t, html[dir="ltr"] .rc-card .t, html[dir="ltr"] .rc-ca
 .rc-side { padding-top: .15rem; }
 
 /* ===== v7.9.7 — Recently updated: Arabic alignment, full title =====
-   Every title, Arabic or English, lines up on the right next to the icon, like the rest of the row.
+   List: every title, Arabic or English, lines up on the right next to the icon, like the rest of the row.
    An English title still reads left to right inside its own <bdi dir="ltr"> (so its punctuation stays in place),
    and it wraps instead of being cut, so it is always shown in full. In the English UI it lines up on the left. */
 html[dir="rtl"] .rc-tab .rc-main .t[dir], html[dir="rtl"] .rc-tab .rc-card .t[dir] { text-align: right; }
+/* Cards: an English title runs left to right from the left edge; an Arabic one stays on the right. */
+.rc-tab .rc-card .t[dir="ltr"] { text-align: left !important; }
+.rc-tab .rc-card .t[dir="rtl"] { text-align: right !important; }
 html[dir="ltr"] .rc-tab .rc-main .t[dir], html[dir="ltr"] .rc-tab .rc-card .t[dir] { text-align: left; }
 .rc-tab .rc-main .t, .rc-tab .rc-card .t { white-space: normal; overflow: visible; text-overflow: clip; -webkit-line-clamp: unset; max-height: none; }
 .rc-tab .rc-main .meta { margin-top: .3rem; }
