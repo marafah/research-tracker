@@ -1053,13 +1053,11 @@ html[dir="ltr"] .rc-main .t, html[dir="ltr"] .rc-card .t, html[dir="ltr"] .rc-ca
 .rc-row .rc-ic { margin-top: .1rem; }
 .rc-side { padding-top: .15rem; }
 
-/* ===== v7.9.6 — Recently updated: only the TITLE follows its own language =====
-   The row keeps the page direction (icon, venue line, status, date). The title <bdi> carries dir from text_dir,
-   and text-align:start makes an English title start at the left and an Arabic one at the right. */
-.rc-tab .rc-main .t[dir], .rc-tab .rc-card .t[dir] { text-align: start; }
-/* An English title and its details read as one block: the venue line under it starts on the same side,
-   so the eye goes down, not across the row. The row frame (icon, status, date) keeps the page direction. */
-.rc-tab .rc-main:has(> .t[dir="ltr"]) .meta { direction: ltr; justify-content: flex-start; }
-.rc-tab .rc-main:has(> .t[dir="ltr"]) .meta .rc-type { direction: rtl; }
+/* ===== v7.9.7 — Recently updated: Arabic alignment, full title =====
+   Every title, Arabic or English, lines up on the right next to the icon, like the rest of the row.
+   An English title still reads left to right inside its own <bdi dir="ltr"> (so its punctuation stays in place),
+   and it wraps instead of being cut, so it is always shown in full. In the English UI it lines up on the left. */
+html[dir="rtl"] .rc-tab .rc-main .t[dir], html[dir="rtl"] .rc-tab .rc-card .t[dir] { text-align: right; }
+html[dir="ltr"] .rc-tab .rc-main .t[dir], html[dir="ltr"] .rc-tab .rc-card .t[dir] { text-align: left; }
+.rc-tab .rc-main .t, .rc-tab .rc-card .t { white-space: normal; overflow: visible; text-overflow: clip; -webkit-line-clamp: unset; max-height: none; }
 .rc-tab .rc-main .meta { margin-top: .3rem; }
-.rc-tab .rc-card:has(> .t[dir="ltr"]) .v { direction: ltr; text-align: left; }
