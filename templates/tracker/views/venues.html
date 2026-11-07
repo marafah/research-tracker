@@ -17,7 +17,7 @@
     <header class="vg-head">
       <span class="vg-ic"><i class="bi {{ g.icon }}"></i></span>
       <div class="min-w-0 vg-titles">
-        <h3>{% if g.when and vg == "month" or g.when and vg == "due_month" %}<span class="vg-num num" dir="ltr">{{ g.label }}</span><span class="vg-month">{{ g.when|date:"F Y" }}</span>{% elif vg == "year" and g.when %}<span class="vg-num num">{{ g.label }}</span>{% else %}<bdi dir="{{ g.label|text_dir }}">{{ g.label }}</bdi>{% endif %}</h3>
+        <h3>{% if g.when and vg == "month" or g.when and vg == "due_month" %}<span class="vg-num num" dir="ltr">{{ g.label }}</span><span class="vg-month">{{ g.when|date:"F" }}</span>{% elif vg == "year" and g.when %}<span class="vg-num num">{{ g.label }}</span>{% else %}<bdi dir="{{ g.label|text_dir }}">{{ g.label }}</bdi>{% endif %}</h3>
         {% if g.extra %}<div class="vg-sub"><bdi>{{ g.extra }}</bdi></div>{% endif %}
       </div>
       <div class="vg-bar-mini" role="img" aria-label="{% trans 'Phases' %}">{% for b in g.bar %}<i style="width:{{ b.pct }}%;background:{{ b.color }}" title="{{ b.label }}: {{ b.count }}"></i>{% endfor %}</div>
