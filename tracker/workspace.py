@@ -58,6 +58,13 @@ PHASE = {
 }
 
 
+STATUS_GROUPS = {
+    "in_review": ["submitted", "under_review", "resubmitted"],
+    "revision": ["major_revision", "minor_revision"],
+    "accepted_pub": ["accepted", "proofs", "published"],
+}
+
+
 def apply_filters(qs, data, user, skip_type=False):
     if data.get("q"):
         q = data["q"]
@@ -65,6 +72,8 @@ def apply_filters(qs, data, user, skip_type=False):
                        Q(submissions__journal__name__icontains=q) | Q(submissions__manuscript_id__icontains=q)).distinct()
     if data.get("status") == "active":
         qs = qs.exclude(status__in=m.Paper.CLOSED + [m.Paper.Status.REJECTED])
+    elif data.get("status") in STATUS_GROUPS:
+        qs = qs.filter(status__in=STATUS_GROUPS[data["status"]])
     elif data.get("status"):
         qs = qs.filter(status=data["status"])
     if data.get("type") and not skip_type:
@@ -96,9 +105,9 @@ def kpis(papers):
     return {
         "total": len(papers),
         "active": sum(1 for p in papers if p.status not in m.Paper.CLOSED + [m.Paper.Status.REJECTED]),
-        "review": sum(1 for p in papers if p.status in ("submitted", "under_review", "resubmitted")),
+        "review": sum(1 for p in papers if p.status in STATUS_GROUPS["in_review"]),
         "overdue": sum(1 for d in open_dl if d.due_at < now),
-        "published": sum(1 for p in papers if p.status in ("accepted", "proofs", "published")),
+        "published": sum(1 for p in papers if p.status in STATUS_GROUPS["accepted_pub"]),
     }
 
 

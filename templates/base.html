@@ -34,8 +34,8 @@
     <nav class="sb-scroll">
       <div class="sb-section">{% trans "Workspace" %}</div>
       <a class="sb-link {% if u == 'dashboard' %}active{% endif %}" href="{% url 'dashboard' %}" style="--c:#60a5fa"><span class="sb-ic"><i class="bi bi-grid-1x2-fill"></i></span> {% trans "Dashboard" %}</a>
-      <a class="sb-link {% if u == 'paper_list' or u == 'paper_detail' or u == 'paper_edit' or u == 'paper_create' %}active{% endif %}" href="{% url 'paper_list' %}" style="--c:#a78bfa"><span class="sb-ic"><i class="bi bi-file-earmark-text-fill"></i></span> {% trans "Papers" %}</a>
-      <a class="sb-link {% if u == 'paper_board' %}active{% endif %}" href="{% url 'paper_board' %}" style="--c:#34d399"><span class="sb-ic"><i class="bi bi-kanban-fill"></i></span> {% trans "Board" %}</a>
+      <a class="sb-link {% if u == 'paper_list' and view != 'board' or u == 'paper_detail' or u == 'paper_edit' or u == 'paper_create' %}active{% endif %}" href="{% url 'paper_list' %}?view=cards" style="--c:#a78bfa"><span class="sb-ic"><i class="bi bi-file-earmark-text-fill"></i></span> {% trans "Papers" %}</a>
+      <a class="sb-link {% if u == 'paper_list' and view == 'board' %}active{% endif %}" href="{% url 'paper_list' %}?view=board" style="--c:#34d399"><span class="sb-ic"><i class="bi bi-kanban-fill"></i></span> {% trans "Board" %}</a>
       <a class="sb-link {% if u == 'deadline_list' %}active{% endif %}" href="{% url 'deadline_list' %}" style="--c:#f472b6"><span class="sb-ic"><i class="bi bi-alarm-fill"></i></span> {% trans "Deadlines" %}
         {% if nav_overdue %}<span class="sb-count danger">{{ nav_overdue }}</span>{% elif nav_open_deadlines %}<span class="sb-count">{{ nav_open_deadlines }}</span>{% endif %}</a>
       <div class="sb-section">{% trans "Network" %}</div>

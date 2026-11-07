@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Research Tracker VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-01 05:43+0300\n"
+"POT-Creation-Date: 2026-11-07 13:20+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ar\n"
@@ -675,6 +675,9 @@ msgstr "الاسم"
 msgid "Needs action"
 msgstr "بحاجة إلى إجراء"
 
+msgid "Needs revision"
+msgstr "بحاجة إلى تعديل"
+
 msgid "Network"
 msgstr "الشبكة"
 
@@ -1137,6 +1140,9 @@ msgstr "إرسال إلى مجلة أخرى"
 msgid "Submitted"
 msgstr "مُرسل"
 
+msgid "Submitted / in review"
+msgstr "مُرسل / قيد التحكيم"
+
 msgid "Subscribe to this private link in Google Calendar, Outlook or Apple Calendar to see all your deadlines:"
 msgstr "اشترك بهذا الرابط الخاص في تقويم Google أو Outlook أو Apple لترى كل مواعيدك:"
 
@@ -1260,9 +1266,6 @@ msgstr "المجلة"
 
 msgid "Vertical timeline"
 msgstr "خط زمني عمودي"
-
-msgid "Waiting for editors"
-msgstr "بانتظار المحررين"
 
 msgid "Web of Science"
 msgstr "Web of Science"
@@ -1689,6 +1692,9 @@ msgstr "بوابة الإرسال"
 msgid "submissions"
 msgstr "الإرسالات"
 
+msgid "submitted / in review"
+msgstr "مُرسل / قيد التحكيم"
+
 msgid "submitted by"
 msgstr "أرسله"
 
@@ -1700,9 +1706,6 @@ msgstr "العنوان"
 
 msgid "type"
 msgstr "النوع"
-
-msgid "under review"
-msgstr "قيد التحكيم"
 
 #, python-format
 msgid "updated author %(n)s"
@@ -1726,6 +1729,9 @@ msgstr "الموقع الإلكتروني"
 
 msgid "where changed in manuscript"
 msgstr "موضع التعديل في المخطوطة"
+
+msgid "with reviewers"
+msgstr "لدى المحكّمين"
 
 #, python-format
 msgid "%(n)s day overdue"

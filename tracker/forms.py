@@ -199,7 +199,9 @@ class JournalForm(BootstrapMixin, forms.ModelForm):
 class PaperFilterForm(BootstrapMixin, forms.Form):
     q = forms.CharField(label=_("Search"), required=False)
     status = forms.ChoiceField(label=_("Status"), required=False,
-                               choices=[("", _("All statuses")), ("active", _("Active only"))] + list(m.Paper.Status.choices))
+                               choices=[("", _("All statuses")), ("active", _("Active only")), ("in_review", _("Submitted / in review")),
+                                        ("revision", _("Needs revision")), ("accepted_pub", _("Accepted / published"))]
+                               + list(m.Paper.Status.choices))
     type = forms.ChoiceField(label=_("Type"), required=False, choices=[("", _("All types"))] + list(m.Paper.Type.choices))
     group = forms.ModelChoiceField(label=_("Group"), required=False, queryset=m.ResearchGroup.objects.none(),
                                    empty_label=_("All groups"))

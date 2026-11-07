@@ -183,3 +183,5 @@ if os.environ.get("CODESPACE_NAME"):
     _dom = os.environ.get("GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN", "app.github.dev")
     CSRF_TRUSTED_ORIGINS += [f"https://{_cs}-8000.{_dom}", "https://localhost:8000", "http://localhost:8000"]
     ALLOWED_HOSTS += ["localhost", "127.0.0.1", f".{_dom}"]
+    if not os.environ.get("SITE_URL"):
+        SITE_URL = f"https://{_cs}-8000.{_dom}"

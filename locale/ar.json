@@ -256,6 +256,7 @@
  "N/A": "غير متوفر",
  "Name": "الاسم",
  "Needs action": "بحاجة إلى إجراء",
+ "Needs revision": "بحاجة إلى تعديل",
  "Network": "الشبكة",
  "New deadline": "موعد جديد",
  "New group": "مجموعة جديدة",
@@ -418,6 +419,7 @@
  "Submissions per year": "الإرسالات حسب السنة",
  "Submit to another journal": "إرسال إلى مجلة أخرى",
  "Submitted": "مُرسل",
+ "Submitted / in review": "مُرسل / قيد التحكيم",
  "Subscribe to this private link in Google Calendar, Outlook or Apple Calendar to see all your deadlines:": "اشترك بهذا الرابط الخاص في تقويم Google أو Outlook أو Apple لترى كل مواعيدك:",
  "Sync to my calendar": "مزامنة مع تقويمي",
  "Table": "جدول",
@@ -607,6 +609,7 @@
  "submission link": "رابط الإرسال",
  "submission portal": "بوابة الإرسال",
  "submissions": "الإرسالات",
+ "submitted / in review": "مُرسل / قيد التحكيم",
  "submitted by": "أرسله",
  "target submission date": "تاريخ الإرسال المستهدف",
  "title": "العنوان",
@@ -618,5 +621,6 @@
  "users": "المستخدمون",
  "volume / issue / pages": "المجلد / العدد / الصفحات",
  "website": "الموقع الإلكتروني",
- "where changed in manuscript": "موضع التعديل في المخطوطة"
+ "where changed in manuscript": "موضع التعديل في المخطوطة",
+ "with reviewers": "لدى المحكّمين"
 }

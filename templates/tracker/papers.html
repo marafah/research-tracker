@@ -20,11 +20,11 @@
 
 <!-- KPI strip -->
 <div class="ws-kpis mb-3">
-  <div class="ws-kpi" style="--c:#2563eb"><span class="ico solid"><i class="bi bi-collection-fill"></i></span><div><b>{{ kpi.total }}</b><span>{% trans "Records" %}</span></div></div>
-  <div class="ws-kpi" style="--c:#0d9488"><span class="ico solid"><i class="bi bi-activity"></i></span><div><b>{{ kpi.active }}</b><span>{% trans "Active" %}</span></div></div>
-  <div class="ws-kpi" style="--c:#7c3aed"><span class="ico solid"><i class="bi bi-hourglass-split"></i></span><div><b>{{ kpi.review }}</b><span>{% trans "Under review" %}</span></div></div>
-  <div class="ws-kpi" style="--c:{% if kpi.overdue %}#dc2626{% else %}#ea580c{% endif %}"><span class="ico solid"><i class="bi bi-alarm-fill"></i></span><div><b>{{ kpi.overdue }}</b><span>{% trans "Overdue deadlines" %}</span></div></div>
-  <div class="ws-kpi" style="--c:#16a34a"><span class="ico solid"><i class="bi bi-patch-check-fill"></i></span><div><b>{{ kpi.published }}</b><span>{% trans "Accepted / published" %}</span></div></div>
+  <a class="ws-kpi {% if not request.GET.status %}on{% endif %}" href="{{ kpi_urls|get_item:'' }}" style="--c:#2563eb"><span class="ico solid"><i class="bi bi-collection-fill"></i></span><div><b>{{ kpi.total }}</b><span>{% trans "Records" %}</span></div></a>
+  <a class="ws-kpi {% if request.GET.status == 'active' %}on{% endif %}" href="{{ kpi_urls.active }}" style="--c:#0d9488"><span class="ico solid"><i class="bi bi-activity"></i></span><div><b>{{ kpi.active }}</b><span>{% trans "Active" %}</span></div></a>
+  <a class="ws-kpi {% if request.GET.status == 'in_review' %}on{% endif %}" href="{{ kpi_urls.in_review }}" style="--c:#7c3aed"><span class="ico solid"><i class="bi bi-hourglass-split"></i></span><div><b>{{ kpi.review }}</b><span>{% trans "Submitted / in review" %}</span></div></a>
+  <a class="ws-kpi" href="{% url 'deadline_list' %}" style="--c:{% if kpi.overdue %}#dc2626{% else %}#ea580c{% endif %}"><span class="ico solid"><i class="bi bi-alarm-fill"></i></span><div><b>{{ kpi.overdue }}</b><span>{% trans "Overdue deadlines" %}</span></div></a>
+  <a class="ws-kpi {% if request.GET.status == 'accepted_pub' %}on{% endif %}" href="{{ kpi_urls.accepted_pub }}" style="--c:#16a34a"><span class="ico solid"><i class="bi bi-patch-check-fill"></i></span><div><b>{{ kpi.published }}</b><span>{% trans "Accepted / published" %}</span></div></a>
 </div>
 
 <!-- View switcher + search -->
@@ -54,7 +54,7 @@
     <select name="group_by" class="form-select form-select-sm" onchange="this.form.submit()">{% for k, lab in group_choices %}<option value="{{ k }}" {% if group_by == k %}selected{% endif %}>{{ lab }}</option>{% endfor %}</select></label>
   {% endif %}
   <label class="ws-mine"><span class="form-check form-switch m-0"><input class="form-check-input" type="checkbox" name="mine" value="on" {% if request.GET.mine %}checked{% endif %} onchange="this.form.submit()"></span>{% trans "Only mine" %}</label>
-  {% if request.GET.status or request.GET.group or request.GET.mine or request.GET.q or request.GET.type %}<a href="?view={{ view }}" class="btn btn-sm btn-link text-muted-rt"><i class="bi bi-x-circle"></i> {% trans "Clear filters" %}</a>{% endif %}
+  {% if request.GET.status or request.GET.group or request.GET.mine or request.GET.q or request.GET.type %}<a href="{% url 'paper_list' %}?view={{ view }}" class="btn btn-sm btn-link text-muted-rt"><i class="bi bi-x-circle"></i> {% trans "Clear filters" %}</a>{% endif %}
 </form>
 
 <div class="ws-body ws-{{ view }}">

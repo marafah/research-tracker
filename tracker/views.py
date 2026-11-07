@@ -11,6 +11,7 @@ from django.core.exceptions import PermissionDenied
 from django.db.models import Count, Q
 from django.http import FileResponse, Http404, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext as _
 from django.views.decorators.csrf import csrf_exempt
@@ -53,8 +54,8 @@ def dashboard(request):
         "counts": status_counts(papers),
         "total": papers.count(),
         "active": papers.exclude(status__in=m.Paper.CLOSED + [m.Paper.Status.REJECTED]).count(),
-        "under_review": papers.filter(status__in=[m.Paper.Status.SUBMITTED, m.Paper.Status.UNDER_REVIEW,
-                                                  m.Paper.Status.RESUBMITTED]).count(),
+        "under_review": papers.filter(status__in=["submitted", "under_review", "resubmitted"]).count(),
+        "in_review_strict": papers.filter(status="under_review").count(),
         "published_year": papers.filter(status=m.Paper.Status.PUBLISHED,
                                         publication_date__year=now.year).count(),
         "accepted_year": m.Submission.objects.filter(paper__in=papers, accepted_at__year=now.year).count(),
@@ -167,8 +168,11 @@ def papers_workspace(request, force_view=None):
     request.session["papers_group_by"] = group_by
     ctx = {
         "form": form, "papers": papers, "view": view, "group_by": group_by,
-        "views": [{"key": k, "label": l, "icon": i, "color": c, "url": "?" + _qs(request, view=k, tl=None),
+        "views": [{"key": k, "label": l, "icon": i, "color": c,
+                   "url": reverse("paper_list") + "?" + _qs(request, view=k, tl=None, all=None, month=None),
                    "active": k == view} for k, l, i, c in ws.VIEWS],
+        "kpi_urls": {k: reverse("paper_list") + "?" + _qs(request, status=k or None)
+                     for k in ("", "active", "in_review", "accepted_pub")},
         "chips": [c | {"url": "?" + _qs(request, type=c["key"])}
                   for c in ws.type_chips(without_type, data.get("type"))],
         "group_choices": ws.GROUP_BY, "kpi": ws.kpis(papers),
@@ -204,7 +208,9 @@ def paper_list(request):
 
 @login_required
 def paper_board(request):
-    return papers_workspace(request, force_view="board")
+    params = request.GET.copy()
+    params["view"] = "board"
+    return redirect(reverse("paper_list") + "?" + params.urlencode())
 
 
 @login_required

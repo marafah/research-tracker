@@ -182,7 +182,7 @@ class PageSmokeTests(Base):
         self.client.force_login(self.owner)
         for name in ["dashboard", "paper_list", "paper_board", "deadline_list", "group_list", "journal_list",
                      "reports", "profile", "paper_create"]:
-            self.assertEqual(self.client.get(reverse(name)).status_code, 200, name)
+            self.assertEqual(self.client.get(reverse(name), follow=True).status_code, 200, name)
         self.assertEqual(self.client.get(reverse("paper_detail", args=[self.paper.pk])).status_code, 200)
 
     def test_arabic_rtl(self):
@@ -191,3 +191,75 @@ class PageSmokeTests(Base):
         self.client.force_login(self.owner)
         r = self.client.get(reverse("dashboard"))
         self.assertContains(r, 'dir="rtl"')
+
+
+class ButtonFlowTests(Base):
+    """Every primary button/form in the UI must do what its label says."""
+
+    def setUp(self):
+        super().setUp()
+        self.client.force_login(self.owner)
+
+    def test_create_paper(self):
+        r = self.client.post(reverse("paper_create"), {"group": self.group.pk, "title": "New work", "type": "journal",
+                                                       "status": "drafting", "priority": 2, "lead": self.owner.pk})
+        p = m.Paper.objects.get(title="New work")
+        self.assertRedirects(r, p.get_absolute_url())
+        self.assertTrue(p.authors.filter(user=self.owner).exists())
+
+    def test_add_submission_deadline_author_comment(self):
+        pk = self.paper.pk
+        now = timezone.localtime()
+        r = self.client.post(reverse("submission_add", args=[pk]), {
+            "journal": self.journal.pk, "manuscript_id": "COSE-1", "decision": "submitted", "round": 1,
+            "submitted_at": now.strftime("%Y-%m-%dT%H:%M"), "submitted_by": self.owner.pk})
+        self.assertEqual(r.status_code, 302, getattr(r, "context", None) and r.context["form"].errors)
+        sub = self.paper.submissions.get()
+        self.paper.refresh_from_db()
+        self.assertEqual(self.paper.status, "submitted")
+        r = self.client.post(reverse("deadline_add", args=[pk]), {
+            "kind": "other", "title": "Check portal", "due_at": (now + timedelta(days=3)).strftime("%Y-%m-%dT%H:%M"),
+            "assignees": [self.owner.pk], "reminder_days": "1"})
+        self.assertEqual(r.status_code, 302)
+        d = self.paper.deadlines.get(title="Check portal")
+        self.client.post(reverse("deadline_toggle", args=[pk, d.pk]))
+        d.refresh_from_db()
+        self.assertIsNotNone(d.completed_at)
+        r = self.client.post(reverse("author_add", args=[pk]), {"name": "Co Author", "email": "co@x.org",
+                                                                "affiliation": "X", "country": "JO", "order": 3})
+        self.assertEqual(r.status_code, 302)
+        self.assertTrue(self.paper.authors.filter(name="Co Author").exists())
+        r = self.client.post(reverse("comment_add", args=[pk, sub.pk]), {"round": 1, "reviewer": "Reviewer 1",
+                                                                        "number": "1", "comment": "Fix it",
+                                                                        "state": "open"})
+        self.assertEqual(r.status_code, 302)
+        self.assertEqual(sub.review_comments.count(), 1)
+
+    def test_status_select_and_board_route(self):
+        r = self.client.post(reverse("paper_status", args=[self.paper.pk]), {"status": "under_review",
+                                                                             "next": reverse("paper_list")})
+        self.assertEqual(r.status_code, 302)
+        self.paper.refresh_from_db()
+        self.assertEqual(self.paper.status, "under_review")
+        r = self.client.get(reverse("paper_board") + "?type=journal")
+        self.assertRedirects(r, reverse("paper_list") + "?type=journal&view=board", fetch_redirect_response=False)
+
+    def test_status_groups_filter(self):
+        self.paper.status = "submitted"
+        self.paper.save()
+        self.other_paper.status = "accepted"
+        self.other_paper.save()
+        r = self.client.get(reverse("paper_list") + "?view=table&status=in_review")
+        self.assertEqual([p.pk for p in r.context["papers"]], [self.paper.pk])
+        r = self.client.get(reverse("paper_list") + "?view=table&status=accepted_pub")
+        self.assertEqual([p.pk for p in r.context["papers"]], [self.other_paper.pk])
+
+    def test_group_journal_invite(self):
+        r = self.client.post(reverse("journal_create"), {"name": "New J", "kind": "journal", "apc_currency": "USD"})
+        self.assertEqual(r.status_code, 302)
+        self.assertTrue(m.Journal.objects.filter(name="New J").exists())
+        r = self.client.post(reverse("group_create"), {"name": "Lab 2"})
+        self.assertEqual(r.status_code, 302)
+        r = self.client.post(reverse("group_invite", args=[self.group.pk]), {"email": "new@uni.edu", "role": "member"})
+        self.assertEqual(r.status_code, 302)
+        self.assertTrue(m.Invitation.objects.filter(email="new@uni.edu").exists())

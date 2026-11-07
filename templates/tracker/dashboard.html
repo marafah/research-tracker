@@ -9,7 +9,7 @@
     <div class="dash-sum">
       {% if overdue %}<span class="chip c" style="--c:#dc2626"><i class="bi bi-exclamation-triangle-fill"></i> {% blocktrans count n=overdue|length %}{{ n }} deadline is overdue{% plural %}{{ n }} deadlines are overdue{% endblocktrans %}</span>{% endif %}
       <span class="chip c" style="--c:#db2777"><i class="bi bi-alarm-fill"></i> {% blocktrans count n=week_count %}{{ n }} deadline this week{% plural %}{{ n }} deadlines this week{% endblocktrans %}</span>
-      <span class="chip c" style="--c:#7c3aed"><i class="bi bi-hourglass-split"></i> {{ under_review }} {% trans "under review" %}</span>
+      <span class="chip c" style="--c:#7c3aed"><i class="bi bi-hourglass-split"></i> {{ under_review }} {% trans "submitted / in review" %}</span>
       <span class="chip c" style="--c:#16a34a"><i class="bi bi-graph-up-arrow"></i> {% blocktrans with n=success_rate %}{{ n }}% accepted or published{% endblocktrans %}</span>
     </div>
   </div>
@@ -35,15 +35,15 @@
     <div class="s-top"><span class="s-ic"><i class="bi bi-folder2-open"></i></span><span class="s-pill">{% blocktrans with n=total %}of {{ n }} in total{% endblocktrans %}</span></div>
     <div class="s-value">{{ active }}</div><div class="s-label">{% trans "Active works" %}</div>
     <div class="s-bar"><span style="width:{% widthratio active total|default:1 100 %}%"></span></div></a></div>
-  <div class="col-6 col-xl-3"><a class="stat" style="--c:#7c3aed" href="{% url 'paper_list' %}?view=table&status=under_review">
-    <div class="s-top"><span class="s-ic"><i class="bi bi-hourglass-split"></i></span><span class="s-pill">{% trans "Waiting for editors" %}</span></div>
-    <div class="s-value">{{ under_review }}</div><div class="s-label">{% trans "Under review" %}</div>
+  <div class="col-6 col-xl-3"><a class="stat" style="--c:#7c3aed" href="{% url 'paper_list' %}?view=table&status=in_review">
+    <div class="s-top"><span class="s-ic"><i class="bi bi-hourglass-split"></i></span><span class="s-pill">{{ in_review_strict }} {% trans "with reviewers" %}</span></div>
+    <div class="s-value">{{ under_review }}</div><div class="s-label">{% trans "Submitted / in review" %}</div>
     <div class="s-bar"><span style="width:{% widthratio under_review total|default:1 100 %}%"></span></div></a></div>
   <div class="col-6 col-xl-3"><a class="stat" style="--c:{% if overdue %}#dc2626{% else %}#ea580c{% endif %}" href="{% url 'deadline_list' %}">
     <div class="s-top"><span class="s-ic"><i class="bi bi-alarm-fill"></i></span><span class="s-pill">{% blocktrans with n=week_count %}{{ n }} due this week{% endblocktrans %}</span></div>
     <div class="s-value">{{ overdue|length }}</div><div class="s-label">{% trans "Overdue" %}</div>
     <div class="s-hint"><i class="bi bi-calendar-week"></i> {{ upcoming|length }} {% trans "in the next 30 days" %}</div></a></div>
-  <div class="col-6 col-xl-3"><a class="stat" style="--c:#16a34a" href="{% url 'reports' %}">
+  <div class="col-6 col-xl-3"><a class="stat" style="--c:#16a34a" href="{% url 'paper_list' %}?view=cards&status=accepted_pub">
     <div class="s-top"><span class="s-ic"><i class="bi bi-patch-check-fill"></i></span><span class="s-pill">{% blocktrans with n=published_year %}{{ n }} published{% endblocktrans %}</span></div>
     <div class="s-value">{{ accepted_year }}</div><div class="s-label">{% trans "Accepted this year" %}</div>
     <div class="s-bar"><span style="width:{{ success_rate }}%"></span></div></a></div>
@@ -59,10 +59,10 @@
       </div>
       <div class="week">
         {% for d in week_strip %}
-        <div class="wk {% if d.today %}today{% endif %} {% if d.count %}busy{% endif %}">
+        <a href="{% url 'deadline_list' %}?view=calendar" class="wk text-decoration-none {% if d.today %}today{% endif %} {% if d.count %}busy{% endif %}" title="{{ d.count }}">
           <div class="wd">{{ d.date|date:"D" }}</div><div class="dn">{{ d.date|date:"d" }}</div>
           <div class="dots">{% for _ in ""|ljust:d.count|make_list|slice:":4" %}<i></i>{% endfor %}</div>
-        </div>
+        </a>
         {% endfor %}
       </div>
       {% for d in overdue %}{% include "tracker/_deadline_row.html" %}{% endfor %}
