@@ -1,0 +1,24 @@
+{% load i18n tracker_tags %}
+{% if papers %}
+<div class="vv-grid">
+  {% for g in vgroups %}{% with j=g.journal %}
+  <section class="card vv-card" style="--c:{% if j %}{% cycle '#0d6efd' '#6f42c1' '#0aa2c0' '#fd7e14' '#198754' '#d63384' '#e0a800' '#5b6bbf' %}{% else %}#8a9bb8{% endif %}">
+    <header class="vv-head">
+      <span class="vv-ic"><i class="bi {% if j %}{% if j.kind == 'conference' %}bi-easel-fill{% elif j.kind == 'book' %}bi-book-fill{% else %}bi-journal-bookmark-fill{% endif %}{% else %}bi-hourglass-split{% endif %}"></i></span>
+      <div class="min-w-0">
+        <h3>{% if j %}{% if j.pk %}<a href="{% url 'journal_detail' j.pk %}"><bdi dir="{{ j.name|text_dir }}">{{ j.name }}</bdi></a>{% endif %}{% else %}{% trans "Not submitted yet" %}{% endif %}</h3>
+        {% if j %}<div class="vv-sub">{{ j.get_kind_display }}{% if j.publisher %} · <bdi>{{ j.publisher }}</bdi>{% endif %}{% if j.quartile %} · <span class="badge quartile-{{ j.quartile|lower }}">{{ j.quartile }}</span>{% endif %}</div>{% endif %}
+      </div>
+      <span class="count-pill">{{ g.papers|length }}</span>
+    </header>
+    <div class="vv-bar" role="img" aria-label="{% trans 'Phases' %}">{% for b in g.bar %}<i style="width:{{ b.pct }}%;background:{{ b.color }}" title="{{ b.label }}: {{ b.count }}"></i>{% endfor %}</div>
+    <ul class="vv-list">
+      {% for p in g.papers %}{% with s=p.current_submission %}
+      <li><a href="{{ p.get_absolute_url }}"><bdi dir="{{ p.title|text_dir }}">{{ p.title }}</bdi></a>
+        <span class="vv-li-meta">{% status_badge p %}{% if s.manuscript_id %}<bdi class="num" dir="ltr">{{ s.manuscript_id }}</bdi>{% endif %}</span></li>
+      {% endwith %}{% endfor %}
+    </ul>
+  </section>
+  {% endwith %}{% endfor %}
+</div>
+{% else %}{% include "tracker/views/_empty.html" %}{% endif %}

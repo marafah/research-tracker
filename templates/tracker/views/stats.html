@@ -1,0 +1,18 @@
+{% load i18n tracker_tags %}
+{% if papers %}
+<div class="vs-grid">
+  <section class="card vs-card"><h3><i class="bi bi-diagram-3-fill" style="--h:#0d6efd"></i>{% trans "By phase" %}</h3>
+    {% for r in st.phase %}<a class="vs-row" href="?{{ qs_base }}&view=table&phase={{ r.key }}" style="--c:{{ r.color }}"><span class="vs-l">{{ r.label }}</span><span class="vs-track"><i style="width:{{ r.bar }}%"></i></span><b class="num">{{ r.count }}</b><span class="vs-p num">{{ r.pct }}%</span></a>{% endfor %}</section>
+  <section class="card vs-card"><h3><i class="bi bi-collection-fill" style="--h:#6f42c1"></i>{% trans "By type" %}</h3>
+    {% for r in st.type %}<a class="vs-row" href="?{{ qs_base }}&view=table&type={{ r.key }}" style="--c:{{ r.color }}"><span class="vs-l"><i class="bi {{ r.icon }}"></i> {{ r.label }}</span><span class="vs-track"><i style="width:{{ r.bar }}%"></i></span><b class="num">{{ r.count }}</b><span class="vs-p num">{{ r.pct }}%</span></a>{% endfor %}</section>
+  <section class="card vs-card"><h3><i class="bi bi-easel-fill" style="--h:#0aa2c0"></i>{% trans "By venue type" %}</h3>
+    {% for r in st.kind %}<a class="vs-row" href="?{{ qs_base }}&view=table&venue_kind={{ r.key }}" style="--c:{{ r.color }}"><span class="vs-l">{{ r.label }}</span><span class="vs-track"><i style="width:{{ r.bar }}%"></i></span><b class="num">{{ r.count }}</b><span class="vs-p num">{{ r.pct }}%</span></a>{% endfor %}</section>
+  <section class="card vs-card"><h3><i class="bi bi-alarm-fill" style="--h:#d63384"></i>{% trans "Next deadline" %}</h3>
+    {% for r in st.deadline %}<div class="vs-row" style="--c:{{ r.color }}"><span class="vs-l">{{ r.label }}</span><span class="vs-track"><i style="width:{{ r.bar }}%"></i></span><b class="num">{{ r.count }}</b><span class="vs-p num">{{ r.pct }}%</span></div>{% endfor %}</section>
+  <section class="card vs-card"><h3><i class="bi bi-building-fill" style="--h:#fd7e14"></i>{% trans "By publisher" %}</h3>
+    {% for r in st.publisher %}<a class="vs-row" href="?{{ qs_base }}&view=table&publisher={{ r.key|urlencode }}" style="--c:{{ r.color }}"><span class="vs-l"><bdi>{{ r.label }}</bdi></span><span class="vs-track"><i style="width:{{ r.bar }}%"></i></span><b class="num">{{ r.count }}</b><span class="vs-p num">{{ r.pct }}%</span></a>{% empty %}<p class="vs-none">{% trans "No submissions yet." %}</p>{% endfor %}</section>
+  <section class="card vs-card"><h3><i class="bi bi-send-fill" style="--h:#198754"></i>{% trans "Submissions per month" %}</h3>
+    {% if st.months %}<div class="vs-cols">{% for mo in st.months %}<div class="vs-col" title="{{ mo.key }}: {{ mo.count }}"><b class="num">{{ mo.count }}</b><i style="height:{{ mo.h }}%"></i><span class="num">{{ mo.key }}</span></div>{% endfor %}</div>
+    {% else %}<p class="vs-none">{% trans "No submissions yet." %}</p>{% endif %}</section>
+</div>
+{% else %}{% include "tracker/views/_empty.html" %}{% endif %}

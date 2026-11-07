@@ -1,0 +1,15 @@
+{% load i18n tracker_tags %}
+{% if papers %}
+<div class="card vm-card"><div class="table-responsive">
+<table class="vm-tbl">
+  <thead><tr><th class="vm-corner">{% trans "Type" %} \ {% trans "Phase" %}</th>
+    {% for ph in mx.phases %}<th style="--c:{{ ph.color }}"><span class="vm-ph"><i class="bi {{ ph.icon }}"></i>{{ ph.label }}</span></th>{% endfor %}<th class="vm-tot">{% trans "Total" %}</th></tr></thead>
+  <tbody>
+  {% for r in mx.rows %}<tr>
+    <th class="vm-type" style="--c:{{ r.color }}"><a href="{{ mx_url }}&type={{ r.type }}"><span class="vm-ic"><i class="bi {{ r.icon }}"></i></span>{{ r.label }}</a></th>
+    {% for c in r.cells %}<td>{% if c.count %}<a class="vm-cell" href="{{ mx_url }}&type={{ r.type }}&phase={{ c.phase }}" style="--a:{{ c.alpha }}%">{{ c.count }}</a>{% else %}<span class="vm-zero">0</span>{% endif %}</td>{% endfor %}
+    <td class="vm-tot"><b class="num">{{ r.total }}</b></td></tr>{% endfor %}
+  </tbody>
+  <tfoot><tr><th>{% trans "Total" %}</th>{% for ph in mx.phases %}<td style="--c:{{ ph.color }}">{% if ph.total %}<a class="vm-foot" href="{{ mx_url }}&phase={{ ph.key }}">{{ ph.total }}</a>{% else %}<span class="vm-zero">0</span>{% endif %}</td>{% endfor %}<td class="vm-tot"><b class="num">{{ mx.total }}</b></td></tr></tfoot>
+</table></div></div>
+{% else %}{% include "tracker/views/_empty.html" %}{% endif %}
