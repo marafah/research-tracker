@@ -9,7 +9,7 @@
           <a href="{{ next_url }}" class="btn btn-ghost btn-icon btn-sm" aria-label="{% trans 'Next month' %}"><i class="bi bi-chevron-{% if LANGUAGE_BIDI %}left{% else %}right{% endif %}"></i></a>
           <a href="{{ this_url }}" class="btn btn-soft btn-sm">{% trans "Today" %}</a>
         </div>
-        <div class="tl-legend"><span><i style="background:#9a4a5c"></i>{% trans "Deadline" %}</span><span><i style="background:#a63a2b"></i>{% trans "Overdue" %}</span><span><i style="background:#6b4f8a"></i>{% trans "Submission event" %}</span><span><i style="background:#b4612a"></i>{% trans "Revision" %}</span><span><i style="background:#2f6b46"></i>{% trans "Accepted / published" %}</span></div>
+        <div class="tl-legend"><span><i style="background:#d63384"></i>{% trans "Deadline" %}</span><span><i style="background:#dc3545"></i>{% trans "Overdue" %}</span><span><i style="background:#6f42c1"></i>{% trans "Submission event" %}</span><span><i style="background:#fd7e14"></i>{% trans "Revision" %}</span><span><i style="background:#198754"></i>{% trans "Accepted / published" %}</span></div>
       </div>
       <div class="cal">
         {% for wd in cal.weekdays %}<div class="cal-wd">{{ wd|date:"D" }}</div>{% endfor %}
@@ -27,7 +27,7 @@
     <div class="card">
       <div class="card-header"><h2 class="card-title-rt"><span class="ic tone-orange"><i class="bi bi-list-task"></i></span>{% trans "This month" %}</h2><span class="count-pill">{{ cal.count }}</span></div>
       {% for it in cal.agenda %}
-        <a class="list-row" href="{{ it.url }}"><div class="dl-date" style="width:52px;flex-basis:52px;--c:{% if it.kind == 'overdue' or it.kind == 'bad' %}#a63a2b{% elif it.kind == 'event' %}#6b4f8a{% elif it.kind == 'good' %}#2f6b46{% elif it.kind == 'warn' %}#b4612a{% elif it.kind == 'done' %}#7a7266{% else %}#9a4a5c{% endif %}"><div class="m">{{ it.date|date:"m/Y" }}</div><div class="d" style="font-size:1rem">{{ it.date|date:"d" }}</div></div>
+        <a class="list-row" href="{{ it.url }}"><div class="dl-date" style="width:52px;flex-basis:52px;--c:{% if it.kind == 'overdue' or it.kind == 'bad' %}#dc3545{% elif it.kind == 'event' %}#6f42c1{% elif it.kind == 'good' %}#198754{% elif it.kind == 'warn' %}#fd7e14{% elif it.kind == 'done' %}#6c757d{% else %}#d63384{% endif %}"><div class="m">{{ it.date|date:"m/Y" }}</div><div class="d" style="font-size:1rem">{{ it.date|date:"d" }}</div></div>
           <div class="grow"><div class="t text-truncate"><span class="cal-dot {{ it.kind }}"></span>{{ it.title }}</div><div class="s text-truncate">{{ it.sub }}</div></div></a>
       {% empty %}<div class="empty py-4"><div class="ic"><i class="bi bi-calendar"></i></div><div class="small">{% trans "Nothing scheduled this month." %}</div></div>{% endfor %}
     </div>

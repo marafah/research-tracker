@@ -4,7 +4,7 @@
 <div class="crumbs"><a href="{% url 'journal_list' %}">{% trans "Journals" %}</a></div>
 <div class="page-head">
   <div class="d-flex gap-3 align-items-center">
-    <span class="rec-ico" style="--t:#2c4a6e;width:56px;height:56px;font-size:1.5rem;border-radius:15px"><i class="bi bi-journal-text"></i></span>
+    <span class="rec-ico" style="--t:#0d6efd;width:56px;height:56px;font-size:1.5rem;border-radius:15px"><i class="bi bi-journal-text"></i></span>
     <div><h1>{{ journal.name }}</h1>
       <div class="d-flex gap-2 flex-wrap mt-2">
         <span class="chip">{{ journal.get_kind_display }}</span>{% if journal.publisher %}<span class="chip"><i class="bi bi-building"></i> {{ journal.publisher }}</span>{% endif %}

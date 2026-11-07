@@ -2,7 +2,7 @@
 {% block title %}{% trans "Research groups" %}{% endblock %}
 {% block content %}
 <div class="page-head">
-  <div class="ph-title"><span class="ico lg solid" style="--c:#a87c22"><i class="bi bi-people-fill"></i></span><div><div class="eyebrow">{% trans "Network" %}</div><h1>{% trans "Research groups" %}</h1><div class="sub">{% trans "Teams you collaborate with, inside and outside the university" %}</div></div></div>
+  <div class="ph-title"><span class="ico lg solid" style="--c:#e0a800"><i class="bi bi-people-fill"></i></span><div><div class="eyebrow">{% trans "Network" %}</div><h1>{% trans "Research groups" %}</h1><div class="sub">{% trans "Teams you collaborate with, inside and outside the university" %}</div></div></div>
   <a href="{% url 'group_create' %}" class="btn btn-primary"><i class="bi bi-plus-lg"></i> {% trans "New group" %}</a>
 </div>
 <div class="row g-4">
@@ -14,7 +14,7 @@
       <h3 class="h5 fw-bold mt-2 mb-1">{{ g.name }}</h3>
       <div class="small text-muted-rt mb-2">{{ g.institution|default:"—" }}</div>
       <p class="small text-muted-rt mb-3" style="min-height:2.6em">{{ g.description|truncatechars:110 }}</p>
-      <div class="d-flex gap-2"><span class="chip c" style="--c:#a87c22"><i class="bi bi-people-fill"></i> {{ g.n_members }} {% trans "members" %}</span><span class="chip c" style="--c:#6b4f8a"><i class="bi bi-file-earmark-text-fill"></i> {{ g.n_papers }} {% trans "papers" %}</span></div>
+      <div class="d-flex gap-2"><span class="chip c" style="--c:#e0a800"><i class="bi bi-people-fill"></i> {{ g.n_members }} {% trans "members" %}</span><span class="chip c" style="--c:#6f42c1"><i class="bi bi-file-earmark-text-fill"></i> {{ g.n_papers }} {% trans "papers" %}</span></div>
     </div></a></div>
 {% empty %}
   <div class="col-12"><div class="card"><div class="empty"><div class="ic"><i class="bi bi-people"></i></div><h6>{% trans "You are not in any group yet." %}</h6><a href="{% url 'group_create' %}" class="btn btn-primary btn-sm mt-2">{% trans "Create a group" %}</a></div></div></div>

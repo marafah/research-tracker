@@ -2,7 +2,7 @@
 <article class="rec-card" style="--c: {{ p.status|status_hex }}">
   <div class="rec-band">
     <span class="rb-status"><i class="bi {{ p.status|status_icon }}"></i>{{ p.get_status_display }}</span>
-    <span class="d-flex align-items-center gap-2">{% if p.priority >= 3 %}<span class="chip c" style="--c:#a63a2b;padding:.12rem .5rem"><i class="bi bi-flag-fill"></i> {{ p.get_priority_display }}</span>{% endif %}
+    <span class="d-flex align-items-center gap-2">{% if p.priority >= 3 %}<span class="chip c" style="--c:#dc3545;padding:.12rem .5rem"><i class="bi bi-flag-fill"></i> {{ p.get_priority_display }}</span>{% endif %}
       <span class="rec-type" style="--t: {{ type_colors|get_item:p.type }}"><i class="bi {{ type_icons|get_item:p.type }}"></i> {{ p.get_type_display }}</span></span>
   </div>
   <div class="rec-body">
@@ -10,14 +10,14 @@
     {% if s %}<div class="rec-venue"><i class="bi bi-journal-bookmark-fill"></i> <span class="text-truncate">{{ s.journal.name }}</span>{% if s.journal.quartile %}<span class="badge quartile-{{ s.journal.quartile|lower }}">{{ s.journal.quartile }}</span>{% endif %}</div>
     {% else %}<div class="rec-venue text-muted-rt"><i class="bi bi-journal"></i> {% trans "Not submitted yet" %}</div>{% endif %}
     <div class="rec-meta">
-      {% if s.submitted_at %}<span style="--c:#2c4a6e"><i class="bi bi-send-fill"></i><span class="num">{{ s.submitted_at|date:"d/m/Y" }}</span></span>{% endif %}
-      {% if s.manuscript_id %}<span style="--c:#7a7266"><i class="bi bi-hash"></i>{{ s.manuscript_id }}</span>{% endif %}
-      {% if not s and p.target_submission_date %}<span style="--c:#b4612a"><i class="bi bi-flag-fill"></i><span class="num">{{ p.target_submission_date|date:"d/m/Y" }}</span></span>{% endif %}
-      {% if s.days_in_review and s.decision != "accepted" %}<span style="--c:#6b4f8a"><i class="bi bi-hourglass-split"></i>{% blocktrans with n=s.days_in_review %}{{ n }} days{% endblocktrans %}</span>{% endif %}
+      {% if s.submitted_at %}<span style="--c:#0d6efd"><i class="bi bi-send-fill"></i><span class="num">{{ s.submitted_at|date:"d/m/Y" }}</span></span>{% endif %}
+      {% if s.manuscript_id %}<span style="--c:#6c757d"><i class="bi bi-hash"></i>{{ s.manuscript_id }}</span>{% endif %}
+      {% if not s and p.target_submission_date %}<span style="--c:#fd7e14"><i class="bi bi-flag-fill"></i><span class="num">{{ p.target_submission_date|date:"d/m/Y" }}</span></span>{% endif %}
+      {% if s.days_in_review and s.decision != "accepted" %}<span style="--c:#6f42c1"><i class="bi bi-hourglass-split"></i>{% blocktrans with n=s.days_in_review %}{{ n }} days{% endblocktrans %}</span>{% endif %}
     </div>
     <div class="rec-foot">
       <div class="avatar-stack">{% for a in p.authors.all|slice:":4" %}<span class="avatar avatar-sm {{ a.user|default:a.name|avatar_class }}" title="{{ a.name }}">{{ a.name|initials }}</span>{% endfor %}</div>
-      {% if nd %}<span class="position-relative" style="z-index:2" title="{{ nd.title }}">{% due_badge nd %}</span>{% else %}<span class="small text-muted-rt text-truncate" style="max-width:55%"><i class="bi bi-people-fill" style="color:#a87c22"></i> {{ p.group.name }}</span>{% endif %}
+      {% if nd %}<span class="position-relative" style="z-index:2" title="{{ nd.title }}">{% due_badge nd %}</span>{% else %}<span class="small text-muted-rt text-truncate" style="max-width:55%"><i class="bi bi-people-fill" style="color:#e0a800"></i> {{ p.group.name }}</span>{% endif %}
     </div>
   </div>
 </article>

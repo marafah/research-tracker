@@ -19,13 +19,13 @@ STATUS_COLORS = {
 
 # A distinct, flat colour for every status so pipelines, badges and boards read at a glance.
 STATUS_HEX = {
-    "idea": "#7a7266", "proposal": "#2f6f78", "drafting": "#2f6f78", "internal_review": "#3d5f80",
-    "ready": "#3d4f7c", "submitted": "#2c4a6e", "under_review": "#6b4f8a", "major_revision": "#b4612a",
-    "minor_revision": "#a87c22", "resubmitted": "#6366f1", "accepted": "#2f6b46", "proofs": "#65a30d",
-    "published": "#2f6b46", "rejected": "#a63a2b", "withdrawn": "#475569", "on_hold": "#a16207",
-    "draft": "#7a7266", "with_editor": "#2c4a6e", "major": "#b4612a", "minor": "#a87c22",
-    "revision_submitted": "#6366f1", "desk_rejected": "#a63a2b", "transfer": "#be123c",
-    "open": "#a63a2b", "in_progress": "#a87c22", "done": "#2f6b46", "rebutted": "#2f6f78",
+    "idea": "#6c757d", "proposal": "#0aa2c0", "drafting": "#0aa2c0", "internal_review": "#3d8bfd",
+    "ready": "#6610f2", "submitted": "#0d6efd", "under_review": "#6f42c1", "major_revision": "#fd7e14",
+    "minor_revision": "#e0a800", "resubmitted": "#6366f1", "accepted": "#198754", "proofs": "#65a30d",
+    "published": "#198754", "rejected": "#dc3545", "withdrawn": "#475569", "on_hold": "#a16207",
+    "draft": "#6c757d", "with_editor": "#0d6efd", "major": "#fd7e14", "minor": "#e0a800",
+    "revision_submitted": "#6366f1", "desk_rejected": "#dc3545", "transfer": "#be123c",
+    "open": "#dc3545", "in_progress": "#e0a800", "done": "#198754", "rebutted": "#0aa2c0",
 }
 STATUS_ICONS = {
     "idea": "bi-lightbulb", "proposal": "bi-file-earmark-richtext", "drafting": "bi-pencil-square",
@@ -43,7 +43,7 @@ def status_color(value):
 
 @register.filter
 def status_hex(value):
-    return STATUS_HEX.get(value, "#7a7266")
+    return STATUS_HEX.get(value, "#6c757d")
 
 
 @register.filter
@@ -136,7 +136,7 @@ def get_item(d, key):
 @register.filter
 def type_hex(value):
     from tracker.workspace import TYPE_COLORS
-    return TYPE_COLORS.get(value, "#7a7266")
+    return TYPE_COLORS.get(value, "#6c757d")
 
 
 @register.filter

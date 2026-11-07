@@ -3,14 +3,14 @@
 {% block content %}
 <div class="row justify-content-center"><div class="col-xl-9 col-xxl-8">
   <div class="page-head">
-    <div class="ph-title"><span class="ico lg solid" style="--c:#2c4a6e"><i class="bi bi-pencil-square"></i></span><div>
+    <div class="ph-title"><span class="ico lg solid" style="--c:#0d6efd"><i class="bi bi-pencil-square"></i></span><div>
       {% if back %}<div class="crumbs"><a href="{{ back.get_absolute_url }}"><i class="bi bi-arrow-{% if LANGUAGE_BIDI %}right{% else %}left{% endif %}"></i> {{ back }}</a></div>{% endif %}
       <h1>{{ title }}</h1>
       {% if subtitle %}<div class="sub">{{ subtitle }}</div>{% endif %}
     </div></div>
   </div>
   {% if help %}<div class="alert alert-soft-info d-flex gap-2 small"><i class="bi bi-lightbulb text-primary fs-5"></i><div>{{ help }}</div></div>{% endif %}
-  <div class="card form-card card-accent" style="--c:#2c4a6e">
+  <div class="card form-card card-accent" style="--c:#0d6efd">
     <form method="post" {% if multipart %}enctype="multipart/form-data"{% endif %} novalidate>{% csrf_token %}
       <div class="card-body">{% include "includes/form_fields.html" %}</div>
       <div class="form-footer">

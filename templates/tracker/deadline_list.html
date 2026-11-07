@@ -2,32 +2,32 @@
 {% block title %}{% trans "Deadlines" %}{% endblock %}
 {% block content %}
 <div class="page-head">
-  <div class="ph-title"><span class="ico lg solid" style="--c:#9a4a5c"><i class="bi bi-alarm-fill"></i></span><div><div class="eyebrow">{% trans "Workspace" %}</div><h1>{% trans "Deadlines" %}</h1><div class="sub">{% trans "Every date that matters, across all your groups" %}</div></div></div>
-  <a href="{% url 'profile' %}#calendar" class="btn btn-ghost"><i class="bi bi-calendar-plus" style="color:#b4612a"></i> {% trans "Sync to my calendar" %}</a>
+  <div class="ph-title"><span class="ico lg solid" style="--c:#d63384"><i class="bi bi-alarm-fill"></i></span><div><div class="eyebrow">{% trans "Workspace" %}</div><h1>{% trans "Deadlines" %}</h1><div class="sub">{% trans "Every date that matters, across all your groups" %}</div></div></div>
+  <a href="{% url 'profile' %}#calendar" class="btn btn-ghost"><i class="bi bi-calendar-plus" style="color:#fd7e14"></i> {% trans "Sync to my calendar" %}</a>
 </div>
 <div class="ws-kpis mb-3" style="grid-template-columns:repeat(auto-fit,minmax(170px,1fr))">
-  <div class="ws-kpi" style="--c:#2c4a6e"><span class="ico solid"><i class="bi bi-list-check"></i></span><div><b>{{ counts.open }}</b><span>{% trans "Open" %}</span></div></div>
-  <div class="ws-kpi" style="--c:#a63a2b"><span class="ico solid"><i class="bi bi-exclamation-octagon-fill"></i></span><div><b>{{ counts.overdue }}</b><span>{% trans "Overdue" %}</span></div></div>
-  <div class="ws-kpi" style="--c:#a87c22"><span class="ico solid"><i class="bi bi-lightning-charge-fill"></i></span><div><b>{{ counts.week }}</b><span>{% trans "Next 7 days" %}</span></div></div>
-  <div class="ws-kpi" style="--c:#2f6b46"><span class="ico solid"><i class="bi bi-check2-all"></i></span><div><b>{{ counts.done }}</b><span>{% trans "Completed" %}</span></div></div>
+  <div class="ws-kpi" style="--c:#0d6efd"><span class="ico solid"><i class="bi bi-list-check"></i></span><div><b>{{ counts.open }}</b><span>{% trans "Open" %}</span></div></div>
+  <div class="ws-kpi" style="--c:#dc3545"><span class="ico solid"><i class="bi bi-exclamation-octagon-fill"></i></span><div><b>{{ counts.overdue }}</b><span>{% trans "Overdue" %}</span></div></div>
+  <div class="ws-kpi" style="--c:#e0a800"><span class="ico solid"><i class="bi bi-lightning-charge-fill"></i></span><div><b>{{ counts.week }}</b><span>{% trans "Next 7 days" %}</span></div></div>
+  <div class="ws-kpi" style="--c:#198754"><span class="ico solid"><i class="bi bi-check2-all"></i></span><div><b>{{ counts.done }}</b><span>{% trans "Completed" %}</span></div></div>
 </div>
 <div class="ws-bar">
   <nav class="ws-views">
-    <a href="?view=list&show={{ show }}" class="{% if view != 'calendar' %}on{% endif %}" style="--c:#9a4a5c"><span class="vi"><i class="bi bi-list-task"></i></span> {% trans "List" %}</a>
-    <a href="?view=calendar&show={{ show }}" class="{% if view == 'calendar' %}on{% endif %}" style="--c:#b4612a"><span class="vi"><i class="bi bi-calendar3-week-fill"></i></span> {% trans "Calendar" %}</a>
+    <a href="?view=list&show={{ show }}" class="{% if view != 'calendar' %}on{% endif %}" style="--c:#d63384"><span class="vi"><i class="bi bi-list-task"></i></span> {% trans "List" %}</a>
+    <a href="?view=calendar&show={{ show }}" class="{% if view == 'calendar' %}on{% endif %}" style="--c:#fd7e14"><span class="vi"><i class="bi bi-calendar3-week-fill"></i></span> {% trans "Calendar" %}</a>
   </nav>
 </div>
 <div class="ws-filters">
-  <a href="?view={{ view }}&show=open" class="ws-chip {% if show == 'open' %}on{% endif %}" style="--c:#2c4a6e"><i class="bi bi-collection-fill"></i> {% trans "All open" %}</a>
-  <a href="?view={{ view }}&show=mine" class="ws-chip {% if show == 'mine' %}on{% endif %}" style="--c:#6b4f8a"><i class="bi bi-person-fill"></i> {% trans "Mine" %}</a>
-  <a href="?view={{ view }}&show=done" class="ws-chip {% if show == 'done' %}on{% endif %}" style="--c:#2f6b46"><i class="bi bi-check2-all"></i> {% trans "Completed" %}</a>
+  <a href="?view={{ view }}&show=open" class="ws-chip {% if show == 'open' %}on{% endif %}" style="--c:#0d6efd"><i class="bi bi-collection-fill"></i> {% trans "All open" %}</a>
+  <a href="?view={{ view }}&show=mine" class="ws-chip {% if show == 'mine' %}on{% endif %}" style="--c:#6f42c1"><i class="bi bi-person-fill"></i> {% trans "Mine" %}</a>
+  <a href="?view={{ view }}&show=done" class="ws-chip {% if show == 'done' %}on{% endif %}" style="--c:#198754"><i class="bi bi-check2-all"></i> {% trans "Completed" %}</a>
 </div>
 {% if view == "calendar" %}{% include "tracker/views/calendar.html" %}
 {% else %}
 <div class="row g-4">
   {% for b in buckets %}
   <div class="col-lg-6">
-    <div class="card h-100 card-accent" style="--c:{% if b.tone == 'danger' %}#a63a2b{% elif b.tone == 'warning' %}#a87c22{% elif b.tone == 'success' %}#2f6b46{% elif b.tone == 'slate' %}#7a7266{% else %}#2c4a6e{% endif %}">
+    <div class="card h-100 card-accent" style="--c:{% if b.tone == 'danger' %}#dc3545{% elif b.tone == 'warning' %}#e0a800{% elif b.tone == 'success' %}#198754{% elif b.tone == 'slate' %}#6c757d{% else %}#0d6efd{% endif %}">
       <div class="card-header"><h2 class="card-title-rt"><span class="ic tone-{{ b.tone }}"><i class="bi {{ b.icon }}"></i></span>{{ b.label }}</h2><span class="count-pill">{{ b.items|length }}</span></div>
       {% for d in b.items %}{% include "tracker/_deadline_row.html" %}
       {% empty %}<div class="empty py-4"><div class="ic tone-success"><i class="bi bi-check2"></i></div><div class="small">{% trans "Nothing here." %}</div></div>{% endfor %}

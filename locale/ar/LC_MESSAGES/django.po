@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Research Tracker VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-07 15:12+0300\n"
+"POT-Creation-Date: 2026-11-07 15:22+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ar\n"
@@ -86,9 +86,6 @@ msgstr "يجب أن يكون للمجموعة مالك واحد على الأق�
 
 msgid "A new deadline has been assigned to you:"
 msgstr "أُسند إليك موعد نهائي جديد:"
-
-msgid "A paper moving through the submission pipeline"
-msgstr "بحث يتنقّل عبر مراحل الإرسال"
 
 msgid "A reviewer comment was assigned to you"
 msgstr "أُسندت إليك ملاحظة محكّم"
@@ -437,8 +434,8 @@ msgstr "أدخل بريدك الإلكتروني وسنرسل لك رابط إع
 msgid "Every date that matters, across all your groups"
 msgstr "كل التواريخ المهمة في جميع مجموعاتك"
 
-msgid "Every manuscript, from first draft to"
-msgstr "كل مخطوطة، من المسودة الأولى حتى"
+msgid "Every paper, every deadline, every co-author — in one place."
+msgstr "كل بحث، وكل موعد، وكل مؤلف مشارك — في مكان واحد."
 
 msgid "Every work your groups are writing, submitting and publishing"
 msgstr "كل الأعمال التي تكتبها مجموعاتك وترسلها وتنشرها"
@@ -602,6 +599,9 @@ msgstr "المسؤول"
 
 msgid "List"
 msgstr "قائمة"
+
+msgid "Live"
+msgstr "مباشر"
 
 msgid "Log in"
 msgstr "تسجيل الدخول"
@@ -826,11 +826,11 @@ msgstr "فتح بوابة الإرسال"
 msgid "Open the paper"
 msgstr "فتح البحث"
 
-msgid "Open-source"
-msgstr "مفتوح المصدر"
-
 msgid "Open-source research publication tracker"
 msgstr "منصة مفتوحة المصدر لمتابعة النشر البحثي"
+
+msgid "Open-source · Self-hostable · Your data stays private"
+msgstr "مفتوح المصدر · قابل للاستضافة الذاتية · بياناتك خاصة"
 
 msgid "Other"
 msgstr "أخرى"
@@ -1115,9 +1115,6 @@ msgstr "إظهار كل المراحل"
 
 msgid "Show password"
 msgstr "إظهار كلمة المرور"
-
-msgid "Sign in"
-msgstr "تسجيل الدخول"
 
 msgid "Sign in to your research workspace"
 msgstr "سجّل الدخول إلى مساحتك البحثية"
@@ -1499,9 +1496,6 @@ msgstr "باحث خارجي"
 
 msgid "file"
 msgstr "الملف"
-
-msgid "final proof."
-msgstr "البروفة النهائية."
 
 msgid "first decision date"
 msgstr "تاريخ القرار الأول"

@@ -1,63 +1,66 @@
 {% extends "base.html" %}{% load i18n %}
 {% block shell %}{% get_current_language as LANG %}
-<div class="ms">
-  <header class="ms-top">
-    <a href="/" class="ms-brand">
-      <svg class="ms-logo" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="currentColor"/><path d="M7 22h18M9 17.5h14M11 13h10M13 8.5h6" stroke="#fffaf0" stroke-width="2.2" stroke-linecap="round"/></svg>
-      <span>{{ SITE_NAME }}</span>
-    </a>
-    <span class="ms-org d-none d-md-inline">{{ INSTITUTION }}</span>
-    <nav class="ms-top-actions">
-      <form action="{% url 'set_language' %}" method="post" class="m-0">{% csrf_token %}
-        <input type="hidden" name="next" value="{{ request.get_full_path }}">
-        <input type="hidden" name="language" value="{% if LANG == 'ar' %}en{% else %}ar{% endif %}">
-        <button class="ms-chip-btn" type="submit"><i class="bi bi-translate"></i> {% if LANG == 'ar' %}English{% else %}العربية{% endif %}</button>
-      </form>
-      {% block nav_cta %}{% if ALLOW_SIGNUP %}<a href="{% url 'signup' %}" class="ms-chip-btn">{% trans "Create account" %}</a>{% endif %}{% endblock %}
-    </nav>
-  </header>
+<div class="container-fluid p-0 bs-auth">
+  <div class="row g-0 min-vh-100">
+    <!-- Brand panel -->
+    <aside class="col-lg-6 d-none d-lg-flex flex-column text-white bs-auth-hero">
+      <div class="d-flex align-items-center gap-2">
+        <span class="bs-logo"><i class="bi bi-journal-bookmark-fill"></i></span>
+        <span class="fw-semibold fs-5">{{ SITE_NAME }}</span>
+        <span class="badge rounded-pill text-bg-light text-primary ms-2">{{ INSTITUTION }}</span>
+      </div>
 
-  <main class="ms-main">
-    <section class="ms-pitch">
-      <p class="ms-sect"><span>§ 01</span>{{ INSTITUTION_UNIT }}</p>
-      <h1 class="ms-display">{% trans "Every manuscript, from first draft to" %} <em>{% trans "final proof." %}</em></h1>
-      <p class="ms-lead">{% trans "Track submissions from idea to publication, never miss a revision deadline, and collect co-author data without the email chase." %}</p>
+      <div class="my-auto py-5">
+        <span class="badge rounded-pill bg-white bg-opacity-10 border border-white border-opacity-25 fw-normal px-3 py-2 mb-4"><i class="bi bi-mortarboard-fill me-1"></i> {{ INSTITUTION_UNIT }}</span>
+        <h1 class="display-5 fw-bold mb-3 text-white">{% trans "Every paper, every deadline, every co-author — in one place." %}</h1>
+        <p class="lead text-white-50 mb-4">{% trans "Track submissions from idea to publication, never miss a revision deadline, and collect co-author data without the email chase." %}</p>
 
-      <figure class="ms-desk" aria-label="{% trans 'A paper moving through the submission pipeline' %}">
-        <ol class="ms-track">
-          <li><i class="bi bi-pencil"></i>{% trans "Draft" %}</li>
-          <li><i class="bi bi-send"></i>{% trans "Submitted" %}</li>
-          <li><i class="bi bi-eyeglasses"></i>{% trans "Under review" %}</li>
-          <li><i class="bi bi-patch-check"></i>{% trans "Accepted" %}</li>
-        </ol>
-        <div class="ms-rail"><span class="ms-rail-fill"></span></div>
-        <div class="ms-paper" aria-hidden="true">
-          <span class="ms-paper-id">MS-2026-0417</span>
-          <span class="ln w90"></span><span class="ln w70"></span><span class="ln w80"></span><span class="ln w40"></span>
-          <span class="ms-stamp">{% trans "Accepted" %}</span>
+        <div class="card bs-pipe border-0 shadow-lg" aria-hidden="true">
+          <div class="card-body">
+            <div class="d-flex justify-content-between small text-body-secondary mb-2">
+              <span><i class="bi bi-file-earmark-text me-1"></i> MS-2026-0417</span>
+              <span class="bs-live"><span class="dot"></span> {% trans "Live" %}</span>
+            </div>
+            <div class="bs-steps">
+              <div class="st"><i class="bi bi-pencil"></i><span>{% trans "Draft" %}</span></div>
+              <div class="st"><i class="bi bi-send"></i><span>{% trans "Submitted" %}</span></div>
+              <div class="st"><i class="bi bi-eyeglasses"></i><span>{% trans "Under review" %}</span></div>
+              <div class="st"><i class="bi bi-patch-check"></i><span>{% trans "Accepted" %}</span></div>
+            </div>
+            <div class="progress mt-3" role="presentation"><div class="progress-bar bs-pipe-bar"></div></div>
+          </div>
         </div>
-      </figure>
-    </section>
 
-    <section class="ms-cardcol">
-      <div class="ms-card">
-        <div class="ms-card-tab"><span>{% block card_label %}{% trans "Sign in" %}{% endblock %}</span><span class="mono">№ {% now "Y" %}</span></div>
-        <div class="ms-card-body">
+        <div class="row g-3 mt-3">
+          <div class="col-4"><div class="bs-feat"><i class="bi bi-bell-fill"></i><span>{% trans "Smart reminders" %}</span></div></div>
+          <div class="col-4"><div class="bs-feat"><i class="bi bi-people-fill"></i><span>{% trans "Team-ready" %}</span></div></div>
+          <div class="col-4"><div class="bs-feat"><i class="bi bi-translate"></i><span>العربية · English</span></div></div>
+        </div>
+      </div>
+
+      <div class="small text-white-50"><i class="bi bi-shield-lock me-1"></i> {% trans "Open-source · Self-hostable · Your data stays private" %}</div>
+    </aside>
+
+    <!-- Form panel -->
+    <main class="col-lg-6 d-flex flex-column bg-body">
+      <div class="d-flex align-items-center justify-content-between px-4 py-3">
+        <a href="/" class="d-flex d-lg-none align-items-center gap-2 text-decoration-none text-body fw-semibold"><span class="bs-logo sm"><i class="bi bi-journal-bookmark-fill"></i></span>{{ SITE_NAME }}</a>
+        <div class="ms-auto d-flex gap-2">
+          <form action="{% url 'set_language' %}" method="post" class="m-0">{% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+            <input type="hidden" name="language" value="{% if LANG == 'ar' %}en{% else %}ar{% endif %}">
+            <button class="btn btn-outline-secondary btn-sm" type="submit"><i class="bi bi-translate me-1"></i>{% if LANG == 'ar' %}English{% else %}العربية{% endif %}</button>
+          </form>
+          {% block nav_cta %}{% if ALLOW_SIGNUP %}<a href="{% url 'signup' %}" class="btn btn-outline-primary btn-sm">{% trans "Create account" %}</a>{% endif %}{% endblock %}
+        </div>
+      </div>
+      <div class="flex-grow-1 d-flex align-items-center justify-content-center px-3 py-4">
+        <div class="bs-auth-form w-100">
           {% block auth %}{% endblock %}
         </div>
       </div>
-    </section>
-  </main>
-
-  <div class="ms-strata" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
-  <footer class="ms-foot">
-    <span>© {% now "Y" %} {{ INSTITUTION }}</span>
-    <span class="ms-foot-badges">
-      <span><i class="bi bi-bell"></i> {% trans "Smart reminders" %}</span>
-      <span><i class="bi bi-people"></i> {% trans "Team-ready" %}</span>
-      <span><i class="bi bi-translate"></i> العربية · English</span>
-      <span><i class="bi bi-shield-check"></i> {% trans "Open-source" %}</span>
-    </span>
-  </footer>
+      <div class="text-center small text-body-secondary py-3">© {% now "Y" %} {{ INSTITUTION }} · {{ SITE_NAME }}</div>
+    </main>
+  </div>
 </div>
 {% endblock %}

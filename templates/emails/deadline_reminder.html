@@ -1,5 +1,5 @@
 {% extends "emails/_base.html" %}{% load i18n %}
-{% block banner %}<tr><td style="padding:12px 24px;font-weight:bold;color:#ffffff;background:{% if days_left < 0 %}#b42318{% elif days_left <= 3 %}#a87c22{% else %}#0e7490{% endif %}">
+{% block banner %}<tr><td style="padding:12px 24px;font-weight:bold;color:#ffffff;background:{% if days_left < 0 %}#b42318{% elif days_left <= 3 %}#e0a800{% else %}#0e7490{% endif %}">
 {% if days_left < 0 %}{% blocktrans with n=overdue_days %}Overdue by {{ n }} day(s){% endblocktrans %}{% elif days_left == 0 %}{% trans "Due today" %}{% else %}{% blocktrans with n=days_left %}{{ n }} day(s) left{% endblocktrans %}{% endif %}</td></tr>{% endblock %}
 {% block body %}
 <p>{% blocktrans with name=user.display_name %}Dear {{ name }},{% endblocktrans %}</p>
