@@ -19,7 +19,7 @@
   <link rel="stylesheet" href="{% static 'vendor/bootstrap-icons/bootstrap-icons.min.css' %}">
   <link rel="stylesheet" href="{% static 'css/app.css' %}">
   <link rel="stylesheet" href="{% static 'css/theme.css' %}">
-  <link rel="stylesheet" href="{% static 'css/bs-theme.css' %}?v=7.9.5">
+  <link rel="stylesheet" href="{% static 'css/bs-theme.css' %}?v=7.9.8">
   {% block head %}{% endblock %}
 </head>
 <body>
@@ -49,7 +49,7 @@
       <a class="sb-link {% if 'journal' in u %}active{% endif %}" href="{% url 'journal_list' %}" style="--c:#0aa2c0"><span class="sb-ic"><i class="bi bi-journals"></i></span> <span class="sb-label">{% trans "Journals" %}</span></a>
       <div class="sb-section">{% trans "Insights" %}</div>
       <a class="sb-link {% if u == 'reports' %}active{% endif %}" href="{% url 'reports' %}" style="--c:#fd7e14"><span class="sb-ic"><i class="bi bi-bar-chart-line-fill"></i></span> <span class="sb-label">{% trans "Reports" %}</span></a>
-      <a class="sb-link" href="{% url 'export_csv' %}" style="--c:#198754"><span class="sb-ic"><i class="bi bi-cloud-arrow-down-fill"></i></span> <span class="sb-label">{% trans "Export CSV" %}</span></a>
+      <a class="sb-link" href="{% url 'export_csv' %}" style="--c:#5b6bbf"><span class="sb-ic"><i class="bi bi-cloud-arrow-down-fill"></i></span> <span class="sb-label">{% trans "Export CSV" %}</span></a>
       {% if user.is_staff %}<a class="sb-link" href="{% url 'admin:index' %}" style="--c:#dc3545"><span class="sb-ic"><i class="bi bi-shield-lock-fill"></i></span> <span class="sb-label">{% trans "Administration" %}</span></a>{% endif %}
     </nav>
     <a href="{% url 'profile' %}" class="sb-user text-decoration-none">
