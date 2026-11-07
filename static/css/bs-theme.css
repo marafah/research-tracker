@@ -1040,3 +1040,15 @@ html[dir="ltr"] .ov-lolly .stick { margin-right: 12px; }
 .ov-tbl td.p .num { min-width: 2.4em; text-align: start; }
 /* switching views changes the page height: keep the scrollbar's space so the cards never change width */
 html { scrollbar-gutter: stable; }
+
+/* ===== v7.9.5 — Recently updated: full titles, each in its own direction =====
+   The full title is shown (wrapping, no ellipsis, no line clamp). The title is an isolated <bdi> with its own
+   dir (English titles read left-to-right, Arabic right-to-left) and sits next to the paper icon: right in Arabic, left in English. */
+.rc-main .t, .rc-card .t { white-space: normal; overflow: visible; text-overflow: clip; overflow-wrap: anywhere; line-height: 1.45;
+  display: block; -webkit-line-clamp: unset; min-height: 0; }
+html[dir="rtl"] .rc-main .t, html[dir="rtl"] .rc-card .t, html[dir="rtl"] .rc-card .v { text-align: right; }
+html[dir="ltr"] .rc-main .t, html[dir="ltr"] .rc-card .t, html[dir="ltr"] .rc-card .v { text-align: left; }
+.rc-card .v { white-space: normal; overflow: visible; }
+.rc-row { align-items: flex-start; }
+.rc-row .rc-ic { margin-top: .1rem; }
+.rc-side { padding-top: .15rem; }
