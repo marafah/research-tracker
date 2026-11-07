@@ -1006,3 +1006,37 @@ html[dir="ltr"] .ov-lolly .stick { margin-right: 12px; }
 .ov-card [data-pane="chart"] { flex: 1 1 0; min-height: 0; }
 .ov-card .ov-tw, .ov-card:has([data-pane="numbers"]:not([hidden])) .ov-tw { overflow: visible !important; flex: 0 0 auto; }
 .ov-tbl thead th { position: static; }
+
+/* ===== v7.9.4 — overview tables: quiet and aligned, with room inside the card =====
+   A real table, not a stack of coloured pills: a plain header with a rule under it, rows divided by hairlines,
+   one colour cue per row (the dot and the bar), numbers in the text colour, and the card's own side padding. */
+.ov-card .ov-tw { padding: .45rem 1.25rem 1rem !important; }
+.ov-tw.two { gap: 1.5rem; }
+.ov-tbl { border-collapse: collapse; border-spacing: 0; font-size: .8rem; }
+.ov-tbl thead th { background: transparent; color: var(--rt-muted); font-size: .7rem; font-weight: 700; letter-spacing: .01em;
+  padding: 0 .5rem .45rem; border: 0; border-bottom: 2px solid var(--rt-border); border-radius: 0 !important; }
+.ov-tbl td { background: transparent; border: 0 !important; border-bottom: 1px solid color-mix(in srgb, var(--rt-border) 75%, transparent) !important;
+  border-radius: 0 !important; box-shadow: none !important; padding: .5rem .5rem; }
+.ov-tbl tbody tr:last-child td { border-bottom: 0 !important; }
+.ov-tbl tbody tr:hover td { background: color-mix(in srgb, var(--c) 6%, transparent); }
+.ov-tbl tr.zero td { background: transparent; }
+.ov-tbl th:first-child, .ov-tbl td:first-child { padding-inline-start: .1rem; }
+.ov-tbl th:last-child, .ov-tbl td:last-child { padding-inline-end: .1rem; }
+.ov-tbl td.l { font-weight: 500; color: var(--rt-text); }
+.ov-tbl td.l:has(> .sw) { padding-inline-start: 1.1rem; }
+.ov-tbl td:first-child.l:has(> .sw) { padding-inline-start: 1rem; }
+.ov-tbl td.l > .sw { inset-inline-start: .1rem; top: 1.02em; width: 8px; height: 8px; border-radius: 50%; }
+.ov-tbl td:not(:first-child).l > .sw { inset-inline-start: .5rem; }
+.ov-tbl td:not(:first-child).l:has(> .sw) { padding-inline-start: 1.4rem; }
+.ov-tbl td.n, .ov-tbl td.n .num { color: var(--rt-text); font-weight: 700; font-size: .86rem; }
+.ov-tbl td.p { color: var(--rt-muted); font-weight: 600; font-size: .74rem; }
+.ov-tbl .pb { width: 64px; height: 6px; border-radius: 99px; background: color-mix(in srgb, var(--c) 14%, transparent); }
+.ov-tbl .pb i, html[dir="rtl"] .ov-tbl .pb i { background: var(--c); border-radius: 99px; }
+.ov-tbl tr.zero td, .ov-tbl tr.zero td.n, .ov-tbl tr.zero td.n .num, .ov-tbl tr.zero td.p { color: color-mix(in srgb, var(--rt-muted) 65%, var(--rt-surface)); font-weight: 500; }
+.ov-tbl tr.zero .sw { opacity: .35; }
+[data-bs-theme="dark"] .ov-tbl td.n, [data-bs-theme="dark"] .ov-tbl td.n .num { color: var(--rt-text); }
+/* the % value sits under its "%" header (value first, then the bar) */
+.ov-tbl .pc { flex-direction: row-reverse; justify-content: flex-end; gap: .5rem; }
+.ov-tbl td.p .num { min-width: 2.4em; text-align: start; }
+/* switching views changes the page height: keep the scrollbar's space so the cards never change width */
+html { scrollbar-gutter: stable; }
