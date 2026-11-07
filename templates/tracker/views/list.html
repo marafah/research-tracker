@@ -1,14 +1,24 @@
 {% load i18n tracker_tags %}
 {% if papers %}
-<div class="card vl-card">
+<div class="card vl-card" role="table" aria-label="{% trans 'Compact list' %}">
+  <div class="vl-head" role="row">
+    <span role="columnheader"><i class="bi bi-file-earmark-text-fill" style="--h:#0d6efd"></i>{% trans "Title" %}</span>
+    <span role="columnheader"><i class="bi bi-flag-fill" style="--h:#6f42c1"></i>{% trans "Status" %}</span>
+    <span role="columnheader"><i class="bi bi-alarm-fill" style="--h:#d63384"></i>{% trans "Next deadline" %}</span>
+    <span role="columnheader"><i class="bi bi-clock-history" style="--h:#0aa2c0"></i>{% trans "Last update" %}</span>
+  </div>
   {% for p in papers %}{% with s=p.current_submission nd=p.next_deadline %}
-  <a class="vl-row" href="{{ p.get_absolute_url }}" style="--c:{{ p.status|status_hex }};--t:{{ type_colors|get_item:p.type }}">
-    <span class="vl-ic"><i class="bi {{ type_icons|get_item:p.type }}"></i></span>
-    <span class="vl-main">
-      <bdi class="vl-t" dir="{{ p.title|text_dir }}" title="{{ p.title }}">{{ p.title }}</bdi>
-      <span class="vl-meta"><span class="vl-type">{{ p.get_type_display }}</span>{% if s %}<span><i class="bi bi-journal-bookmark-fill"></i> <bdi>{{ s.journal.name }}</bdi></span>{% endif %}</span>
+  <a class="vl-row" role="row" href="{{ p.get_absolute_url }}" style="--c:{{ p.status|status_hex }};--t:{{ type_colors|get_item:p.type }}">
+    <span class="vl-cell vl-titlecell" role="cell">
+      <span class="vl-ic"><i class="bi {{ type_icons|get_item:p.type }}"></i></span>
+      <span class="vl-main">
+        <bdi class="vl-t" dir="{{ p.title|text_dir }}" title="{{ p.title }}">{{ p.title }}</bdi>
+        <span class="vl-meta"><span class="vl-type">{{ p.get_type_display }}</span>{% if s %}<span class="vl-sep">·</span><bdi>{{ s.journal.name }}</bdi>{% endif %}</span>
+      </span>
     </span>
-    <span class="vl-side">{% status_badge p %}{% if nd %}{% due_badge nd %}{% else %}<span class="vl-none">{% trans "No upcoming deadline" %}</span>{% endif %}</span>
+    <span class="vl-cell" role="cell">{% status_badge p %}</span>
+    <span class="vl-cell" role="cell">{% if nd %}{% due_badge nd %}{% else %}<span class="vl-none">—</span>{% endif %}</span>
+    <span class="vl-cell vl-date num" role="cell"><bdi dir="ltr">{{ p.updated_at|date:"d/m/Y" }}</bdi></span>
   </a>
   {% endwith %}{% endfor %}
 </div>
