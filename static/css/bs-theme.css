@@ -1064,3 +1064,11 @@ html[dir="rtl"] .rc-tab .rc-main .t[dir], html[dir="rtl"] .rc-tab .rc-card .t[di
 html[dir="ltr"] .rc-tab .rc-main .t[dir], html[dir="ltr"] .rc-tab .rc-card .t[dir] { text-align: left; }
 .rc-tab .rc-main .t, .rc-tab .rc-card .t { white-space: normal; overflow: visible; text-overflow: clip; -webkit-line-clamp: unset; max-height: none; }
 .rc-tab .rc-main .meta { margin-top: .3rem; }
+
+/* ===== v7.9.8 — Sidebar: colourful icons =====
+   Each link already carries its own colour (--c on the <a>). The icon sits in a soft chip of that colour,
+   so the menu is easy to scan; hover deepens the chip, and the active link keeps its blue bar with a white icon. */
+.sb-link .sb-ic { color: var(--c, var(--blue)) !important; background: color-mix(in srgb, var(--c, var(--blue)) 13%, transparent) !important; border-radius: .55rem; }
+.sb-link:hover .sb-ic { color: var(--c, var(--blue)) !important; background: color-mix(in srgb, var(--c, var(--blue)) 22%, transparent) !important; }
+.sb-link.active .sb-ic { color: #fff !important; background: rgba(255, 255, 255, .2) !important; }
+[data-bs-theme="dark"] .sb-link:not(.active) .sb-ic { color: color-mix(in srgb, var(--c, var(--blue)) 75%, #fff) !important; background: color-mix(in srgb, var(--c, var(--blue)) 22%, transparent) !important; }
